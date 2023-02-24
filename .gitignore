@@ -1,0 +1,7 @@
+.idea
+
+tmp
+
+data/*.gml
+
+output/*.txt

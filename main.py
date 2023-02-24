@@ -44,26 +44,12 @@ if __name__ == '__main__':
     # 座標系
     # https://www.mlit.go.jp/plateau/learning/tpc03-4/
 
-    # 札幌大通郵便局
-    plateau_settings = {
-        'bldg_mesh1': '6441',
-        'bldg_mesh2': '42',
-        'bldg_mesh3_list': ['78'],
-        'road_mesh3_list': ['78'],
-        # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
-        'bldg_crs_from': '6697',
-        # 日本測地系2011 における経緯度座標系
-        'road_crs_from': '6668',
-        # 平面直角座標系
-        'crs_to': '6677',  # 関東圏（9系）
-    }
-    # # さいたま新都心
+    # # 札幌大通郵便局
     # plateau_settings = {
-    #     'bldg_mesh1': '5339',
-    #     'bldg_mesh2': '65',
-    #     'bldg_mesh3_list': ['70'],
-    #     # 'bldg_mesh3_list': ['60', '61', '70', '71'],
-    #     'road_mesh3_list': [''],
+    #     'bldg_mesh1': '6441',
+    #     'bldg_mesh2': '42',
+    #     'bldg_mesh3_list': ['78'],
+    #     'road_mesh3_list': ['78'],
     #     # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
     #     'bldg_crs_from': '6697',
     #     # 日本測地系2011 における経緯度座標系
@@ -71,6 +57,20 @@ if __name__ == '__main__':
     #     # 平面直角座標系
     #     'crs_to': '6677',  # 関東圏（9系）
     # }
+    # さいたスーパーアリーナ
+    plateau_settings = {
+        'bldg_mesh1': '5339',
+        'bldg_mesh2': '65',
+        'bldg_mesh3_list': ['70'],
+        # 'bldg_mesh3_list': ['60', '61', '70', '71'],
+        'road_mesh3_list': [''],
+        # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
+        'bldg_crs_from': '6697',
+        # 日本測地系2011 における経緯度座標系
+        'road_crs_from': '6668',
+        # 平面直角座標系
+        'crs_to': '6677',  # 関東圏（9系）
+    }
     # # 大宮駅
     # plateau_settings = {
     #     'bldg_mesh1': '5339',
