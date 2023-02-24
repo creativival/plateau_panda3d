@@ -122,13 +122,13 @@ if __name__ == '__main__':
     # )
 
     app = OpenWorld(
-        title='Player',
-        window_title='PLATEAU World',
-        plateau_settings=plateau_settings,
-        has_celestial=False,
-        has_wire_frame=True,
-        has_solid_model=True,
-        has_player=True,
-        has_mobs=True,
+        title='Map only',  # タイトル
+        window_title='PLATEAU World',  # ウインドウタイトル
+        plateau_settings=plateau_settings,  # PLATEAUデータ設定
+        has_celestial=False,  # 天球を表示
+        has_wire_frame=True,  # ワイヤーフレームを表示
+        has_solid_model=True,  # 面を表示
+        has_player=False, # プレイヤーを表示
+        has_mobs=False,  # モブを表示
     )
     app.run()
