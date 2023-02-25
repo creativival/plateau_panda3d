@@ -149,7 +149,7 @@ main.py（起動ファイル）の設定を変更します。
 
 plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読み込む設定を行います。  
 メッシュコードを「bldg_mesh1」「bldg_mesh2」「bldg_mesh3」に分割して、記載します「bldg_mesh3」は、リスト形式になっており、広い範囲を選択するときは、複数の番号を入れることが可能です。  
-座標参照系「bldg_crs_frm」「road_crs_from」は、ファイル名の最後に記載してある数字を入力します。（6697、6697_2などは立体、6688は平面データ）  
+座標参照系「bldg_crs_from」「road_crs_from」は、ファイル名の最後に記載してある数字を入力します。（6697、6697_2などは立体、6688は平面データ）  
 
 ![平面直角座標系](https://www.mlit.go.jp/plateau/uploads/2022/11/zu03-25.png)
 
@@ -176,8 +176,46 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ターミナルから起動ファイルを実行します。初回起動時は、データ変換のため時間がかかります。そのまま変換が終了するまで、お待ちください。  
 2度目の起動からは、変換後データを読み込みますので、起動は早くなります。
 
-
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image3.png)
+
+## 設定例
+
+```text
+    # 札幌大通郵便局
+    plateau_settings = {
+        'bldg_mesh1': '6441',
+        'bldg_mesh2': '42',
+        'bldg_mesh3_list': ['78'],
+        'road_mesh3_list': ['78'],  # 道路のデータはあまりない
+        # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
+        'bldg_crs_from': '6697',
+        # 日本測地系2011 における経緯度座標系
+        'road_crs_from': '6668',
+        # 平面直角座標系
+        'crs_to': '6677',  # 関東圏（9系）
+    }
+```
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image4.png)
+
+```text
+    # 渋谷駅
+    plateau_settings = {
+        'bldg_mesh1': '5339',
+        'bldg_mesh2': '35',
+        'bldg_mesh3_list': ['85', '86', '95', '96'],  # 4つのメッシュにまたがっているので、すべて指定する
+        # 'bldg_mesh3_list': ['85'],
+        'road_mesh3_list': [''],
+        # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
+        'bldg_crs_from': '6697_2',
+        # 日本測地系2011 における経緯度座標系
+        'road_crs_from': '6697',
+        # 平面直角座標系
+        'crs_to': '6677',  # 関東圏（9系）
+    }
+```
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image5.png)
 
 ## 操作方法
 
