@@ -34,7 +34,7 @@ root/
  │     │     ├ sky_1024x512.png  # 天球の内面
  │     │
  │     ├ egg_surface.egg  # キャラクター
- │     ├ sphere_uv_reverse.egg.egg  # 天球（テクスチャー反転）
+ │     ├ sphere_uv_reverse.egg  # 天球（テクスチャー反転）
  │
  ├ output/                 アウトプット
  ├ tmp/                    一時ファイル
@@ -166,7 +166,19 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
 
 平面直角座標系は、誤差を少なくするために全国を9つのエリアに分割されています。  
-「crs_to」は、さいたま市が含まれる「9系（6677）」を入力します。
+「crs_to」は、さいたま市が含まれる「9系（6677）」を入力します。  
+
+```text
+        has_celestial=False,  # 天球を表示
+        has_wire_frame=True,  # ワイヤーフレームを表示
+        has_solid_model=True,  # 面を表示
+        has_player=False, # プレイヤーを表示
+        has_mobs=False,  # モブを表示
+```
+
+インスタンス化のさい、引数をブール値で設定すると、オブジェクトを表示/非表示を変更できます。  
+FPSが低いときはパソコンの負荷を下げるため、has_celestial、has_solid_modelは、「False」推奨です。
+
 これで、起動ファイルの設定は完了です。ゲームを実行しましょう。
 
 ```text
@@ -216,6 +228,33 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ```
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image5.png)
+
+## 天球
+
+巨大なドーム（天球）の内面に画像を貼り付けて、空を表現できます。  
+
+```text
+        # main.py
+        if has_celestial:
+            self.sky_texture = self.loader.loadTexture('models/maps/sky_1024x1024.png')
+            # self.sky_texture = self.loader.loadTexture('models/maps/cloud_sky_1024x1024.png')
+            # self.sky_texture = self.loader.loadTexture('models/maps/star_sky_1024x1024.png')
+            CelestialSphere.__init__(self)
+```
+
+main.pyのインスタンス変数sky_textureを入れ替えることで、様々な空を表現できます。
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image6.png)
+
+快晴
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image7.png)
+
+星空
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image8.png)
+
+雲空
 
 ## 操作方法
 
