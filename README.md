@@ -2,7 +2,9 @@
 
 PythonのライブラリPanda3Dを使って、日本全国の3D都市モデルの整備、活用、オープンデータ化プロジェクト PLATEAUのモデルを3Dゲームに変換します。
 
-![image_top](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image_top.png)
+https://user-images.githubusercontent.com/33368327/221327955-510d7851-fc3f-410a-b23b-59893d13b2a5.mp4
+
+
 
 ## 開発環境
 
@@ -192,6 +194,7 @@ WASDで平行移動
 Tでカメラの切り替え
 WASDで平行移動
 マウスで回転
+スペースでジャンプ
 ```
 
 ## パフォーマンス調整
