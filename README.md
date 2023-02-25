@@ -2,8 +2,7 @@
 
 PythonのライブラリPanda3Dを使って、日本全国の3D都市モデルの整備、活用、オープンデータ化プロジェクト PLATEAUのモデルを3Dゲームに変換します。
 
-https://user-images.githubusercontent.com/33368327/221327955-510d7851-fc3f-410a-b23b-59893d13b2a5.mp4
-
+https://user-images.githubusercontent.com/33368327/221376187-bf98d0f3-9b3e-4954-914f-3766a53690f2.mp4
 
 
 ## 開発環境
@@ -12,7 +11,7 @@ https://user-images.githubusercontent.com/33368327/221327955-510d7851-fc3f-410a-
 - PyCharm Professional
 - Python 3.9 (venv)
 - Panda3D 1.10.13
-- PyProj
+- PyProj 3.4.1
 
 ## ライブラリのインストール
 
@@ -159,7 +158,9 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>1</td><td>6669</td><td>129度30分0秒0000</td><td>33度0分0秒0000</td><td>長崎県すべてと鹿児島県の一部</td></tr>
   <tr><td>2</td><td>6670</td><td>131度 0分0秒0000</td><td>33度0分0秒0000</td><td>福岡県　佐賀県　熊本県　大分県　宮崎県　鹿児島県の一部</td></tr>
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
+  <tr>...</tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
+  <tr>...</tr>
 </tbody></table>
 
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
