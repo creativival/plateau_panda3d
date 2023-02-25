@@ -11,4 +11,4 @@ class ReadBuilding:
         min_position, max_position = get_min_and_max_position(self.building_attributes_list)
         area_center = (min_position + max_position) / 2
         self.area_center = Point3(*area_center)
-        print(area_center)
+        print('area center:', area_center)

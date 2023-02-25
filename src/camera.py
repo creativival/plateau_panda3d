@@ -85,26 +85,28 @@ class Camera:
         key_map = self.key_map
 
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+            add_angle = 0
             if key_map['w'] and key_map['a']:
-                angle = 215
+                add_angle += 215
             elif key_map['a'] and key_map['s']:
-                angle = 315
+                add_angle += 315
             elif key_map['s'] and key_map['d']:
-                angle = 45
+                add_angle += 45
             elif key_map['d'] and key_map['w']:
-                angle = 135
+                add_angle += 135
             elif key_map['w']:
-                angle = 180
+                add_angle += 180
             elif key_map['a']:
-                angle = 270
+                add_angle += 270
             elif key_map['s']:
-                angle = 0
+                add_angle += 0
             elif key_map['d']:
-                angle = 90
+                add_angle += 90
+
             self.camera_velocity = \
                 Vec2(
-                    cos(radians(angle + self.camera_phi)),
-                    sin(radians(angle + self.camera_phi))
+                    cos(radians(add_angle + self.camera_phi)),
+                    sin(radians(add_angle + self.camera_phi))
                 ) * self.camera_move_speed
         else:
             self.camera_velocity = Vec2(0, 0)
