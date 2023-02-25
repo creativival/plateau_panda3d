@@ -23,9 +23,9 @@ class OpenWorld(ShowBase, DrawText, Window, Camera, Player, Mobs):
         Axis.__init__(self)
         Ground.__init__(self)
         if has_celestial:
-            # self.sky_texture = self.loader.loadTexture('models/maps/sky_1024x512.jpg')
-            # self.sky_texture = self.loader.loadTexture('models/maps/cloud_1024x512.jpg')
-            self.sky_texture = self.loader.loadTexture('models/maps/star_sky_1024x512.jpg')
+            # self.sky_texture = self.loader.loadTexture('models/maps/sky_1024x1024.png')
+            self.sky_texture = self.loader.loadTexture('models/maps/cloud_sky_1024x1024.png')
+            # self.sky_texture = self.loader.loadTexture('models/maps/star_sky_1024x1024.png')
             CelestialSphere.__init__(self)
         if has_wire_frame:
             WireFrame.__init__(self)
@@ -44,19 +44,6 @@ if __name__ == '__main__':
     # 座標系
     # https://www.mlit.go.jp/plateau/learning/tpc03-4/
 
-    # # 札幌大通郵便局
-    # plateau_settings = {
-    #     'bldg_mesh1': '6441',
-    #     'bldg_mesh2': '42',
-    #     'bldg_mesh3_list': ['78'],
-    #     'road_mesh3_list': ['78'],
-    #     # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
-    #     'bldg_crs_from': '6697',
-    #     # 日本測地系2011 における経緯度座標系
-    #     'road_crs_from': '6668',
-    #     # 平面直角座標系
-    #     'crs_to': '6677',  # 関東圏（9系）
-    # }
     # さいたスーパーアリーナ
     plateau_settings = {
         'bldg_mesh1': '5339',
@@ -71,55 +58,6 @@ if __name__ == '__main__':
         # 平面直角座標系
         'crs_to': '6677',  # 関東圏（9系）
     }
-    # # 大宮駅
-    # plateau_settings = {
-    #     'bldg_mesh1': '5339',
-    #     'bldg_mesh2': '64',
-    #     'bldg_mesh3_list': ['89'],
-    #     'road_mesh3_list': [''],
-    #     # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
-    #     'bldg_crs_from': '6697',
-    #     # 日本測地系2011 における経緯度座標系
-    #     'road_crs_from': '6668',
-    #     # 平面直角座標系
-    #     'crs_to': '6677',  # 関東圏（9系）
-    # }
-    # # 渋谷駅
-    # plateau_settings = {
-    #     'bldg_mesh1': '5339',
-    #     'bldg_mesh2': '35',
-    #     'bldg_mesh3_list': ['85', '86', '95', '96'],
-    #     # 'bldg_mesh3_list': ['85'],
-    #     'road_mesh3_list': [''],
-    #     # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
-    #     'bldg_crs_from': '6697_2',
-    #     # 日本測地系2011 における経緯度座標系
-    #     'road_crs_from': '6697',
-    #     # 平面直角座標系
-    #     'crs_to': '6677',  # 関東圏（9系）
-    # }
-
-    # app = OpenWorld(
-    #     title='Wire Frame',
-    #     window_title='PLATEAU World',
-    #     plateau_settings=plateau_settings,
-    #     has_celestial=False,
-    #     has_wire_frame=True,
-    #     has_solid_model=False,
-    #     has_player=False,
-    #     has_mobs=False,
-    # )
-
-    # app = OpenWorld(
-    #     title='Solid Model',
-    #     window_title='PLATEAU World',
-    #     plateau_settings=plateau_settings,
-    #     has_celestial=False,
-    #     has_wire_frame=True,
-    #     has_solid_model=True,
-    #     has_player=False,
-    #     has_mobs=False,
-    # )
 
     app = OpenWorld(
         title='Map only',  # タイトル
