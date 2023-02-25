@@ -57,7 +57,7 @@ class SolidModel:
                     (center_y - self.road_tolerance < y < center_y + self.road_tolerance)):
                 # print(x, y)
                 vertices = [Point3(p[0], p[1], 0) for p in positions]
-                print(vertices[:3])
+                # print(vertices[:3])
                 # colors=[Vec4(0.2 + diff_color * i, 0.2 + diff_color * i, 0.2 + diff_color * i, 1) for i in range(len(positions))]
                 colors = [Vec4(0.2, 0.2, 0.2, 0.3) for _ in range(len(positions))]
                 draw_triangles(vertices, colors, self.map_node, node_name='road_node')

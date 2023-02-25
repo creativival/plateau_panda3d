@@ -147,7 +147,7 @@ if __name__ == '__main__':
 main.py（起動ファイル）の設定を変更します。
 
 plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読み込む設定を行います。  
-メッシュコードを「bldg_mesh1」「bldg_mesh2」「bldg_mesh3」に分割して、記載します「bldg_mesh3」は、リスト形式になっており、広い範囲を選択するときは、複数の番号を入れることが可能です。 
+メッシュコードを「bldg_mesh1」「bldg_mesh2」「bldg_mesh3」に分割して、記載します「bldg_mesh3」は、リスト形式になっており、広い範囲を選択するときは、複数の番号を入れることが可能です。  
 座標参照系「bldg_crs_frm」「road_crs_from」は、ファイル名の最後に記載してある数字を入力します。（6697、6697_2などは立体、6688は平面データ）  
 
 ![平面直角座標系](https://www.mlit.go.jp/plateau/uploads/2022/11/zu03-25.png)

@@ -1,10 +1,6 @@
-# プレイヤー
 from math import sin, cos, radians, floor
-from time import time
-
 from direct.showbase.ShowBaseGlobal import globalClock
 from panda3d.core import *
-
 
 
 class Player:
@@ -23,6 +19,7 @@ class Player:
     perspective_lens = PerspectiveLens()
     perspective_lens.setFov(fps_cam_fov)
     perspective_lens.setNearFar(0.18, 500)  # 遠方は表示しない（デフォルトは100000）
+
     # orthographic_lens = OrthographicLens()
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
@@ -32,6 +29,8 @@ class Player:
         self.player_velocity = Vec3(0, 0, 0)
         self.player_move_speed = 10
         # jump and fly
+        self.gravity = 9.8
+        self.player_jump_speed = 10
         self.fly_height = 0
         self.jump_status = False
         self.double_jump_status = False
@@ -49,7 +48,7 @@ class Player:
         self.character_node = self.player_node.attachNewNode(PandaNode('character_node'))
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
-        
+
         self.character = self.loader.loadModel("models/egg_shape32")
         self.character.reparentTo(self.character_node)
         self.character.setTexture(self.cat_tex, 1)
@@ -73,8 +72,7 @@ class Player:
         self.character_right_hand.setPos(-0.3, 0, 0.3)
         self.character_right_hand.setHpr(0, 0, -45)
         self.character_right_hand.setColor(1, 1, 1)
-        
-        
+
         # add camera
         # tps cam
         self.tps_cam = self.makeCamera(self.win)
@@ -122,33 +120,47 @@ class Player:
     def set_player_velocity(self):
         key_map = self.key_map
 
+        # jump
+        if key_map['space'] and not self.double_jump_status:
+            self.player_velocity.setZ(self.player_jump_speed)
+            if not self.jump_status:
+                self.jump_status = True
+                self.fly_height = 0
+            else:
+                self.double_jump_status = True
+
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+            # move
+            add_angle = 0
             if key_map['w'] and key_map['a']:
-                angle = 135
+                add_angle += 135
             elif key_map['a'] and key_map['s']:
-                angle = 225
+                add_angle += 225
             elif key_map['s'] and key_map['d']:
-                angle = 315
+                add_angle += 315
             elif key_map['d'] and key_map['w']:
-                angle = 45
+                add_angle += 45
             elif key_map['w']:
-                angle = 90
+                add_angle += 90
             elif key_map['a']:
-                angle = 180
+                add_angle += 180
             elif key_map['s']:
-                angle = 270
+                add_angle += 270
             elif key_map['d']:
-                angle = 0
-            self.player_velocity = \
-                Vec3(
-                    cos(radians(angle + self.player_direction.x)),
-                    sin(radians(angle + self.player_direction.x)),
-                    0
-                ) * self.player_move_speed
+                add_angle += 0
+
+            self.player_velocity.setX(
+                cos(radians(add_angle + self.player_direction.x)) * self.player_move_speed
+            )
+            self.player_velocity.setY(
+                sin(radians(add_angle + self.player_direction.x)) * self.player_move_speed
+            )
+            # print(self.player_velocity)
         else:
-            # 重力加速度を残すため、Z成分は0にしない
-            self.player_velocity.setX(0)
-            self.player_velocity.setY(0)
+            if self.player_position.z == 0:
+                # 重力加速度を残すため、Z成分は0にしない
+                self.player_velocity.setX(0)
+                self.player_velocity.setY(0)
 
     def set_player_direction(self):
         if self.mouseWatcherNode.hasMouse():
@@ -162,10 +174,17 @@ class Player:
 
     def set_player_position(self):
         dt = globalClock.getDt()
-        self.player_position = self.player_position + self.player_velocity * dt
-        self.player_velocity.setZ(0)
-        self.jump_status = False
-        self.double_jump_status = False
+
+        if self.player_position.z >= 0:
+            self.player_velocity.z -= self.gravity * dt
+        else:
+            self.player_position.setZ(0)
+            self.player_velocity.setZ(0)
+            self.jump_status = False
+            self.double_jump_status = False
+
+        print(self.player_velocity)
+        self.player_position += self.player_velocity * dt
 
     def player_update(self, task):
         if self.active_cam != 0:

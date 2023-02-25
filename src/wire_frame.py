@@ -69,7 +69,7 @@ class WireFrame:
         # 道路
         for attributes in self.road_attributes_list:
             positions = attributes['positions']
-            print(positions)
+            # print(positions)
             x = positions[0][0]
             y = positions[0][1]
             if ((center_x - self.road_tolerance < x < center_x + self.road_tolerance) and
