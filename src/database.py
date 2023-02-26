@@ -1,0 +1,150 @@
+import sqlite3
+import os
+import xml.etree.ElementTree as ET
+from panda3d.core import *
+from . import get_building_positions, get_road_positions
+
+
+class Database:
+    def __init__(self):
+        self.db = sqlite3.connect('output/plateau_panda3d.sqlite3')
+        self.db_cursor = self.db.cursor()
+        self.create_building_table()
+        self.area_center = self.get_area_center()
+
+    def table_is_exist(self, table_name):
+        self.db_cursor.execute(
+            'SELECT COUNT(*) FROM sqlite_master '
+            f'WHERE TYPE="table" AND name="{table_name}"'
+        )
+        if self.db_cursor.fetchone()[0] == 0:
+            return False
+        return True
+
+    def get_area_center(self):
+        settings = self.settings
+        mesh3_list = settings['bldg_mesh3_list']
+        x_positions = []
+        y_positions = []
+        for mesh3 in mesh3_list:
+            file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'
+                          f'_bldg_{settings["bldg_crs_from"]}_op')
+            table_name = f'plateau_{file_name}'
+
+            # ワールド名のリストを取得
+            self.db_cursor.execute(
+                f'SELECT center_position FROM {table_name}'
+            )
+            center_positions = [tuple_value[0].split('/') for tuple_value in self.db_cursor.fetchall()]
+            print(center_positions)
+
+            # print(attributes_list[0])
+            # print(attributes_list[1])
+            x_positions += [float(position[0]) for position in center_positions]
+            y_positions += [float(position[1]) for position in center_positions]
+            print(x_positions)
+            print(y_positions)
+
+        min_position = Point3(min(x_positions), min(y_positions), 0)
+        max_position = Point3(max(x_positions), max(y_positions), 0)
+
+        return (min_position + max_position) / 2
+
+    def create_building_table(self):
+        settings = self.settings
+        mesh3_list = settings['bldg_mesh3_list']
+        bldg_crs_from = settings['bldg_crs_from']
+        if len(bldg_crs_from.split('_')) > 1:
+            _bldg_crs_from = bldg_crs_from.split('_')[0]
+        else:
+            _bldg_crs_from = bldg_crs_from
+
+        for mesh3 in mesh3_list:
+            file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'
+                          f'_bldg_{settings["bldg_crs_from"]}_op')
+            table_name = f'plateau_{file_name}'
+
+            # ワールドを保存
+            if self.table_is_exist(table_name):
+                print('database exists:', table_name)
+            else:
+                print('not fount:', table_name)
+                count = 0
+
+                file_path = f'data/{file_name}.gml'
+                if not os.path.exists(file_path):
+                    print('not found:', file_path)
+                    return
+                else:
+                    print('file exists:', file_path)
+                    self.db_cursor.execute(
+                        f'CREATE TABLE IF NOT EXISTS {table_name}('
+                        'building_id TEXT PRIMARY KEY UNIQUE, '
+                        'name TEXT, '
+                        'height TEXT, '
+                        'positions TEXT, '
+                        'center_position TEXT, '
+                        'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
+                        'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
+                    )
+
+                # XMLファイルを解析
+                tree = ET.parse(file_path)
+
+                # XMLを取得
+                root = tree.getroot()
+
+                # 接頭辞の辞書
+                ns = {
+                    'core': 'http://www.opengis.net/citygml/2.0',
+                    'bldg': 'http://www.opengis.net/citygml/building/2.0',
+                    'gml': 'http://www.opengis.net/gml',
+                    'gen': 'http://www.opengis.net/citygml/generics/2.0',
+                }
+
+                for building in root.findall('core:cityObjectMember/bldg:Building', ns):
+                    name = ''
+                    building_id = ''
+                    height = 0
+                    positions = None
+                    for child in building:
+                        if child.tag == '{http://www.opengis.net/gml}name':
+                            name = child.text
+                        if 'name' in child.attrib and child.attrib['name'] == '建物ID':
+                            building_id = child[0].text
+                        if child.tag == '{http://www.opengis.net/citygml/building/2.0}lod1Solid':
+                            geo_text = child[0][0][0][0][0][0][0][0].text
+                            positions = get_building_positions(geo_text, _bldg_crs_from, settings['crs_to'])
+
+                        # heightは2つの方法のどちらかで取得できる
+                        if 'name' in child.attrib and child.attrib['name'] == '建物高さ':
+                            height = float(child[0].text)
+                        if child.tag == '{http://www.opengis.net/citygml/building/2.0}measuredHeight':
+                            height = float(child.text)
+
+                    if positions and height:
+                        count += 1
+                        print('count:', count)
+
+                        x0 = sum([position[0] for position in positions]) / len(positions)
+                        y0 = sum([position[1] for position in positions]) / len(positions)
+                        center_position = [x0, y0, 0]
+
+                        # データベース保存
+                        positions_text = \
+                            '|'.join(['/'.join([str(v) for v in l]) for l in positions])
+                        center_position_text = '/'.join(map(str, center_position))
+                        inserts = (
+                            building_id,
+                            name,
+                            height,
+                            positions_text,
+                            center_position_text
+                        )
+
+                        self.db_cursor.execute(
+                            f'INSERT INTO {table_name}(building_id, name, height, positions, center_position) '
+                            'values(?, ?, ?, ?, ?)',
+                            inserts)
+
+        self.db.commit()

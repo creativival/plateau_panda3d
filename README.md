@@ -161,7 +161,7 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
   <tr><td>...</td></tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
-  <tr>...</tr>
+  <tr><td>...</td></tr>
 </tbody></table>
 
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）

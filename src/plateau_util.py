@@ -46,7 +46,7 @@ def get_building_positions(geo_text, crs_from, crs_to):
     return tuple(cartesian_locations)
 
 
-def get_road_attributes_list(settings):
+def get_road_attributes_list(settings, db, db_cursor):
     mesh3_list = settings['road_mesh3_list']
     road_crs_from = settings['road_crs_from']
     if len(road_crs_from.split('_')) > 1:
@@ -71,7 +71,8 @@ def get_road_attributes_list(settings):
                 line = f.readline()
                 while line:
                     attributes = decoder.raw_decode(line)[0]
-                    attributes['positions'] = [list(map(float, p.split('/'))) for p in attributes['positions'].split('|')]
+                    attributes['positions'] = [list(map(float, p.split('/'))) for p in
+                                               attributes['positions'].split('|')]
                     road_attributes_list.append(attributes)
                     line = f.readline()
 
@@ -116,26 +117,62 @@ def get_road_attributes_list(settings):
                 if positions:
                     count += 1
                     print('count:', count)
-                    road_attributes_list.append({
+                    road_attributes = {
                         'id': count,
                         'positions': positions
-                    })
+                    }
+                    road_attributes_list.append(road_attributes)
 
-            with open(output_file_path, 'w') as f:
-                attributes_list = copy.deepcopy(road_attributes_list)
-                for attributes in attributes_list:
-                    attributes['positions'] = \
-                        '|'.join(['/'.join([str(v) for v in l]) for l in attributes['positions']])
+                    # データベース保存
+                    positions_text = \
+                        '|'.join(['/'.join([str(v) for v in l]) for l in road_attributes['positions']])
+                    inserts = (
+                        settings['bldg_mesh1'],
+                        settings['bldg_mesh2'],
+                        mesh3,
+                        positions_text
+                    )
 
-                l = [json.dumps(attributes) for attributes in attributes_list]
-                f.write('\n'.join(l))
+                    db_cursor.execute(
+                        'INSERT INTO buildings(mesh1, mesh2, mesh3, positions) '
+                        'values(?, ?, ?, ?)',
+                        inserts)
+
+            # with open(output_file_path, 'w') as f:
+            #     attributes_list = copy.deepcopy(road_attributes_list)
+            #     for attributes in attributes_list:
+            #         name = attributes['name']
+            #         bldg_id = attributes['bldg_id']
+            #         height = attributes['height']
+            #         positions = '|'.join(['/'.join([str(v) for v in l]) for l in attributes['positions']])
+            #         attributes['positions'] = \
+            #             '|'.join(['/'.join([str(v) for v in l]) for l in attributes['positions']])
+            #
+            #     l = [json.dumps(attributes) for attributes in attributes_list]
+            #     f.write('\n'.join(l))
 
             all_road_attributes_list += road_attributes_list
+
+    db.commit()
 
     return all_road_attributes_list
 
 
-def get_building_attributes_list(settings):
+def table_is_exist(db_cursor, table_name):
+    print(f"""
+        SELECT COUNT(*) FROM sqlite_master 
+        WHERE TYPE='table' AND name='{table_name}'
+        """)
+    db_cursor.execute(f"""
+        SELECT COUNT(*) FROM sqlite_master 
+        WHERE TYPE='table' AND name='{table_name}'
+        """)
+    if db_cursor.fetchone()[0] == 0:
+        return False
+    return True
+
+
+def get_building_attributes_list(settings, db, db_cursor):
     mesh3_list = settings['bldg_mesh3_list']
     bldg_crs_from = settings['bldg_crs_from']
     if len(bldg_crs_from.split('_')) > 1:
@@ -145,21 +182,21 @@ def get_building_attributes_list(settings):
     all_building_attributes_list = []
 
     for mesh3 in mesh3_list:
-        file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}'
-                     f'{mesh3[:1]}{mesh3[1:]}'
+        table_name = (f'plateau_{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'
                      f'_bldg_{bldg_crs_from}_op')
-        output_file_path = f'output/{file_name}.txt'
         building_attributes_list = []
 
-        if os.path.exists(output_file_path):
-            print('file exists:', output_file_path)
+        # ワールドを保存
+        if table_is_exist(db_cursor, table_name):
+            print('database exists:', table_name)
 
             decoder = json.JSONDecoder()
             with open(output_file_path, 'r') as f:
                 line = f.readline()
                 while line:
                     attributes = decoder.raw_decode(line)[0]
-                    attributes['positions'] = [list(map(float, p.split('/'))) for p in attributes['positions'].split('|')]
+                    attributes['positions'] = [list(map(float, p.split('/'))) for p in
+                                               attributes['positions'].split('|')]
                     # print(attributes['center_position'])
                     attributes['center_position'] = list(map(float, attributes['center_position'].split('/')))
                     building_attributes_list.append(attributes)
@@ -174,6 +211,16 @@ def get_building_attributes_list(settings):
                 return
             else:
                 print('file exists:', file_path)
+                db_cursor.execute(
+                    f'CREATE TABLE IF NOT EXISTS {file_name}('
+                    'building_id TEXT PRIMARY KEY UNIQUE, '
+                    'name TEXT, '
+                    'height TEXT, '
+                    'positions TEXT, '
+                    'center_position TEXT, '
+                    'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
+                    'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
+                )
 
             # XMLファイルを解析
             tree = ET.parse(file_path)
@@ -224,17 +271,36 @@ def get_building_attributes_list(settings):
 
                     building_attributes_list.append(building_attributes)
 
-            with open(output_file_path, 'w') as f:
-                attributes_list = copy.deepcopy(building_attributes_list)
-                for attributes in attributes_list:
-                    attributes['positions'] = \
-                        '|'.join(['/'.join([str(v) for v in l]) for l in attributes['positions']])
-                    attributes['center_position'] ='/'.join([str(v) for v in attributes['center_position']])
+                    # データベース保存
+                    positions_text = \
+                        '|'.join(['/'.join([str(v) for v in l]) for l in building_attributes['positions']])
+                    center_position_text = '/'.join(map(str, building_attributes['center_position']))
+                    inserts = (
+                        building_attributes['building_id'],
+                        building_attributes['name'],
+                        building_attributes['height'],
+                        positions_text,
+                        center_position_text
+                    )
 
-                l = [json.dumps(attributes) for attributes in attributes_list]
-                f.write('\n'.join(l))
+                    db_cursor.execute(
+                        'INSERT INTO buildings(building_id, name, height, positions, center_position) '
+                        'values(?, ?, ?, ?, ?)',
+                        inserts)
+
+            # with open(output_file_path, 'w') as f:
+            #     attributes_list = copy.deepcopy(building_attributes_list)
+            #     for attributes in attributes_list:
+            #         attributes['positions'] = \
+            #             '|'.join(['/'.join([str(v) for v in l]) for l in attributes['positions']])
+            #         attributes['center_position'] ='/'.join([str(v) for v in attributes['center_position']])
+            #
+            #     l = [json.dumps(attributes) for attributes in attributes_list]
+            #     f.write('\n'.join(l))
 
         all_building_attributes_list += building_attributes_list
+
+    db.commit()
 
     return all_building_attributes_list
 
