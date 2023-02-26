@@ -31,7 +31,7 @@ root/
  ├ models/                      3Dモデル
  │     ├ maps                 テクスチャー
  │     │     ├ cat.png  # キャラクター
- │     │     ├ sky_1024x512.png  # 天球の内面
+ │     │     ├ sky_1024x1024.png  # 天球の内面
  │     │
  │     ├ egg_surface.egg  # キャラクター
  │     ├ sphere_uv_reverse.egg  # 天球（テクスチャー反転）
@@ -40,7 +40,7 @@ root/
  ├ tmp/                    一時ファイル
  ├ src/                     パッケージ
  │     ├ __init__.py  # 初期化モジュール
- │     ├ axis.py  # 座標軸表示
+ │     ├ axis.py  # 座標軸
  │     ├ camera.py  # カメラ
  │     ├ celestial_sphere.py  # 天球
  │     ├ draw_text.py  # テキスト表示
@@ -50,6 +50,7 @@ root/
  │     ├ mobs.py  # モブを管理
  │     ├ plateau_util.py  # データ変換
  │     ├ player.py  # プレイヤー
+ │     ├ sound.py  # サウンド
  │     ├ read_building.py  # データ読み込み
  │     ├ solid_model.py  # 建築物の面を作成
  │     ├ vector.py  # ベクトル変換
@@ -158,7 +159,7 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>1</td><td>6669</td><td>129度30分0秒0000</td><td>33度0分0秒0000</td><td>長崎県すべてと鹿児島県の一部</td></tr>
   <tr><td>2</td><td>6670</td><td>131度 0分0秒0000</td><td>33度0分0秒0000</td><td>福岡県　佐賀県　熊本県　大分県　宮崎県　鹿児島県の一部</td></tr>
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
-  <tr>...</tr>
+  <tr><td>...</td></tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
   <tr>...</tr>
 </tbody></table>
@@ -232,6 +233,7 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
 ## 天球
 
 巨大なドーム（天球）の内面に画像を貼り付けて、空を表現できます。  
+画像サイズは1024x1024。上半分に空の画像、下はrgb(0,1,0)の単色。空の画像は鏡面対象にすると継ぎ目が目立たない。  
 
 ```text
         # main.py
@@ -297,6 +299,11 @@ main.pyの設定項目を編集して、パソコンの描画範囲を調整で�
 - 開発は基本developブランチでおこなう。大きな変更があるときはfeature/\*ブランチを切る。
 - 本番環境にデプロイされるのはmasterブランチ。リリースしたいときはdevelopでの変更をmasterにmergeする。
 - 起動ファイルは、main.pyをコピーしたdev_main.pyで各自の設定により行う。dev_main.pyをgitに含めない。
+
+## サウンド
+
+GarageBandで簡単な効果音を作成し、BGMとして鳴らしています。  
+音源を提供してくださる方がいらっしゃいましたら、大歓迎です。
 
 ## ライセンス
 

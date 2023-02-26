@@ -1,6 +1,6 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    ReadBuilding, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
+    ReadBuilding, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
 )
 import constants
 
@@ -17,6 +17,7 @@ class OpenWorld(ShowBase, DrawText, Window, Camera, Player, Mobs):
 
         ShowBase.__init__(self)
         ReadBuilding.__init__(self, plateau_settings)
+        Sound.__init__(self)
         DrawText.__init__(self)
         Window.__init__(self, title, window_title)
         Camera.__init__(self)

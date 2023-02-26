@@ -26,7 +26,9 @@ class Camera:
         self.camera_position = Vec2(0, 0)
         self.camera_velocity = Vec2(0, 0)
         self.camera_move_speed = 100
+        # 複数カメラ（プレイヤーカメラ）の設定
         self.active_cam = 0
+        self.has_player_camera = False
 
         # キー操作でカメラを動かす
         self.accept('arrow_right', self.right_key)

@@ -74,6 +74,7 @@ class Player:
         self.character_right_hand.setColor(1, 1, 1)
 
         # add camera
+        self.has_player_camera = True
         # tps cam
         self.tps_cam = self.makeCamera(self.win)
         self.tps_cam.node().setLens(self.perspective_lens)
@@ -119,9 +120,12 @@ class Player:
 
     def set_player_velocity(self):
         key_map = self.key_map
+        walk_sound = self.walk_sound
 
         # jump
         if key_map['space'] and not self.double_jump_status:
+            self.jump_sound.play()
+
             self.player_velocity.setZ(self.player_jump_speed)
             if not self.jump_status:
                 self.jump_status = True
@@ -130,6 +134,8 @@ class Player:
                 self.double_jump_status = True
 
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+            if walk_sound.status() is not walk_sound.PLAYING:
+                walk_sound.play()
             # move
             add_angle = 0
             if key_map['w'] and key_map['a']:
@@ -158,6 +164,8 @@ class Player:
             # print(self.player_velocity)
         else:
             if self.player_position.z == 0:
+                if walk_sound.status() is walk_sound.PLAYING:
+                    walk_sound.stop()
                 # 重力加速度を残すため、Z成分は0にしない
                 self.player_velocity.setX(0)
                 self.player_velocity.setY(0)
@@ -195,12 +203,13 @@ class Player:
         return task.cont
 
     def toggle_cam(self):
-        self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(0)
-        self.active_cam = (self.active_cam + 1) % len(self.cameras)
-        self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(1)
-        # cam_names = ['Default cam', 'Player cam', 'Mirror cam', 'Guest cam']
-        # self.console_window.setText(self.i18n.t(cam_names[self.activeCam]))
-        # self.console_window.start_time = time()
+        if self.has_player_camera:
+            self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(0)
+            self.active_cam = (self.active_cam + 1) % len(self.cameras)
+            self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(1)
+            # cam_names = ['Default cam', 'Player cam', 'Mirror cam', 'Guest cam']
+            # self.console_window.setText(self.i18n.t(cam_names[self.activeCam]))
+            # self.console_window.start_time = time()
 
     # def get_floor_level(self, x1, y1, z1, x2, y2, z2):
     #     x1, y1, z1, x2, y2, z2 = floor(x1), floor(y1), floor(z1), floor(x2), floor(y2), floor(z2)
