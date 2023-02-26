@@ -2,7 +2,8 @@
 
 PythonのライブラリPanda3Dを使って、日本全国の3D都市モデルの整備、活用、オープンデータ化プロジェクト PLATEAUのモデルを3Dゲームに変換します。
 
-![image_top](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image_top.png)
+https://user-images.githubusercontent.com/33368327/221376187-bf98d0f3-9b3e-4954-914f-3766a53690f2.mp4
+
 
 ## 開発環境
 
@@ -10,7 +11,7 @@ PythonのライブラリPanda3Dを使って、日本全国の3D都市モデル�
 - PyCharm Professional
 - Python 3.9 (venv)
 - Panda3D 1.10.13
-- PyProj
+- PyProj 3.4.1
 
 ## ライブラリのインストール
 
@@ -160,6 +161,7 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
   <tr><td>...</td></tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
+  <tr>...</tr>
 </tbody></table>
 
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
@@ -272,6 +274,7 @@ WASDで平行移動
 Tでカメラの切り替え
 WASDで平行移動
 マウスで回転
+スペースでジャンプ
 ```
 
 ## パフォーマンス調整
