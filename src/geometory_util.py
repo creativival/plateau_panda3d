@@ -48,7 +48,6 @@ def draw_triangles(vertices, colors, parent, position=None, direction=None, node
             v = (vertex_num - 1) - (i // 2)
         else:
             v = 2 + (i // 2)
-        print(v)
         geom_tristrips.addVertex(v)
     geom_tristrips.closePrimitive()
 

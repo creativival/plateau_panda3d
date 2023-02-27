@@ -49,29 +49,35 @@ class Player:
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
 
-        self.character = self.loader.loadModel("models/egg_shape32")
-        self.character.reparentTo(self.character_node)
-        self.character.setTexture(self.cat_tex, 1)
-        self.character.setScale(1.41, 1.2, 1)
-        self.character.setPos(0, 0, 0)
-        self.character.setHpr(0, 0, 0)
-        self.character.setColor(1, 1, 1)
+        # モデル
+        self.character_color = (1, 1, 0, 1)
 
-        self.character_left_hand = self.loader.loadModel("models/egg_shape32")
-        self.character_left_hand.reparentTo(self.character_node)
-        self.character_left_hand.setTexture(self.cat_ear_tex, 1)
-        self.character_left_hand.setScale(1, 0.3, 1)
-        self.character_left_hand.setPos(0.3, 0, 0.3)
-        self.character_left_hand.setHpr(0, 0, 45)
-        self.character_left_hand.setColor(1, 1, 1)
+        self.character_model = self.loader.loadModel("models/egg_shape32")
+        self.character_model.reparentTo(self.character_node)
+        self.character_model.setTexture(self.cat_tex, 1)
+        self.character_model.setScale(1.41, 1.2, 1)
+        self.character_model.setPos(0, 0, 0)
+        self.character_model.setHpr(0, 0, 0)
+        self.character_model.setColor(*self.character_color)
+        self.character_model.setTransparency(TransparencyAttrib.MBinary)
 
-        self.character_right_hand = self.loader.loadModel("models/egg_shape32")
-        self.character_right_hand.reparentTo(self.character_node)
-        self.character_right_hand.setTexture(self.cat_ear_tex, 1)
-        self.character_right_hand.setScale(1, 0.3, 1)
-        self.character_right_hand.setPos(-0.3, 0, 0.3)
-        self.character_right_hand.setHpr(0, 0, -45)
-        self.character_right_hand.setColor(1, 1, 1)
+        self.character_left_hand_model = self.loader.loadModel("models/egg_shape32")
+        self.character_left_hand_model.reparentTo(self.character_node)
+        self.character_left_hand_model.setTexture(self.cat_ear_tex, 1)
+        self.character_left_hand_model.setScale(1, 0.3, 1)
+        self.character_left_hand_model.setPos(0.3, 0, 0.3)
+        self.character_left_hand_model.setHpr(0, 0, 45)
+        self.character_left_hand_model.setColor(*self.character_color)
+        self.character_left_hand_model.setTransparency(TransparencyAttrib.MBinary)
+
+        self.character_right_hand_model = self.loader.loadModel("models/egg_shape32")
+        self.character_right_hand_model.reparentTo(self.character_node)
+        self.character_right_hand_model.setTexture(self.cat_ear_tex, 1)
+        self.character_right_hand_model.setScale(1, 0.3, 1)
+        self.character_right_hand_model.setPos(-0.3, 0, 0.3)
+        self.character_right_hand_model.setHpr(0, 0, -45)
+        self.character_right_hand_model.setColor(*self.character_color)
+        self.character_right_hand_model.setTransparency(TransparencyAttrib.MBinary)
 
         # add camera
         self.has_player_camera = True
@@ -113,6 +119,14 @@ class Player:
 
         # move the player
         self.taskMgr.add(self.player_update, "player_update")
+
+        # 表情の変更
+        for i in range(1, 10):
+            self.accept(str(i), self.change_face, [i])
+
+    def change_face(self, i):
+        self.cat_tex = self.loader.loadTexture(f'models/maps/cat{i}.png')
+        self.character_model.setTexture(self.cat_tex, 1)
 
     def player_draw(self):
         self.player_node.setPos(self.player_position)
@@ -191,7 +205,6 @@ class Player:
             self.jump_status = False
             self.double_jump_status = False
 
-        print(self.player_velocity)
         self.player_position += self.player_velocity * dt
 
     def player_update(self, task):
