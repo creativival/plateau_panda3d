@@ -90,13 +90,14 @@ class WireFrame:
 
             for tuple_value in self.db_cursor.fetchall():
                 positions, center_position = tuple_value
-                positions = [list(map(float, p.split('/'))) for p in positions.split('|')]
                 base_position = Point3(*map(float, center_position.split('/')))
                 x = base_position[0]
                 y = base_position[1]
 
                 if ((center_x - self.road_tolerance < x < center_x + self.road_tolerance) and
                         (center_y - self.road_tolerance < y < center_y + self.road_tolerance)):
+                    positions = [list(map(float, p.split('/'))) for p in positions.split('|')]
+
                     for i in range(len(positions)):
                         start_position = Point3(*positions[i])
                         end_position = Point3(*positions[(i + 1) % len(positions)])

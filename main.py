@@ -1,12 +1,14 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    Database, ReadBuilding, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
+    Database, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
 )
 import constants
 
 
 class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
-    def __init__(self, title, window_title, plateau_settings, has_celestial, has_wire_frame, has_solid_model, has_player, has_mobs):
+    def __init__(self, title, window_title, plateau_settings, has_celestial, has_wire_frame, has_solid_model,
+                 has_player, has_mobs):
+        self.settings = plateau_settings
         # PCの能力により調整
         self.building_tolerance = 200  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
@@ -17,7 +19,6 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
 
         ShowBase.__init__(self)
         Database.__init__(self)
-        ReadBuilding.__init__(self, plateau_settings)
         Sound.__init__(self)
         DrawText.__init__(self)
         Window.__init__(self, title, window_title)
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         has_celestial=False,  # 天球を表示
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
-        has_player=False, # プレイヤーを表示
+        has_player=False,  # プレイヤーを表示
         has_mobs=False,  # モブを表示
     )
     app.run()
