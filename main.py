@@ -1,22 +1,24 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    ReadBuilding, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
+    Database, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
 )
 import constants
 
 
-class OpenWorld(ShowBase, DrawText, Window, Camera, Player, Mobs):
-    def __init__(self, title, window_title, plateau_settings, has_celestial, has_wire_frame, has_solid_model, has_player, has_mobs):
+class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
+    def __init__(self, title, window_title, plateau_settings, has_celestial, has_wire_frame, has_solid_model,
+                 has_player, has_mobs):
+        self.settings = plateau_settings
         # PCの能力により調整
         self.building_tolerance = 200  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
         self.min_surface_height = 100  # 壁を描画する最低の高さ
         self.celestial_radius = 2000  # 天球の半径
         self.max_camera_radius_to_render_surface = 1000  # 面を表示する最大のカメラ半径
-        self.interval_drawing_pillar = 2  # 縦の線を何本おきに描画するか
+        self.interval_drawing_pillar = 10  # 縦の線を何本おきに描画するか
 
         ShowBase.__init__(self)
-        ReadBuilding.__init__(self, plateau_settings)
+        Database.__init__(self)
         Sound.__init__(self)
         DrawText.__init__(self)
         Window.__init__(self, title, window_title)
@@ -67,7 +69,7 @@ if __name__ == '__main__':
         has_celestial=False,  # 天球を表示
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
-        has_player=False, # プレイヤーを表示
+        has_player=False,  # プレイヤーを表示
         has_mobs=False,  # モブを表示
     )
     app.run()

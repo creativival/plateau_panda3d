@@ -12,6 +12,7 @@ https://user-images.githubusercontent.com/33368327/221376187-bf98d0f3-9b3e-4954-
 - Python 3.9 (venv)
 - Panda3D 1.10.13
 - PyProj 3.4.1
+- sqlite3 3.39.5（開発環境にインストールしておく）
 
 ## ライブラリのインストール
 
@@ -36,29 +37,29 @@ root/
  │     ├ egg_surface.egg  # キャラクター
  │     ├ sphere_uv_reverse.egg  # 天球（テクスチャー反転）
  │
- ├ output/                 アウトプット
+ ├ output/                 アウトプット（sqlite3データベースファイル）
  ├ tmp/                    一時ファイル
  ├ src/                     パッケージ
  │     ├ __init__.py  # 初期化モジュール
  │     ├ axis.py  # 座標軸
  │     ├ camera.py  # カメラ
  │     ├ celestial_sphere.py  # 天球
+ │     ├ database.py  # データベース（sqlite3）
  │     ├ draw_text.py  # テキスト表示
  │     ├ geometry.py  # ジオメトリ
  │     ├ ground.py  # グラウンド
  │     ├ mod.py  # モブ
  │     ├ mobs.py  # モブを管理
- │     ├ plateau_util.py  # データ変換
+ │     ├ pypro_util.py  # 座標変換
  │     ├ player.py  # プレイヤー
  │     ├ sound.py  # サウンド
- │     ├ read_building.py  # データ読み込み
  │     ├ solid_model.py  # 建築物の面を作成
  │     ├ vector.py  # ベクトル変換
  │     ├ window.py  # ウインドウ
  │     ├ wire_frame.py  # 建築物の線を作成
  │     ├
  │
- ├ Config.prc  # Panda3Dの設定
+ ├ Config.prc  # Panda3Dの設定（FPSを表示）
  ├ constants.js  # 定数
  ├ main.js  # 起動ファイル
  ├ README.md  # リードミー
@@ -161,7 +162,7 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
   <tr><td>...</td></tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
-  <tr>...</tr>
+  <tr><td>...</td></tr>
 </tbody></table>
 
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
@@ -186,8 +187,8 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
 % python main.py
 ```
 
-ターミナルから起動ファイルを実行します。初回起動時は、データ変換のため時間がかかります。そのまま変換が終了するまで、お待ちください。  
-2度目の起動からは、変換後データを読み込みますので、起動は早くなります。
+ターミナルから起動ファイルを実行します。初回起動時は、データ変換のため時間がかかります。そのまま変換が終了するまで、お待ちください。（SQlite3データベースに全てのデータを登録するため、都心部などビルが多い地域では数時間かかります。）  
+2度目の起動からは、データベースを読み込みますので、起動は早くなります。
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image3.png)
 
@@ -199,7 +200,7 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
         'bldg_mesh1': '6441',
         'bldg_mesh2': '42',
         'bldg_mesh3_list': ['78'],
-        'road_mesh3_list': ['78'],  # 道路のデータはあまりない
+        'road_mesh3_list': ['78'],
         # 日本測地系2011 における経緯度座標系と東京湾平均海面を基準とする標高の複合座標参照系
         'bldg_crs_from': '6697',
         # 日本測地系2011 における経緯度座標系

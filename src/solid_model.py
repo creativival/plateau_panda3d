@@ -9,19 +9,28 @@ class SolidModel:
         center_y = self.area_center[1]
 
         # 建物
-        for attributes in self.building_attributes_list:
-            height = attributes['height']
-            if height:
-                bldg_id = attributes['building_id']
-                name = attributes['name']
-                positions = attributes['positions']
-                base_position = Point3(*attributes['center_position'])
-                building_node = self.map_node.find(f'building{bldg_id}')
+        settings = self.settings
+        mesh3_list = settings['bldg_mesh3_list']
+        for mesh3 in mesh3_list:
+            file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'
+                         f'_bldg_{settings["bldg_crs_from"]}_op')
+            table_name = f'plateau_{file_name}'
+
+            self.db_cursor.execute(
+                f'SELECT building_id, name, height, positions, center_position FROM {table_name}'
+            )
+
+            for tuple_value in self.db_cursor.fetchall():
+                building_id, name, height, positions, center_position = tuple_value
+                base_position = Point3(*map(float, center_position.split('/')))
                 x = base_position[0]
                 y = base_position[1]
 
                 if ((center_x - self.building_tolerance < x < center_x + self.building_tolerance) and
                         (center_y - self.building_tolerance < y < center_y + self.building_tolerance)):
+                    positions = [list(map(float, p.split('/'))) for p in positions.split('|')]
+                    height = float(height)
+                    building_node = self.map_node.find(building_id)
 
                     offset_positions = [Point3(x, y, 0) - base_position for x, y, _ in positions]
                     offset_ceil_positions = [Point3(x, y, height) - base_position for x, y, _ in positions]
@@ -49,15 +58,28 @@ class SolidModel:
                         draw_triangles(vertices, colors, building_node, direction='reverse', node_name='ceil_node')
 
         # 道路
-        for attributes in self.road_attributes_list:
-            positions = attributes['positions']
-            x = positions[0][0]
-            y = positions[0][1]
-            if ((center_x - self.road_tolerance < x < center_x + self.road_tolerance) and
-                    (center_y - self.road_tolerance < y < center_y + self.road_tolerance)):
-                # print(x, y)
-                vertices = [Point3(p[0], p[1], 0) for p in positions]
-                # print(vertices[:3])
-                # colors=[Vec4(0.2 + diff_color * i, 0.2 + diff_color * i, 0.2 + diff_color * i, 1) for i in range(len(positions))]
-                colors = [Vec4(0.2, 0.2, 0.2, 0.3) for _ in range(len(positions))]
-                draw_triangles(vertices, colors, self.map_node, node_name='road_node')
+        mesh3_list = settings['road_mesh3_list']
+        for mesh3 in mesh3_list:
+            file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'
+                         f'_tran_{settings["road_crs_from"]}_op')
+            table_name = f'plateau_{file_name}'
+
+            self.db_cursor.execute(
+                f'SELECT positions, center_position FROM {table_name}'
+            )
+
+            for tuple_value in self.db_cursor.fetchall():
+                positions, center_position = tuple_value
+                base_position = Point3(*map(float, center_position.split('/')))
+                x = base_position[0]
+                y = base_position[1]
+
+                if ((center_x - self.road_tolerance < x < center_x + self.road_tolerance) and
+                        (center_y - self.road_tolerance < y < center_y + self.road_tolerance)):
+                    positions = [list(map(float, p.split('/'))) for p in positions.split('|')]
+                    # print(x, y)
+                    vertices = [Point3(p[0], p[1], 0) for p in positions]
+                    # print(vertices[:3])
+                    # colors=[Vec4(0.2 + diff_color * i, 0.2 + diff_color * i, 0.2 + diff_color * i, 1) for i in range(len(positions))]
+                    colors = [Vec4(0.2, 0.2, 0.2, 0.3) for _ in range(len(positions))]
+                    draw_triangles(vertices, colors, self.map_node, node_name='road_node')
