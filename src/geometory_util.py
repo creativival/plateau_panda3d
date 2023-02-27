@@ -28,16 +28,32 @@ def draw_triangles(vertices, colors, parent, position=None, direction=None, node
         vertex_writer.addData3f(pos)
         color_writer.addData4f(color)
 
-    geom_triangles = GeomTriangles(Geom.UHStatic)
-    for i in range(len(vertices) - 2):
-        v1 = 0
-        v2 = i + 1
-        v3 = i + 2
-        geom_triangles.addVertices(v1, v2, v3)
-        geom_triangles.closePrimitive()
+    # geom_triangles = GeomTriangles(Geom.UHStatic)
+    # for i in range(len(vertices) - 2):
+    #     v1 = 0
+    #     v2 = i + 1
+    #     v3 = i + 2
+    #     geom_triangles.addVertices(v1, v2, v3)
+    #     geom_triangles.closePrimitive()
+    #
+    # geom = Geom(geom_vertex_data)
+    # geom.addPrimitive(geom_triangles)
+
+    vertex_num = len(vertices)
+    geom_tristrips = GeomTristrips(Geom.UHStatic)
+    geom_tristrips.addVertex(0)
+    geom_tristrips.addVertex(1)
+    for i in range(vertex_num - 2):
+        if i % 2 == 0:
+            v = (vertex_num - 1) - (i // 2)
+        else:
+            v = 2 + (i // 2)
+        print(v)
+        geom_tristrips.addVertex(v)
+    geom_tristrips.closePrimitive()
 
     geom = Geom(geom_vertex_data)
-    geom.addPrimitive(geom_triangles)
+    geom.addPrimitive(geom_tristrips)
 
     geom_node = GeomNode('geom_node')
     # 右回りの面しか描画されない
@@ -88,8 +104,8 @@ if __name__ == '__main__':
     # gem_node = GeomNode("box")
     # gem_node.addGeom(geom)
 
-    gem_node = draw_triangles(vertices, colors)
-    box = base.render.attachNewNode(gem_node)
+    gem_node = draw_triangles(vertices, colors, base.render)
+    # box = base.render.attachNewNode(gem_node)
 
     OnscreenText(text="0",
                  fg=Vec4(1, 1, 1, 1),

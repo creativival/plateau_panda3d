@@ -18,7 +18,7 @@ class Player:
 
     perspective_lens = PerspectiveLens()
     perspective_lens.setFov(fps_cam_fov)
-    perspective_lens.setNearFar(0.18, 500)  # 遠方は表示しない（デフォルトは100000）
+    perspective_lens.setNearFar(0.18, 4000)  # 遠方は表示しない（デフォルトは100000）
 
     # orthographic_lens = OrthographicLens()
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
