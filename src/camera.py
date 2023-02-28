@@ -75,7 +75,7 @@ class Camera:
         self.accept('t', self.toggle_cam)
 
         # move the camera
-        self.taskMgr.add(self.update, "update")
+        self.taskMgr.add(self.update, 'update')
 
     def update_key_map(self, key_name, key_state):
         self.key_map[key_name] = key_state

@@ -1,9 +1,10 @@
 from math import sin, cos, radians, floor
 from direct.showbase.ShowBaseGlobal import globalClock
 from panda3d.core import *
+from . import Character
 
 
-class Player:
+class Player(Character):
     max_heading_angle = 200
     max_pitch_angle = 75
     tps_cam_fov = 90
@@ -18,16 +19,20 @@ class Player:
 
     perspective_lens = PerspectiveLens()
     perspective_lens.setFov(fps_cam_fov)
-    perspective_lens.setNearFar(0.18, 500)  # 遠方は表示しない（デフォルトは100000）
+    perspective_lens.setNearFar(0.18, 4000)  # 遠方は表示しない（デフォルトは100000）
 
     # orthographic_lens = OrthographicLens()
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
     def __init__(self):
+        Character.__init__(self)
+
         self.player_position = Vec3(0, 0, 1)
         self.player_direction = Vec3(0, 0, 0)
         self.player_velocity = Vec3(0, 0, 0)
         self.player_move_speed = 10
+        self.is_walking = False
+        self.walking_count = 0
         # jump and fly
         self.gravity = 9.8
         self.player_jump_speed = 10
@@ -41,37 +46,9 @@ class Player:
         self.player_node = self.player_base_node.attachNewNode(PandaNode('player_node'))
         self.player_node.setPos(self.player_position)
         self.player_node.setHpr(self.player_direction)
-
-        self.cat_tex = self.loader.loadTexture("models/maps/cat.png")
-        self.cat_ear_tex = self.loader.loadTexture("models/maps/cat_ear.png")
-
-        self.character_node = self.player_node.attachNewNode(PandaNode('character_node'))
+        self.character_node.reparentTo(self.player_node)
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
-
-        self.character = self.loader.loadModel("models/egg_shape32")
-        self.character.reparentTo(self.character_node)
-        self.character.setTexture(self.cat_tex, 1)
-        self.character.setScale(1.41, 1.2, 1)
-        self.character.setPos(0, 0, 0)
-        self.character.setHpr(0, 0, 0)
-        self.character.setColor(1, 1, 1)
-
-        self.character_left_hand = self.loader.loadModel("models/egg_shape32")
-        self.character_left_hand.reparentTo(self.character_node)
-        self.character_left_hand.setTexture(self.cat_ear_tex, 1)
-        self.character_left_hand.setScale(1, 0.3, 1)
-        self.character_left_hand.setPos(0.3, 0, 0.3)
-        self.character_left_hand.setHpr(0, 0, 45)
-        self.character_left_hand.setColor(1, 1, 1)
-
-        self.character_right_hand = self.loader.loadModel("models/egg_shape32")
-        self.character_right_hand.reparentTo(self.character_node)
-        self.character_right_hand.setTexture(self.cat_ear_tex, 1)
-        self.character_right_hand.setScale(1, 0.3, 1)
-        self.character_right_hand.setPos(-0.3, 0, 0.3)
-        self.character_right_hand.setHpr(0, 0, -45)
-        self.character_right_hand.setColor(1, 1, 1)
 
         # add camera
         self.has_player_camera = True
@@ -112,7 +89,33 @@ class Player:
         self.accept('t', self.toggle_cam)
 
         # move the player
-        self.taskMgr.add(self.player_update, "player_update")
+        self.taskMgr.add(self.player_update, 'player_update')
+        self.taskMgr.doMethodLater(0.5, self.set_player_motion, "set_player_motion")
+
+    def set_player_motion(self, task):
+        z_length = 0.8 * self.character_hand_length
+        self.character_left_hand_model.setScale(0.5, 0.3, z_length)
+        self.character_right_hand_model.setScale(0.5, 0.3, z_length)
+
+        if self.character_face_num in [2, 8, 9]:
+            base_left_angle = 45
+            base_right_angle = 45
+        else:
+            base_left_angle = 0
+            base_right_angle = 0
+
+        if self.is_walking:
+            self.walking_count += 1
+            if self.walking_count % 2:
+                self.character_right_hand_model_node.setP(base_left_angle - 20)
+                self.character_left_hand_model_node.setP(base_right_angle + 20)
+            else:
+                self.character_right_hand_model_node.setP(base_left_angle + 20)
+                self.character_left_hand_model_node.setP(base_right_angle - 20)
+        else:
+            self.character_right_hand_model_node.setP(base_left_angle)
+            self.character_left_hand_model_node.setP(base_right_angle)
+        return task.again
 
     def player_draw(self):
         self.player_node.setPos(self.player_position)
@@ -134,6 +137,7 @@ class Player:
                 self.double_jump_status = True
 
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+            self.is_walking = True
             if walk_sound.status() is not walk_sound.PLAYING:
                 walk_sound.play()
             # move
@@ -163,6 +167,7 @@ class Player:
             )
             # print(self.player_velocity)
         else:
+            self.is_walking = False
             if self.player_position.z == 0:
                 if walk_sound.status() is walk_sound.PLAYING:
                     walk_sound.stop()
@@ -191,7 +196,6 @@ class Player:
             self.jump_status = False
             self.double_jump_status = False
 
-        print(self.player_velocity)
         self.player_position += self.player_velocity * dt
 
     def player_update(self, task):

@@ -137,7 +137,7 @@ if __name__ == '__main__':
     app = OpenWorld(
         title='Map only',  # タイトル
         window_title='PLATEAU World',  # ウインドウタイトル
-        plateau_settings=plateau_settings,  # PLATEAUデータ設定
+        settings=plateau_settings,  # PLATEAUデータ設定
         has_celestial=False,  # 天球を表示
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
