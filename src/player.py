@@ -31,6 +31,8 @@ class Player(Character):
         self.player_direction = Vec3(0, 0, 0)
         self.player_velocity = Vec3(0, 0, 0)
         self.player_move_speed = 10
+        self.is_walking = False
+        self.walking_count = 0
         # jump and fly
         self.gravity = 9.8
         self.player_jump_speed = 10
@@ -87,7 +89,33 @@ class Player(Character):
         self.accept('t', self.toggle_cam)
 
         # move the player
-        self.taskMgr.add(self.player_update, "player_update")
+        self.taskMgr.add(self.player_update, 'player_update')
+        self.taskMgr.doMethodLater(0.5, self.set_player_motion, "set_player_motion")
+
+    def set_player_motion(self, task):
+        z_length = 0.8 * self.character_hand_length
+        self.character_left_hand_model.setScale(0.5, 0.3, z_length)
+        self.character_right_hand_model.setScale(0.5, 0.3, z_length)
+
+        if self.character_face_num in [2, 8, 9]:
+            base_left_angle = 45
+            base_right_angle = 45
+        else:
+            base_left_angle = 0
+            base_right_angle = 0
+
+        if self.is_walking:
+            self.walking_count += 1
+            if self.walking_count % 2:
+                self.character_right_hand_model_node.setP(base_left_angle - 20)
+                self.character_left_hand_model_node.setP(base_right_angle + 20)
+            else:
+                self.character_right_hand_model_node.setP(base_left_angle + 20)
+                self.character_left_hand_model_node.setP(base_right_angle - 20)
+        else:
+            self.character_right_hand_model_node.setP(base_left_angle)
+            self.character_left_hand_model_node.setP(base_right_angle)
+        return task.again
 
     def player_draw(self):
         self.player_node.setPos(self.player_position)
@@ -109,6 +137,7 @@ class Player(Character):
                 self.double_jump_status = True
 
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+            self.is_walking = True
             if walk_sound.status() is not walk_sound.PLAYING:
                 walk_sound.play()
             # move
@@ -138,6 +167,7 @@ class Player(Character):
             )
             # print(self.player_velocity)
         else:
+            self.is_walking = False
             if self.player_position.z == 0:
                 if walk_sound.status() is walk_sound.PLAYING:
                     walk_sound.stop()

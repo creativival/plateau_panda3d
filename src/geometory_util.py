@@ -20,14 +20,15 @@ def draw_line_between_two_points(position1, position2, line_color, parent, thick
 
 def draw_triangles(vertices, colors, parent, position=None, direction=None, node_name=''):
     geom_format = GeomVertexFormat.getV3c4()
-    geom_vertex_data = GeomVertexData("box", geom_format, Geom.UHStatic)
-    vertex_writer = GeomVertexWriter(geom_vertex_data, "vertex")
-    color_writer = GeomVertexWriter(geom_vertex_data, "color")
+    geom_vertex_data = GeomVertexData('box', geom_format, Geom.UHStatic)
+    vertex_writer = GeomVertexWriter(geom_vertex_data, 'vertex')
+    color_writer = GeomVertexWriter(geom_vertex_data, 'color')
 
     for pos, color in zip(vertices, colors):
         vertex_writer.addData3f(pos)
         color_writer.addData4f(color)
 
+    # GeomTriangles
     # geom_triangles = GeomTriangles(Geom.UHStatic)
     # for i in range(len(vertices) - 2):
     #     v1 = 0
@@ -39,6 +40,7 @@ def draw_triangles(vertices, colors, parent, position=None, direction=None, node
     # geom = Geom(geom_vertex_data)
     # geom.addPrimitive(geom_triangles)
 
+    # GeomTristrips
     vertex_num = len(vertices)
     geom_tristrips = GeomTristrips(Geom.UHStatic)
     geom_tristrips.addVertex(0)
@@ -71,7 +73,7 @@ def draw_triangles(vertices, colors, parent, position=None, direction=None, node
 
 if __name__ == '__main__':
     base = ShowBase()
-    font = base.loader.loadFont("cmr12.egg")
+    font = base.loader.loadFont('cmr12.egg')
 
     base.props = WindowProperties()
     base.props.setTitle('Gem')
@@ -83,9 +85,9 @@ if __name__ == '__main__':
     colors = [Vec4(1, 0, 0, 1), Vec4(0, 1, 0, 1), Vec4(0, 0, 1, 1), Vec4(1, 0, 1, 1), Vec4(1, 1, 0, 1)]
 
     # format = GeomVertexFormat.getV3c4()
-    # geomData = GeomVertexData("box", format, Geom.UHStatic)
-    # vertexWriter = GeomVertexWriter(geomData, "vertex")
-    # colorWriter = GeomVertexWriter(geomData, "color")
+    # geomData = GeomVertexData('box', format, Geom.UHStatic)
+    # vertexWriter = GeomVertexWriter(geomData, 'vertex')
+    # colorWriter = GeomVertexWriter(geomData, 'color')
     #
     # for pos, color in zip(vertices, colors):
     #     print(pos, color)
@@ -100,41 +102,41 @@ if __name__ == '__main__':
     #
     # geom = Geom(geomData)
     # geom.addPrimitive(triangles)
-    # gem_node = GeomNode("box")
+    # gem_node = GeomNode('box')
     # gem_node.addGeom(geom)
 
     gem_node = draw_triangles(vertices, colors, base.render)
     # box = base.render.attachNewNode(gem_node)
 
-    OnscreenText(text="0",
+    OnscreenText(text='0',
                  fg=Vec4(1, 1, 1, 1),
                  bg=Vec4(0, 0, 0, 1),
                  pos=Vec2(0.85, 0.75),
                  scale=0.2,
                  font=font)
 
-    OnscreenText(text="1",
+    OnscreenText(text='1',
                  fg=Vec4(1, 1, 1, 1),
                  bg=Vec4(0, 0, 0, 1),
                  pos=Vec2(-0.85, 0.75),
                  scale=0.2,
                  font=font)
 
-    OnscreenText(text="2",
+    OnscreenText(text='2',
                  fg=Vec4(1, 1, 1, 1),
                  bg=Vec4(0, 0, 0, 1),
                  pos=Vec2(-0.85, -0.75),
                  scale=0.2,
                  font=font)
 
-    OnscreenText(text="3",
+    OnscreenText(text='3',
                  fg=Vec4(1, 1, 1, 1),
                  bg=Vec4(0, 0, 0, 1),
                  pos=Vec2(0.85, -0.75),
                  scale=0.2,
                  font=font)
 
-    OnscreenText(text="4",
+    OnscreenText(text='4',
                  fg=Vec4(1, 1, 1, 1),
                  bg=Vec4(0, 0, 0, 1),
                  pos=Vec2(1.2, 0),

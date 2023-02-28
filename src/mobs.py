@@ -14,7 +14,7 @@ class Mobs(Mob):
         for mob_dic in mob_dic_list:
             self.mob_obj_list.append(Mob(self, mob_dic))
 
-        self.taskMgr.add(self.mobs_update, "mobs_update")
+        self.taskMgr.add(self.mobs_update, 'mobs_update')
 
     def mobs_update(self, task):
         dt = self.grobal_clock.getDt()
