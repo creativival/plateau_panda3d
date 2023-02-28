@@ -1,9 +1,10 @@
 from math import sin, cos, radians, floor
 from direct.showbase.ShowBaseGlobal import globalClock
 from panda3d.core import *
+from . import Character
 
 
-class Player:
+class Player(Character):
     max_heading_angle = 200
     max_pitch_angle = 75
     tps_cam_fov = 90
@@ -24,6 +25,8 @@ class Player:
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
     def __init__(self):
+        Character.__init__(self)
+
         self.player_position = Vec3(0, 0, 1)
         self.player_direction = Vec3(0, 0, 0)
         self.player_velocity = Vec3(0, 0, 0)
@@ -41,43 +44,9 @@ class Player:
         self.player_node = self.player_base_node.attachNewNode(PandaNode('player_node'))
         self.player_node.setPos(self.player_position)
         self.player_node.setHpr(self.player_direction)
-
-        self.cat_tex = self.loader.loadTexture("models/maps/cat.png")
-        self.cat_ear_tex = self.loader.loadTexture("models/maps/cat_ear.png")
-
-        self.character_node = self.player_node.attachNewNode(PandaNode('character_node'))
+        self.character_node.reparentTo(self.player_node)
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
-
-        # モデル
-        self.character_color = (1, 1, 0, 1)
-
-        self.character_model = self.loader.loadModel("models/egg_shape32")
-        self.character_model.reparentTo(self.character_node)
-        self.character_model.setTexture(self.cat_tex, 1)
-        self.character_model.setScale(1.41, 1.2, 1)
-        self.character_model.setPos(0, 0, 0)
-        self.character_model.setHpr(0, 0, 0)
-        self.character_model.setColor(*self.character_color)
-        self.character_model.setTransparency(TransparencyAttrib.MBinary)
-
-        self.character_left_hand_model = self.loader.loadModel("models/egg_shape32")
-        self.character_left_hand_model.reparentTo(self.character_node)
-        self.character_left_hand_model.setTexture(self.cat_ear_tex, 1)
-        self.character_left_hand_model.setScale(1, 0.3, 1)
-        self.character_left_hand_model.setPos(0.3, 0, 0.3)
-        self.character_left_hand_model.setHpr(0, 0, 45)
-        self.character_left_hand_model.setColor(*self.character_color)
-        self.character_left_hand_model.setTransparency(TransparencyAttrib.MBinary)
-
-        self.character_right_hand_model = self.loader.loadModel("models/egg_shape32")
-        self.character_right_hand_model.reparentTo(self.character_node)
-        self.character_right_hand_model.setTexture(self.cat_ear_tex, 1)
-        self.character_right_hand_model.setScale(1, 0.3, 1)
-        self.character_right_hand_model.setPos(-0.3, 0, 0.3)
-        self.character_right_hand_model.setHpr(0, 0, -45)
-        self.character_right_hand_model.setColor(*self.character_color)
-        self.character_right_hand_model.setTransparency(TransparencyAttrib.MBinary)
 
         # add camera
         self.has_player_camera = True
@@ -119,14 +88,6 @@ class Player:
 
         # move the player
         self.taskMgr.add(self.player_update, "player_update")
-
-        # 表情の変更
-        for i in range(1, 10):
-            self.accept(str(i), self.change_face, [i])
-
-    def change_face(self, i):
-        self.cat_tex = self.loader.loadTexture(f'models/maps/cat{i}.png')
-        self.character_model.setTexture(self.cat_tex, 1)
 
     def player_draw(self):
         self.player_node.setPos(self.player_position)

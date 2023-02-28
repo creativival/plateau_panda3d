@@ -11,6 +11,7 @@ from .celestial_sphere import CelestialSphere
 from .ground import Ground
 from .wire_frame import WireFrame
 from .solid_model import SolidModel
+from .character import Character
 from .player import Player
 from .mob import Mob
 from .mobs import Mobs
