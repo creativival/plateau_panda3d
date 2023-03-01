@@ -7,8 +7,9 @@ import constants
 
 class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
     def __init__(self, title, window_title, settings, has_celestial, has_wire_frame, has_solid_model,
-                 has_player, has_mobs):
+                 has_player, has_mobs, character_color):
         self.settings = settings
+        self.character_color = character_color
         # PCの能力により調整
         self.building_tolerance = 200  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
@@ -16,7 +17,6 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
         self.celestial_radius = 500  # 天球の半径
         self.max_camera_radius_to_render_surface = 2000  # 面を表示する最大のカメラ半径
         self.interval_drawing_pillar = 10  # 縦の線を何本おきに描画するか
-
         ShowBase.__init__(self)
         Database.__init__(self)
         Sound.__init__(self)
@@ -71,5 +71,6 @@ if __name__ == '__main__':
         has_solid_model=True,  # 面を表示
         has_player=False,  # プレイヤーを表示
         has_mobs=False,  # モブを表示
+        character_color=(1, 1, 0, 1),  # キャラクターの色を変更
     )
     app.run()

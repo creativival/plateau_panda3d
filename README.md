@@ -143,6 +143,7 @@ if __name__ == '__main__':
         has_solid_model=True,  # 面を表示
         has_player=False, # プレイヤーを表示
         has_mobs=False,  # モブを表示
+        character_color=(1, 1, 0, 1),  # キャラクターの色を変更
     )
     app.run()
 ```
@@ -277,6 +278,14 @@ WASDで平行移動
 マウスで回転
 スペースでジャンプ
 ```
+
+## キャラクター
+
+数字キーで表情を変えて、エモーションを表現できます。  
+色は、インスタンス化の引数character_colorにより設定できます。  
+移動時に耳が動くモーションを追加しました。  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image9.png)
 
 ## パフォーマンス調整
 
