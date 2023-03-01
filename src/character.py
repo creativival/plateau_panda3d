@@ -5,16 +5,16 @@ from direct.showbase.ShowBase import ShowBase
 
 
 class Character:
-    def __init__(self, character_color=(1, 1, 1, 1)):
+    def __init__(self, character_face_num=1, character_hand_length=1):
         self.character_node = NodePath('character_node')
 
         # モデル
-        self.cat_tex = self.loader.loadTexture('models/maps/cat.png')
-        self.cat_ear_tex = self.loader.loadTexture('models/maps/cat_ear.png')
-        self.character_color = character_color
-        self.character_face_num = 1
-        self.character_hand_length = 1
+        self.character_color = self.character_color
+        self.character_face_num = character_face_num
+        self.character_hand_length = character_hand_length
 
+        self.cat_tex = self.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
+        self.cat_ear_tex = self.loader.loadTexture('models/maps/cat_ear.png')
         self.character_model = self.loader.loadModel('models/egg_shape32')
         self.character_model.reparentTo(self.character_node)
         self.character_model.setTexture(self.cat_tex, 1)
@@ -24,6 +24,7 @@ class Character:
         self.character_model.setColor(*self.character_color)
         self.character_model.setTransparency(TransparencyAttrib.MBinary)
 
+        z_length = 0.8 * self.character_hand_length
         self.character_left_hand_model_node = self.character_node.attachNewNode(
             PandaNode('character_left_hand_model_node'))
         self.character_left_hand_model_node.setPos(0.3, 0, 0.3)
@@ -32,7 +33,7 @@ class Character:
         self.character_left_hand_model = self.loader.loadModel('models/egg_shape32')
         self.character_left_hand_model.reparentTo(self.character_left_hand_model_node)
         self.character_left_hand_model.setTexture(self.cat_ear_tex, 1)
-        self.character_left_hand_model.setScale(0.5, 0.3, 0.8)
+        self.character_left_hand_model.setScale(0.5, 0.3, z_length)
         self.character_left_hand_model.setPos(0, 0, 0.4)
         self.character_left_hand_model.setColor(*self.character_color)
         self.character_left_hand_model.setTransparency(TransparencyAttrib.MBinary)
@@ -45,7 +46,7 @@ class Character:
         self.character_right_hand_model = self.loader.loadModel('models/egg_shape32')
         self.character_right_hand_model.reparentTo(self.character_right_hand_model_node)
         self.character_right_hand_model.setTexture(self.cat_ear_tex, 1)
-        self.character_right_hand_model.setScale(0.5, 0.3, 0.8)
+        self.character_right_hand_model.setScale(0.5, 0.3, z_length)
         self.character_right_hand_model.setPos(0, 0, 0.4)
         self.character_right_hand_model.setColor(*self.character_color)
         self.character_right_hand_model.setTransparency(TransparencyAttrib.MBinary)
