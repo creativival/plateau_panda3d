@@ -11,7 +11,7 @@ class NetCommon:
         self.writer = ConnectionWriter(self.manager, 0)
         self.protocol = protocol
 
-        taskMgr.add(self.updateReader, "updateReader")
+        self.base.taskMgr.add(self.updateReader, "updateReader")
 
     def updateReader(self, task):
         if self.reader.dataAvailable():

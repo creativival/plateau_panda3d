@@ -6,14 +6,15 @@ from . import NetCommon
 
 
 class Server(NetCommon):
-    def __init__(self, protocol, port):
+    def __init__(self, base, protocol, port):
+        self.base = base
         NetCommon.__init__(self, protocol)
         self.listener = QueuedConnectionListener(self.manager, 0)
         socket = self.manager.openTCPServerRendezvous(port, 100)
         self.listener.addConnection(socket)
         self.connections = []
 
-        taskMgr.add(self.updateListener, "updateListener")
+        self.base.taskMgr.add(self.updateListener, "updateListener")
 
     def updateListener(self, task):
         if self.listener.newConnectionAvailable():

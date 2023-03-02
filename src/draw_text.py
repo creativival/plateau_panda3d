@@ -24,7 +24,7 @@ class DrawText:
                      fg=(1, 1, 0, 1), bg=(0, 0, 0, 0.1), mayChange=True, wordwrap=40):
         if parent is None:
             parent = self.text_parent
-        OnscreenText(text=text,
+        return OnscreenText(text=text,
                      parent=parent,
                      font=self.font,
                      scale=scale,
@@ -45,7 +45,7 @@ class DrawText:
         text_node.setHpr(heading, pitch, 0)
         text_node.setPythonTag('position', position)
         # print(text, phi, theta, heading, pitch)
-        OnscreenText(text=text,
+        return OnscreenText(text=text,
                      parent=text_node,
                      font=self.font,
                      fg=fg,

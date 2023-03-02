@@ -6,7 +6,8 @@ from . import NetCommon
 
 
 class Client(NetCommon):
-    def __init__(self, protocol):
+    def __init__(self, base, protocol):
+        self.base = base
         NetCommon.__init__(self, protocol)
 
     def connect(self, host, port, timeout):
