@@ -1,23 +1,30 @@
-from direct.showbase.ShowBase import ShowBase
-from panda3d.core import *
-from network import Server, Client, ServerProtocol, ClientProtocol, Connect
 from direct.distributed.PyDatagram import PyDatagram
-from direct.distributed.PyDatagramIterator import PyDatagramIterator
-from src import DrawText
+from threading import Timer
 
 
 class Message:
     def __init__(self):
-        self.accept('h', self.hello_func)
-        self.accept('t', self.thank_you_func)
-        self.accept('escape', exit)
+        self.messages = []
+        self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
+
+        self.accept('h', self.send_message, ['Hello!'])
+        self.accept('t', self.send_message, ['thank you!'])
 
     def display_messages(self):
+        self.show_message()
         self.top_left_text.setText('\n'.join(self.messages))
+        timer = Timer(3, self.hide_message)
+        timer.start()
 
-    def hello_func(self):
-        message = 'Hello!'
+    def show_message(self):
+        if self.top_left_text.isHidden():
+            self.top_left_text.show()
 
+    def hide_message(self):
+        if not self.top_left_text.isHidden():
+            self.top_left_text.hide()
+
+    def send_message(self, message):
         if self.network_state == 'server':
             self.messages += [message]
             self.display_messages()
@@ -25,21 +32,6 @@ class Message:
         data = PyDatagram()
         data.addUint8(0)
         data.addString(message)
-        self.send_data(data)
-
-    def thank_you_func(self):
-        message = 'Thank you!'
-
-        if self.network_state == 'server':
-            self.messages += [message]
-            self.display_messages()
-
-        data = PyDatagram()
-        data.addUint8(0)
-        data.addString(message)
-        self.send_data(data)
-
-    def send_data(self, data):
         if self.network_state == 'server':
             self.server.send(data)
         else:

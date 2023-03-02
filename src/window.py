@@ -4,7 +4,7 @@ from . import draw_line_between_two_points
 
 
 class Window:
-    def __init__(self, title, window_title):
+    def __init__(self, window_title):
         # FPS表示
         # Config.prc -> show-frame-rate-meter #t
         self.setFrameRateMeter(True)
@@ -38,7 +38,7 @@ class Window:
                 building_node.setPos(base_position)
                 building_node.setTag('height', str(height))
 
-        self.draw_2d_text(title)
+        # self.draw_2d_text(title)
 
         # plight = PointLight('plight')
         # plight.setColor((0.2, 0.2, 0.2, 1))

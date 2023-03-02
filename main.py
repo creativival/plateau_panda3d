@@ -6,7 +6,7 @@ import constants
 
 
 class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
-    def __init__(self, title, window_title, settings, has_celestial, has_wire_frame, has_solid_model,
+    def __init__(self, window_title, settings, has_celestial, has_wire_frame, has_solid_model,
                  has_player, has_mobs, character_color):
         self.settings = settings
         self.character_color = character_color
@@ -17,11 +17,12 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
         self.celestial_radius = 500  # 天球の半径
         self.max_camera_radius_to_render_surface = 2000  # 面を表示する最大のカメラ半径
         self.interval_drawing_pillar = 10  # 縦の線を何本おきに描画するか
+
         ShowBase.__init__(self)
         Database.__init__(self)
         Sound.__init__(self)
         DrawText.__init__(self)
-        Window.__init__(self, title, window_title)
+        Window.__init__(self, window_title)
         Camera.__init__(self)
         Axis.__init__(self)
         Ground.__init__(self)
@@ -63,7 +64,6 @@ if __name__ == '__main__':
     }
 
     app = OpenWorld(
-        title='Map only',  # タイトル
         window_title='PLATEAU World',  # ウインドウタイトル
         settings=plateau_settings,  # PLATEAUデータ設定
         has_celestial=False,  # 天球を表示

@@ -1,8 +1,6 @@
 import platform
 from direct.gui.DirectGui import OnscreenText
 from panda3d.core import *
-from direct.showbase.ShowBase import ShowBase
-from . import get_polar_angles_from_vec
 
 
 class DrawText:

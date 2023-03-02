@@ -1,8 +1,4 @@
-from direct.showbase.ShowBase import ShowBase
-from panda3d.core import *
 from network import Server, Client, ServerProtocol, ClientProtocol
-from direct.distributed.PyDatagram import PyDatagram
-from direct.distributed.PyDatagramIterator import PyDatagramIterator
 
 
 class Connect:
