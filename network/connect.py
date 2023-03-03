@@ -11,4 +11,4 @@ class Connect:
         else:  # 'client'
             self.server = None
             self.client = Client(self, ClientProtocol(self))
-            self.client.connect("localhost", 9999, 3000)
+            self.client.connect('localhost', 9999, 3000)

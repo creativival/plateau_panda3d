@@ -19,15 +19,14 @@ class ClientProtocol(Protocol):
 
     def handleTextMessage(self, it):
         message = it.getString()
-        self.printMessage("Client received:", message)
-        self.base.messages += [message]
-        self.base.display_messages()
+        self.printMessage('Client received:', message)
+        self.base.display_messages(message)
 
     # def handleQuestion(self, it):
-    #     self.printMessage("Client received:", it.getString())
+    #     self.printMessage('Client received:', it.getString())
     #     return self.buildReply(2, "I'm fine too. Gotta run! Bye!")
     #
     # def handleBye(self, it):
-    #     self.printMessage("Client received:", it.getString())
+    #     self.printMessage('Client received:', it.getString())
     #     return None
 

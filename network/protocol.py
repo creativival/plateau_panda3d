@@ -9,7 +9,7 @@ class Protocol:
         return None
 
     def printMessage(self, title, msg):
-        print("%s %s" % (title, msg))
+        print('%s %s' % (title, msg))
 
     def buildReply(self, msgid, data):
         reply = PyDatagram()

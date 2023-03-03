@@ -1,3 +1,4 @@
+from direct.distributed.PyDatagram import PyDatagram
 from . import NetCommon
 
 
@@ -10,8 +11,13 @@ class Client(NetCommon):
         self.connection = self.manager.openTCPClientConnection(host, port, timeout)
         if self.connection:
             self.reader.addConnection(self.connection)
-            print("Client: Connected to server.")
+            message = 'Client: Connected to server.'
+            print(message)
+            self.base.display_messages(message)
 
-    def send(self, datagram):
+    def send(self, message):
         if self.connection:
-            self.writer.send(datagram, self.connection)
+            data = PyDatagram()
+            data.addUint8(0)
+            data.addString(message)
+            self.writer.send(data, self.connection)

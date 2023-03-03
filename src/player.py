@@ -90,7 +90,7 @@ class Player(Character):
 
         # move the player
         self.taskMgr.add(self.player_update, 'player_update')
-        self.taskMgr.doMethodLater(0.5, self.set_player_motion, "set_player_motion")
+        self.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
 
     def set_player_motion(self, task):
         z_length = 0.8 * self.character_hand_length
