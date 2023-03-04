@@ -1,11 +1,11 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    Database, Sound, DrawText, Window, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
+    Database, Sound, DrawText, Window, KeyMap, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel, Player, Mobs
 )
 import constants
 
 
-class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
+class OpenWorld(ShowBase, Database, DrawText, Window, KeyMap, Camera, Player, Mobs):
     def __init__(self, window_title, settings, has_celestial, has_wire_frame, has_solid_model,
                  has_player, has_mobs, character_color):
         self.settings = settings
@@ -23,6 +23,7 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Camera, Player, Mobs):
         Sound.__init__(self)
         DrawText.__init__(self)
         Window.__init__(self, window_title)
+        KeyMap.__init__(self)
         Camera.__init__(self)
         Axis.__init__(self)
         Ground.__init__(self)

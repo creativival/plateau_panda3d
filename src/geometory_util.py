@@ -17,8 +17,6 @@ def draw_line_between_two_points(position1, position2, line_color, parent, thick
     if node_name:
         np.setName(node_name)
 
-    return np
-
 
 def draw_triangles(vertices, colors, parent, position=None, direction=None, node_name=''):
     geom_format = GeomVertexFormat.getV3c4()
@@ -71,8 +69,6 @@ def draw_triangles(vertices, colors, parent, position=None, direction=None, node
         node.setName(node_name)
     if position:
         node.setPos(position)
-
-    return node
 
 
 if __name__ == '__main__':
