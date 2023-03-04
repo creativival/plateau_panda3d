@@ -11,16 +11,19 @@ class ClientProtocol(Protocol):
         msgid = it.getUint8()
 
         if msgid == 0:
-            return self.handleTextMessage(it)
+            # クライエントがメッセージを受信
+            received_message = it.getString()
+            # ウインドウにテキスト表示
+            self.handle_received_message(received_message)
         elif msgid == 1:
             return self.handleQuestion(it)
         elif msgid == 2:
             return self.handleBye(it)
 
-    def handleTextMessage(self, it):
-        message = it.getString()
-        self.printMessage('Client received:', message)
-        self.base.display_messages(message)
+    # def handle_received_message(self, it):
+    #     message = it.getString()
+    #     self.printMessage('Client received:', message)
+    #     self.base.display_messages(message)
 
     # def handleQuestion(self, it):
     #     self.printMessage('Client received:', it.getString())

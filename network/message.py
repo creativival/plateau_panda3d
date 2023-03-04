@@ -28,14 +28,24 @@ class Message:
             self.top_left_text.hide()
 
     def send_message(self, message):
-        if self.network_state == 'server':
-            self.display_messages(message)
-            self.server.send(message)
-        else:
-            self.client.send(message)
-
-    def broadcast_message(self, message):
         data = PyDatagram()
         data.addUint8(0)
         data.addString(message)
-        self.server.send(message)
+
+        if self.network_state == 'server':
+            # サーバーがメッセージを送信
+            # ウインドウにテキスト表示
+            self.display_messages(message)
+            # クライエント全員に送信
+            self.server.broadcast(data)
+        else:
+            # クライエントがメッセージを送信
+            # サーバーにメッセージを送信
+            self.client.send(data)
+
+    def broadcast_received_message(self, received_message):
+        # クライエントから受信したメッセージを全クライエントに再送信
+        data = PyDatagram()
+        data.addUint8(0)
+        data.addString(received_message)
+        self.server.broadcast(data)

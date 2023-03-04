@@ -27,9 +27,7 @@ class Server(NetCommon):
 
         return task.cont
 
-    def send(self, message):
+    def broadcast(self, data):
         for connection in self.connections:
-            data = PyDatagram()
-            data.addUint8(0)
-            data.addString(message)
-            self.writer.send(data, connection)
+            if connection:
+                self.writer.send(data, connection)

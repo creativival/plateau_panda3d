@@ -23,3 +23,25 @@ class NetCommon:
                 self.writer.send(reply, data.getConnection())
 
         return task.cont
+
+    def sendPlayerState(self, task):
+        sync = self.playerState(self.base)
+        self.broadcast(sync)
+        return task.again
+
+    def sendMobState(self, task):
+        sync = PyDatagram()
+        sync.addInt8(101)  # sync mobs
+        for mob in self.base.mobs:
+            x, y, z = mob.position
+            velocity_x, velocity_y, velocity_z = mob.velocity
+            object_name = f'{mob.model_name}_{mob.color_id}'
+            sync.addString(f'{x},{y},{z},{velocity_x},{velocity_y},{velocity_z},{object_name}')
+        sync.addString('end')
+        self.broadcast(sync)
+        return task.again
+
+    def sendBlockChanges(self, task):
+        sync = self.blockChange(self.base)
+        self.broadcast(sync)
+        return task.again

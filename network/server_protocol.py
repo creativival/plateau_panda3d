@@ -11,19 +11,24 @@ class ServerProtocol(Protocol):
         msgid = it.getUint8()
 
         if msgid == 0:
-            return self.broadcast_message(it)
+            # サーバーがメッセージを受信
+            received_message = it.getString()
+            # ウインドウにテキスト表示
+            self.handle_received_message(received_message)
+            # クライエント全員に転送
+            self.base.broadcast_received_message(received_message)
         elif msgid == 1:
             return self.handleQuestion(it)
         elif msgid == 2:
             return self.handleBye(it)
 
-    def broadcast_message(self, it):
-        message = it.getString()
-        self.base.display_messages(message)
-        self.base.broadcast_message(message)
+    # def broadcast_message(self, it):
+    #     message = it.getString()
+    #     self.base.display_messages(message)
+    #     self.base.broadcast_message(message)
 
 
-    # def handleTextMessage(self, it):
+    # def handle_received_message(self, it):
     #     message = it.getString()
     #     self.printMessage('Server received:', message)
     #     self.base.messages += [message]

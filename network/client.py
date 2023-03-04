@@ -15,9 +15,6 @@ class Client(NetCommon):
             print(message)
             self.base.display_messages(message)
 
-    def send(self, message):
+    def send(self, data):
         if self.connection:
-            data = PyDatagram()
-            data.addUint8(0)
-            data.addString(message)
             self.writer.send(data, self.connection)

@@ -16,3 +16,7 @@ class Protocol:
         reply.addUint8(msgid)
         reply.addString(data)
         return reply
+
+    def handle_received_message(self, received_message):
+        self.printMessage('received message:', received_message)
+        self.base.display_messages(received_message)
