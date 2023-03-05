@@ -1,15 +1,16 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *
-from network import Connect, Message, Player2D
+from network import NetCommon, Server, Client, Connect, Message, Player2D
 from src import DrawText, KeyMap, Ground
 
 
-class Application(ShowBase, DrawText, KeyMap, Message, Player2D):
+class Application(ShowBase, DrawText, KeyMap, NetCommon, Server, Client, Message, Player2D):
     def __init__(self, network_state):
         self.area_center = Point3(0, 81, 0)
         ShowBase.__init__(self)
         DrawText.__init__(self)
         Message.__init__(self)
+        NetCommon.__init__(self)
         Connect.__init__(self, network_state)
         Ground.__init__(self)
         KeyMap.__init__(self)

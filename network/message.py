@@ -37,15 +37,15 @@ class Message:
             # ウインドウにテキスト表示
             self.display_messages(message)
             # クライエント全員に送信
-            self.server.broadcast(data)
+            self.broadcast(data)
         else:
             # クライエントがメッセージを送信
             # サーバーにメッセージを送信
-            self.client.send(data)
+            self.send(data)
 
     def broadcast_received_message(self, received_message):
         # クライエントから受信したメッセージを全クライエントに再送信
         data = PyDatagram()
         data.addUint8(0)
         data.addString(received_message)
-        self.server.broadcast(data)
+        self.broadcast(data)

@@ -1,18 +1,17 @@
 from direct.distributed.PyDatagram import PyDatagram
 from panda3d.core import *
-from . import NetCommon
+from . import NetCommon, ServerProtocol
 
 
-class Server(NetCommon):
-    def __init__(self, base, protocol, port):
-        self.base = base
-        NetCommon.__init__(self, protocol)
+class Server:
+    def __init__(self, port):
+        self.protocol = ServerProtocol(self)
         self.listener = QueuedConnectionListener(self.manager, 0)
         socket = self.manager.openTCPServerRendezvous(port, 100)
         self.listener.addConnection(socket)
         self.connections = []
 
-        self.base.taskMgr.add(self.updateListener, 'updateListener')
+        self.taskMgr.add(self.updateListener, 'updateListener')
 
     def updateListener(self, task):
         if self.listener.newConnectionAvailable():
@@ -23,7 +22,7 @@ class Server(NetCommon):
                 self.reader.addConnection(connection)
                 message = 'Server: New connection established.'
                 print(message)
-                self.base.display_messages(message)
+                self.display_messages(message)
 
         return task.cont
 

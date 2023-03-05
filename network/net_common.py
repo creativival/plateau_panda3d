@@ -5,13 +5,12 @@ from direct.distributed.PyDatagramIterator import PyDatagramIterator
 
 
 class NetCommon:
-    def __init__(self, protocol):
+    def __init__(self):
         self.manager = ConnectionManager()
         self.reader = QueuedConnectionReader(self.manager, 0)
         self.writer = ConnectionWriter(self.manager, 0)
-        self.protocol = protocol
 
-        self.base.taskMgr.add(self.updateReader, 'updateReader')
+        self.taskMgr.add(self.updateReader, 'updateReader')
 
     def updateReader(self, task):
         if self.reader.dataAvailable():
