@@ -5,6 +5,7 @@ from direct.stdpy import threading
 class Message:
     def __init__(self):
         self.messages = []
+        self.timers = []
         self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
 
         self.accept('h', self.send_message, ['Hello!'])
@@ -16,8 +17,13 @@ class Message:
         self.messages += [message]
         self.show_message()
         self.top_left_text.setText('\n'.join(self.messages))
-        timer = threading.Timer(3, self.hide_message)
+
+        for timer in self.timers:
+            timer.cancel()
+
+        timer = threading.Timer(5, self.hide_message)
         timer.start()
+        self.timers = [timer]
 
     def show_message(self):
         if self.top_left_text.isHidden():
@@ -26,6 +32,7 @@ class Message:
     def hide_message(self):
         if not self.top_left_text.isHidden():
             self.top_left_text.hide()
+        self.timers = []
 
     def send_message(self, message):
         data = PyDatagram()

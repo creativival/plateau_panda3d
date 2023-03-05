@@ -4,7 +4,6 @@ from . import Protocol
 
 class ClientProtocol(Protocol):
     def __init__(self, base):
-        print('self.base = base')
         self.base = base
 
     def process(self, data):
