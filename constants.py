@@ -1,3 +1,6 @@
+PORT_ADDRESS = 9999
+IP_ADDRESS = 'localhost'
+TIMEOUT = 3000
 mob_dic_list = [
     {
         'name': 'smiley1',

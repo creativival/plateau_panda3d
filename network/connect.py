@@ -1,4 +1,5 @@
 from network import Server, Client, ServerProtocol, ClientProtocol
+from constants import *
 
 
 class Connect:
@@ -8,10 +9,10 @@ class Connect:
         if self.network_state == 'server':
             # self.server = Server(self, 9999)
             # self.client = None
-            Server.__init__(self, 9999)
+            Server.__init__(self, PORT_ADDRESS)
         else:  # 'client'
             # self.server = None
             # self.client = Client(self)
             # self.client.connect('localhost', 9999, 3000)
             Client.__init__(self)
-            self.connect('localhost', 9999, 3000)
+            self.connect(IP_ADDRESS, PORT_ADDRESS, TIMEOUT)
