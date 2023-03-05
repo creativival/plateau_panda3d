@@ -11,9 +11,9 @@ class Server:
         self.listener.addConnection(socket)
         self.connections = []
 
-        self.taskMgr.add(self.updateListener, 'updateListener')
+        self.taskMgr.add(self.update_listener, 'update_listener')
 
-    def updateListener(self, task):
+    def update_listener(self, task):
         if self.listener.newConnectionAvailable():
             connection = PointerToConnection()
             if self.listener.getNewConnection(connection):

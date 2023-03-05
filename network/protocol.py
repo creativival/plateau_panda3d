@@ -5,18 +5,24 @@ from direct.distributed.PyDatagramIterator import PyDatagramIterator
 
 
 class Protocol:
+    def __init__(self, base):
+        self.base = base
+
     def process(self, data):
         return None
 
-    def printMessage(self, title, msg):
+    def handle_received_message(self, received_message):
+        self.print_message('received message:', received_message)
+        self.base.display_messages(received_message)
+
+    @staticmethod
+    def print_message(title, msg):
         print('%s %s' % (title, msg))
 
-    def buildReply(self, msgid, data):
+    @staticmethod
+    def build_reply(msg_id, data):
         reply = PyDatagram()
-        reply.addUint8(msgid)
+        reply.addUint8(msg_id)
         reply.addString(data)
         return reply
 
-    def handle_received_message(self, received_message):
-        self.printMessage('received message:', received_message)
-        self.base.display_messages(received_message)
