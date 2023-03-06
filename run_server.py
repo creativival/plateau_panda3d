@@ -1,7 +1,7 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *
-from network import NetCommon, Server, Client, Connect, Message, Player2D
-from src import DrawText, KeyMap, Ground
+from network import NetCommon, Server, Client, Connect, Message
+from src import DrawText, KeyMap, Ground, Player2D
 
 
 class Application(ShowBase, DrawText, KeyMap, NetCommon, Server, Client, Message, Player2D):
@@ -14,7 +14,7 @@ class Application(ShowBase, DrawText, KeyMap, NetCommon, Server, Client, Message
         Connect.__init__(self, network_state)
         Ground.__init__(self)
         KeyMap.__init__(self)
-        Player2D.__init__(self)
+        self.player = Player2D(self)
 
         self.ground_node.setP(90)
 

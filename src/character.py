@@ -9,13 +9,13 @@ class Character:
         self.character_node = NodePath('character_node')
 
         # モデル
-        self.character_color = self.character_color
+        self.character_color = self.base.character_color
         self.character_face_num = character_face_num
         self.character_hand_length = character_hand_length
 
-        self.cat_tex = self.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
-        self.cat_ear_tex = self.loader.loadTexture('models/maps/cat_ear.png')
-        self.character_model = self.loader.loadModel('models/egg_shape32')
+        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
+        self.cat_ear_tex = self.base.loader.loadTexture('models/maps/cat_ear.png')
+        self.character_model = self.base.loader.loadModel('models/egg_shape32')
         self.character_model.reparentTo(self.character_node)
         self.character_model.setTexture(self.cat_tex, 1)
         self.character_model.setScale(1.41, 1.2, 1)
@@ -30,7 +30,7 @@ class Character:
         self.character_left_hand_model_node.setPos(0.3, 0, 0.3)
         self.character_left_hand_model_node.setHpr(0, 0, 35)
 
-        self.character_left_hand_model = self.loader.loadModel('models/egg_shape32')
+        self.character_left_hand_model = self.base.loader.loadModel('models/egg_shape32')
         self.character_left_hand_model.reparentTo(self.character_left_hand_model_node)
         self.character_left_hand_model.setTexture(self.cat_ear_tex, 1)
         self.character_left_hand_model.setScale(0.5, 0.3, z_length)
@@ -43,7 +43,7 @@ class Character:
         self.character_right_hand_model_node.setPos(-0.3, 0, 0.3)
         self.character_right_hand_model_node.setHpr(0, 0, -35)
 
-        self.character_right_hand_model = self.loader.loadModel('models/egg_shape32')
+        self.character_right_hand_model = self.base.loader.loadModel('models/egg_shape32')
         self.character_right_hand_model.reparentTo(self.character_right_hand_model_node)
         self.character_right_hand_model.setTexture(self.cat_ear_tex, 1)
         self.character_right_hand_model.setScale(0.5, 0.3, z_length)
@@ -53,12 +53,12 @@ class Character:
 
         # 表情の変更
         for i in range(1, 10):
-            self.accept(str(i), self.change_face, [i])
+            self.base.accept(str(i), self.change_face, [i])
 
     def change_face(self, i):
         print(i)
         self.character_face_num = i
-        self.cat_tex = self.loader.loadTexture(f'models/maps/cat{i}.png')
+        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{i}.png')
         self.character_model.setTexture(self.cat_tex, 1)
         if i in [3, 6, 7, 9]:
             self.character_hand_length = 1.5

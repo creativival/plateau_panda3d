@@ -6,32 +6,33 @@ from src import DrawText
 
 
 class Player2D:
-    def __init__(self):
-        self.disableMouse()
+    def __init__(self, base):
+        self.base = base
+        self.client_id = None
 
-        self.player = self.render.attachNewNode(PandaNode('player'))
+        self.player = self.base.render.attachNewNode(PandaNode('player'))
         self.player_model_node = self.player.attachNewNode(PandaNode('player_model_node'))
         self.player_model_node.setHpr(0, -60, 180)
-        self.player_model = self.loader.loadModel('models/smiley')
+        self.player_model = self.base.loader.loadModel('models/smiley')
         self.player_model.reparentTo(self.player_model_node)
         self.player_position = Point3(0, 80, 0)
         self.player_velocity = Vec3(0, 0, 0)
         self.player_move_speed = 10
         self.player_phi = 0
-        self.player.reparentTo(self.render)
+        self.player.reparentTo(self.base.render)
         self.player.setPos(self.player_position)
-        if self.network_state == 'client':
+        if self.base.network_state == 'client':
             self.player.setColor(0, 0, 1, 0.5)
 
         # move the player
-        self.taskMgr.add(self.update, 'update')
+        self.base.taskMgr.add(self.update, 'update')
 
     def draw(self):
         self.player.setPos(self.player_position)
 
     def set_direction(self):
-        if self.mouseWatcherNode.hasMouse():
-            mouse_pos = self.mouseWatcherNode.getMouse()
+        if self.base.mouseWatcherNode.hasMouse():
+            mouse_pos = self.base.mouseWatcherNode.getMouse()
             x = mouse_pos.x
             y = mouse_pos.y
             self.player_phi = degrees(atan2(y, x)) - 90
@@ -42,7 +43,7 @@ class Player2D:
             # pitch = -y * self.max_pitch_angle
 
     def set_velocity(self):
-        key_map = self.key_map
+        key_map = self.base.key_map
 
         if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
             add_angle = 0

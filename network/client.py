@@ -11,7 +11,7 @@ class Client:
         if self.connection:
             self.reader.addConnection(self.connection)
             message = 'Client: Connected to server.'
-            print(message)
+            # print(message)
             self.display_messages(message)
 
     def send(self, data):

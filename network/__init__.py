@@ -6,4 +6,3 @@ from .server import Server
 from .client import Client
 from .connect import Connect
 from .message import Message
-from .player_2d import Player2D

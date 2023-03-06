@@ -24,7 +24,9 @@ class Player(Character):
     # orthographic_lens = OrthographicLens()
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
-    def __init__(self):
+    def __init__(self, base):
+        self.base = base
+        self.client_id = None
         Character.__init__(self)
 
         self.player_position = Vec3(0, 0, 1)
@@ -41,8 +43,8 @@ class Player(Character):
         self.double_jump_status = False
 
         # プレイヤー
-        self.player_base_node = self.render.attachNewNode(PandaNode('player_base_node'))
-        self.player_base_node.setPos(self.area_center)
+        self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
+        self.player_base_node.setPos(self.base.area_center)
         self.player_node = self.player_base_node.attachNewNode(PandaNode('player_node'))
         self.player_node.setPos(self.player_position)
         self.player_node.setHpr(self.player_direction)
@@ -53,7 +55,7 @@ class Player(Character):
         # add camera
         self.has_player_camera = True
         # tps cam
-        self.tps_cam = self.makeCamera(self.win)
+        self.tps_cam = self.base.makeCamera(self.base.win)
         self.tps_cam.node().setLens(self.perspective_lens)
         self.tps_cam.reparentTo(self.player_node)
         # self.tps_cam.getLens().setFov(tps_cam_fov)
@@ -65,7 +67,7 @@ class Player(Character):
         )
         # fps cam
         self.fps_cam_height = self.player_head_height
-        self.fps_cam = self.makeCamera(self.win)
+        self.fps_cam = self.base.makeCamera(self.base.win)
         self.fps_cam.node().setLens(self.perspective_lens)
         self.fps_cam.reparentTo(self.character_node)
         self.fps_cam.setPos(
@@ -73,24 +75,24 @@ class Player(Character):
         )
         self.fps_cam.setH(180)
         # mirror cam
-        self.mirror_cam = self.makeCamera(self.win)
+        self.mirror_cam = self.base.makeCamera(self.base.win)
         self.mirror_cam.node().setLens(self.perspective_lens)
         self.mirror_cam.reparentTo(self.character_node)
         self.mirror_cam.setPos(
             Vec3(0, -self.mirror_cam_radius, 0)
         )
         # camera change settings
-        self.cameras = [self.cam, self.tps_cam, self.fps_cam, self.mirror_cam]
+        self.cameras = [self.base.cam, self.tps_cam, self.fps_cam, self.mirror_cam]
         self.cameras[1].node().getDisplayRegion(0).setActive(0)
         self.cameras[2].node().getDisplayRegion(0).setActive(0)
         self.cameras[3].node().getDisplayRegion(0).setActive(0)
 
         # カメラの切り替え
-        self.accept('t', self.toggle_cam)
+        self.base.accept('t', self.toggle_cam)
 
         # move the player
-        self.taskMgr.add(self.player_update, 'player_update')
-        self.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
+        self.base.taskMgr.add(self.player_update, 'player_update')
+        self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
 
     def set_player_motion(self, task):
         z_length = 0.8 * self.character_hand_length
@@ -122,12 +124,12 @@ class Player(Character):
         self.player_node.setHpr(self.player_direction)
 
     def set_player_velocity(self):
-        key_map = self.key_map
-        walk_sound = self.walk_sound
+        key_map = self.base.key_map
+        walk_sound = self.base.walk_sound
 
         # jump
         if key_map['space'] and not self.double_jump_status:
-            self.jump_sound.play()
+            self.base.jump_sound.play()
 
             self.player_velocity.setZ(self.player_jump_speed)
             if not self.jump_status:
@@ -176,8 +178,8 @@ class Player(Character):
                 self.player_velocity.setY(0)
 
     def set_player_direction(self):
-        if self.mouseWatcherNode.hasMouse():
-            mouse_pos = self.mouseWatcherNode.getMouse()
+        if self.base.mouseWatcherNode.hasMouse():
+            mouse_pos = self.base.mouseWatcherNode.getMouse()
             x = mouse_pos.x
             y = mouse_pos.y
             # print(x, y)
@@ -199,7 +201,7 @@ class Player(Character):
         self.player_position += self.player_velocity * dt
 
     def player_update(self, task):
-        if self.active_cam != 0:
+        if self.base.active_cam != 0:
             self.set_player_velocity()
             self.set_player_direction()
             self.set_player_position()
@@ -208,9 +210,9 @@ class Player(Character):
 
     def toggle_cam(self):
         if self.has_player_camera:
-            self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(0)
-            self.active_cam = (self.active_cam + 1) % len(self.cameras)
-            self.cameras[self.active_cam].node().getDisplayRegion(0).setActive(1)
+            self.cameras[self.base.active_cam].node().getDisplayRegion(0).setActive(0)
+            self.base.active_cam = (self.base.active_cam + 1) % len(self.cameras)
+            self.cameras[self.base.active_cam].node().getDisplayRegion(0).setActive(1)
             # cam_names = ['Default cam', 'Player cam', 'Mirror cam', 'Guest cam']
             # self.console_window.setText(self.i18n.t(cam_names[self.activeCam]))
             # self.console_window.start_time = time()

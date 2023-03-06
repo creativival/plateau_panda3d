@@ -1,5 +1,6 @@
 from direct.distributed.PyDatagram import PyDatagram
 from direct.stdpy import threading
+from panda3d.core import *
 
 
 class Message:
@@ -7,6 +8,8 @@ class Message:
         self.messages = []
         self.timers = []
         self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
+        self.top_right_text = self.draw_2d_text('', parent=self.a2dTopRight, pos=(-0.05, -0.1),
+                                                align=TextNode.ARight)
 
         self.accept('h', self.send_message, ['Hello!'])
         self.accept('t', self.send_message, ['thank you!'])
@@ -37,22 +40,27 @@ class Message:
     def send_message(self, message):
         data = PyDatagram()
         data.addUint8(0)
-        data.addString(message)
 
         if self.network_state == 'server':
             # サーバーがメッセージを送信
+            name = 'server'
             # ウインドウにテキスト表示
-            self.display_messages(message)
+            self.display_messages(f'{name}: {message}')
             # クライエント全員に送信
+            data.addString(name)
+            data.addString(message)
             self.broadcast(data)
         else:
             # クライエントがメッセージを送信
+            name = f'client{self.player.client_id}'
             # サーバーにメッセージを送信
+            data.addString(name)
+            data.addString(message)
             self.send(data)
 
     def broadcast_received_message(self, received_message):
         # クライエントから受信したメッセージを全クライエントに再送信
         data = PyDatagram()
-        data.addUint8(0)
+        data.addUint8(1)
         data.addString(received_message)
         self.broadcast(data)
