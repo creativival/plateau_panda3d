@@ -39,7 +39,7 @@ class Message:
 
     def send_message(self, message):
         data = PyDatagram()
-        data.addUint8(0)
+        data.addUint8(10)
 
         if self.network_state == 'server':
             # サーバーがメッセージを送信
@@ -49,18 +49,18 @@ class Message:
             # クライエント全員に送信
             data.addString(name)
             data.addString(message)
-            self.broadcast(data)
+            self.server.broadcast(data)
         else:
             # クライエントがメッセージを送信
             name = f'client{self.player.client_id}'
             # サーバーにメッセージを送信
             data.addString(name)
             data.addString(message)
-            self.send(data)
+            self.client.send(data)
 
     def broadcast_received_message(self, received_message):
         # クライエントから受信したメッセージを全クライエントに再送信
         data = PyDatagram()
-        data.addUint8(1)
+        data.addUint8(11)
         data.addString(received_message)
-        self.broadcast(data)
+        self.server.broadcast(data)

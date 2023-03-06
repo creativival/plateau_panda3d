@@ -24,20 +24,20 @@ class Player(Character):
     # orthographic_lens = OrthographicLens()
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
-    def __init__(self, base):
+    def __init__(self, base, is_guest=False):
         self.base = base
         self.client_id = None
         Character.__init__(self)
 
-        self.player_position = Vec3(0, 0, 1)
-        self.player_direction = Vec3(0, 0, 0)
-        self.player_velocity = Vec3(0, 0, 0)
-        self.player_move_speed = 10
+        self.position = Vec3(0, 0, 1)
+        self.direction = Vec3(0, 0, 0)
+        self.velocity = Vec3(0, 0, 0)
+        self.move_speed = 10
         self.is_walking = False
         self.walking_count = 0
         # jump and fly
         self.gravity = 9.8
-        self.player_jump_speed = 10
+        self.jump_speed = 10
         self.fly_height = 0
         self.jump_status = False
         self.double_jump_status = False
@@ -46,8 +46,8 @@ class Player(Character):
         self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
         self.player_base_node.setPos(self.base.area_center)
         self.player_node = self.player_base_node.attachNewNode(PandaNode('player_node'))
-        self.player_node.setPos(self.player_position)
-        self.player_node.setHpr(self.player_direction)
+        self.player_node.setPos(self.position)
+        self.player_node.setHpr(self.direction)
         self.character_node.reparentTo(self.player_node)
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
@@ -87,12 +87,14 @@ class Player(Character):
         self.cameras[2].node().getDisplayRegion(0).setActive(0)
         self.cameras[3].node().getDisplayRegion(0).setActive(0)
 
-        # カメラの切り替え
-        self.base.accept('t', self.toggle_cam)
-
         # move the player
-        self.base.taskMgr.add(self.player_update, 'player_update')
-        self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
+        if not is_guest:
+            # カメラの切り替え
+            self.base.accept('t', self.toggle_cam)
+
+            # move the player
+            self.base.taskMgr.add(self.player_update, 'player_update')
+            self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
 
     def set_player_motion(self, task):
         z_length = 0.8 * self.character_hand_length
@@ -120,8 +122,8 @@ class Player(Character):
         return task.again
 
     def player_draw(self):
-        self.player_node.setPos(self.player_position)
-        self.player_node.setHpr(self.player_direction)
+        self.player_node.setPos(self.position)
+        self.player_node.setHpr(self.direction)
 
     def set_player_velocity(self):
         key_map = self.base.key_map
@@ -131,7 +133,7 @@ class Player(Character):
         if key_map['space'] and not self.double_jump_status:
             self.base.jump_sound.play()
 
-            self.player_velocity.setZ(self.player_jump_speed)
+            self.velocity.setZ(self.jump_speed)
             if not self.jump_status:
                 self.jump_status = True
                 self.fly_height = 0
@@ -161,21 +163,21 @@ class Player(Character):
             elif key_map['d']:
                 add_angle += 0
 
-            self.player_velocity.setX(
-                cos(radians(add_angle + self.player_direction.x)) * self.player_move_speed
+            self.velocity.setX(
+                cos(radians(add_angle + self.direction.x)) * self.move_speed
             )
-            self.player_velocity.setY(
-                sin(radians(add_angle + self.player_direction.x)) * self.player_move_speed
+            self.velocity.setY(
+                sin(radians(add_angle + self.direction.x)) * self.move_speed
             )
-            # print(self.player_velocity)
+            # print(self.velocity)
         else:
             self.is_walking = False
-            if self.player_position.z == 0:
+            if self.position.z == 0:
                 if walk_sound.status() is walk_sound.PLAYING:
                     walk_sound.stop()
                 # 重力加速度を残すため、Z成分は0にしない
-                self.player_velocity.setX(0)
-                self.player_velocity.setY(0)
+                self.velocity.setX(0)
+                self.velocity.setY(0)
 
     def set_player_direction(self):
         if self.base.mouseWatcherNode.hasMouse():
@@ -185,20 +187,20 @@ class Player(Character):
             # print(x, y)
             heading = -x * self.max_heading_angle
             pitch = -y * self.max_pitch_angle
-            self.player_direction = VBase3(heading, pitch, 0)
+            self.direction = VBase3(heading, pitch, 0)
 
     def set_player_position(self):
         dt = globalClock.getDt()
 
-        if self.player_position.z >= 0:
-            self.player_velocity.z -= self.gravity * dt
+        if self.position.z >= 0:
+            self.velocity.z -= self.gravity * dt
         else:
-            self.player_position.setZ(0)
-            self.player_velocity.setZ(0)
+            self.position.setZ(0)
+            self.velocity.setZ(0)
             self.jump_status = False
             self.double_jump_status = False
 
-        self.player_position += self.player_velocity * dt
+        self.position += self.velocity * dt
 
     def player_update(self, task):
         if self.base.active_cam != 0:

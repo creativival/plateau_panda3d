@@ -113,7 +113,7 @@ class Mob:
     #         self.acceleration_to_align = Vec3(0, 0, 0)
     #
     def player_impact(self):
-        vector_to_player = self.base.player.player_position - self.position
+        vector_to_player = self.base.player.position - self.position
         length_to_player = vector_to_player.length()
         # print(length_to_player)
         if length_to_player < self.RADIUS_OF_PLAYER * 3:
