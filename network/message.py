@@ -52,7 +52,7 @@ class Message:
             self.server.broadcast(data)
         else:
             # クライエントがメッセージを送信
-            name = f'client{self.players["base"].client_id}'
+            name = f'client{self.players["myself"]["obj"].client_id}'
             # サーバーにメッセージを送信
             data.addString(name)
             data.addString(message)

@@ -13,7 +13,7 @@ class ClientProtocol(Protocol):
 
         if msg_id == 0:
             client_id = it.getUint8()
-            self.base.players['myself'].client_id = client_id
+            self.base.players['myself']['obj'].client_id = client_id
             message = it.getString()
             # ウインドウにテキスト表示
             self.handle_received_message(message)
@@ -44,17 +44,17 @@ class ClientProtocol(Protocol):
             has_moving_hands = it.getInt8()
             # server_playerとplayerの位置の差を求める
             player_position = Point3(x, y, z)
-            diff_position = player_position - self.base.players['guest'].position
+            diff_position = player_position - self.base.players['guest']['obj'].position
             # print(player_position)
             # print(diff_position)
             if diff_position.length() < 1:
                 # server_playerとplayerを同期するため、server_playerの速度を変更
-                self.base.players['guest'].velocity = Vec3(velocity_x, velocity_y, velocity_z) + diff_position * 0.1
+                self.base.players['guest']['obj'].velocity = Vec3(velocity_x, velocity_y, velocity_z) + diff_position * 0.1
             else:
                 # 位置、速度をダイレクトに合わせる
-                self.base.players['guest'].position = Vec3(x, y, z)
-                self.base.players['guest'].velocity = Vec3(velocity_x, velocity_y, velocity_z)
-            self.base.players['guest'].direction = Vec3(direction_x, direction_y, direction_z)
-            self.base.players['guest'].has_moving_hands = has_moving_hands
+                self.base.players['guest']['obj'].position = Vec3(x, y, z)
+                self.base.players['guest']['obj'].velocity = Vec3(velocity_x, velocity_y, velocity_z)
+            self.base.players['guest']['obj'].direction = Vec3(direction_x, direction_y, direction_z)
+            self.base.players['guest']['obj'].has_moving_hands = has_moving_hands
 
 

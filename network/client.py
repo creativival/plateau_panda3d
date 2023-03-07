@@ -28,8 +28,8 @@ class Client(NetCommon):
             self.writer.send(data, self.connection)
 
     def send_player_state(self, task):
-        if self.base.players['myself'].client_id is not None:
-            print('client_id:', self.base.players['myself'].client_id)
-            sync = self.player_state(self.base.players['myself'].client_id)
+        if self.base.players['myself']['obj'].client_id is not None:
+            # print('client_id:', self.base.players['myself']['obj'].client_id)
+            sync = self.player_state(self.base.players['myself']['obj'].client_id)
             self.send(sync)
         return task.again

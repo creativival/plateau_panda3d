@@ -9,5 +9,5 @@ class Players:
         self.players = {}
 
     def add_player(self, key, is_guest=False):
-        self.players[key] = Player2D(self, is_guest)
+        self.players[key] = {'obj': Player2D(self, is_guest)}
         print(self.players)
