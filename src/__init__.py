@@ -14,6 +14,7 @@ from .wire_frame import WireFrame
 from .solid_model import SolidModel
 from .character import Character
 from .player import Player
+from .player_2d import Player2D
+from .players import Players
 from .mob import Mob
 from .mobs import Mobs
-from .player_2d import Player2D

@@ -1,6 +1,6 @@
 from direct.distributed.PyDatagram import PyDatagram
 from panda3d.core import *
-from src import Player2D
+from src import Player2D, Players
 from . import NetCommon, ServerProtocol
 
 
@@ -35,8 +35,8 @@ class Server(NetCommon):
                 self.base.top_right_text.setText(
                     self.base.top_right_text.getText() + f'\nclient{self.client_id}'
                 )
-                
-                self.base.guest_player = Player2D(self.base, is_guest=True)
+
+                self.base.add_player('guest', is_guest=True)
 
                 sending_message = \
                     f'Server: Welcome, client{self.client_id}! Please send your first message.'
@@ -60,6 +60,7 @@ class Server(NetCommon):
                 self.writer.send(data, connection)
 
     def send_player_state(self, task):
-        sync = self.player_state()
-        self.broadcast(sync)
+        if len(self.connections):
+            sync = self.player_state()
+            self.broadcast(sync)
         return task.again

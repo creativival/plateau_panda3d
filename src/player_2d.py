@@ -5,13 +5,14 @@ from direct.showbase.ShowBaseGlobal import globalClock
 
 class Player2D:
     def __init__(self, base, is_guest=False):
+        print('is_guest:', is_guest)
         self.base = base
         self.is_guest = is_guest
         self.client_id = None
         self.has_moving_hands = False
 
-        self.player = self.base.render.attachNewNode(PandaNode('player'))
-        self.model_node = self.player.attachNewNode(PandaNode('model_node'))
+        self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
+        self.model_node = self.player_base_node.attachNewNode(PandaNode('model_node'))
         self.model_node.setHpr(0, -60, 180)
         self.model = self.base.loader.loadModel('models/smiley')
         self.model.reparentTo(self.model_node)
@@ -20,16 +21,16 @@ class Player2D:
         self.direction = Vec3(0, 0, 0)
         self.move_speed = 10
         self.phi = 0
-        self.player.reparentTo(self.base.render)
-        self.player.setPos(self.position)
+        self.player_base_node.reparentTo(self.base.render)
+        self.player_base_node.setPos(self.position)
         if is_guest:
-            self.player.setColor(0, 0, 1, 0.5)
+            self.player_base_node.setColor(0, 0, 1, 0.5)
 
         # move the player
         self.base.taskMgr.add(self.update, 'update')
 
     def draw(self):
-        self.player.setPos(self.position)
+        self.player_base_node.setPos(self.position)
 
     def set_direction(self):
         if not self.is_guest:
@@ -40,7 +41,7 @@ class Player2D:
                 self.phi = degrees(atan2(y, x)) - 90
                 # print(x, y)
                 # print(self.phi)
-                self.player.setR(-self.phi)
+                self.player_base_node.setR(-self.phi)
                 # heading = -x * self.max_heading_angle
                 # pitch = -y * self.max_pitch_angle
 

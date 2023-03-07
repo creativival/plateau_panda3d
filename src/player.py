@@ -25,6 +25,7 @@ class Player(Character):
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
     def __init__(self, base, is_guest=False):
+        print('is_guest:', is_guest)
         self.base = base
         self.client_id = None
         Character.__init__(self)
