@@ -20,7 +20,7 @@ class Server(NetCommon):
         self.base.top_right_text.setText('server')
 
         self.base.taskMgr.add(self.update_listener, 'update_listener')
-        self.base.taskMgr.add(self.send_player_state, 'send_player_state')
+        self.base.taskMgr.doMethodLater(0.1, self.send_player_state, 'send_player_state')
 
     def update_listener(self, task):
         if self.listener.newConnectionAvailable():

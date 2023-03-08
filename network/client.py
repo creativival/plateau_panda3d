@@ -11,7 +11,7 @@ class Client(NetCommon):
         self.connection = None
         self.protocol = ClientProtocol(base)
 
-        self.base.taskMgr.add(self.send_player_state, 'send_player_state')
+        self.base.taskMgr.doMethodLater(0.1, self.send_player_state, 'send_player_state')
 
     def connect(self, host, port, timeout):
         self.connection = self.manager.openTCPClientConnection(host, port, timeout)

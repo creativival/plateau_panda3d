@@ -20,7 +20,7 @@ class Player2D:
         self.velocity = Vec3(0, 0, 0)
         self.direction = Vec3(0, 0, 0)
         self.move_speed = 10
-        self.phi = 0
+        # self.phi = 0
         self.player_base_node.reparentTo(self.base.render)
         self.player_base_node.setPos(self.position)
         if is_guest:
@@ -31,6 +31,7 @@ class Player2D:
 
     def draw(self):
         self.player_base_node.setPos(self.position)
+        self.player_base_node.setHpr(self.direction)
 
     def set_direction(self):
         if not self.is_guest:
@@ -38,16 +39,17 @@ class Player2D:
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
                 x = mouse_pos.x
                 y = mouse_pos.y
-                self.phi = degrees(atan2(y, x)) - 90
+                phi = degrees(atan2(y, x)) - 90
                 # print(x, y)
                 # print(self.phi)
-                self.player_base_node.setR(-self.phi)
+                self.direction = Vec3(0, 0, -phi)
                 # heading = -x * self.max_heading_angle
                 # pitch = -y * self.max_pitch_angle
 
     def set_velocity(self):
         if not self.is_guest:
             key_map = self.base.key_map
+            phi = -self.direction.z
 
             if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
                 add_angle = 0
@@ -70,9 +72,9 @@ class Player2D:
 
                 self.velocity = \
                     Vec3(
-                        cos(radians(add_angle + self.phi)),
+                        cos(radians(add_angle + phi)),
                         0,
-                        sin(radians(add_angle + self.phi))
+                        sin(radians(add_angle + phi))
                     ) * self.move_speed
             else:
                 self.velocity = Vec3(0, 0, 0)
