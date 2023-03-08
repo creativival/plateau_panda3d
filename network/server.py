@@ -36,7 +36,7 @@ class Server(NetCommon):
                     self.base.top_right_text.getText() + f'\nclient{self.client_id}'
                 )
 
-                self.base.add_player('guest', is_guest=True)
+                self.base.add_player(self.client_id, is_guest=True)
 
                 sending_message = \
                     f'Server: Welcome, client{self.client_id}! Please send your first message.'

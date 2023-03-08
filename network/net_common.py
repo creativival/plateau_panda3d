@@ -28,16 +28,16 @@ class NetCommon:
         sync = PyDatagram()
         sync.addInt8(20)  # sync player
         sync.addInt8(client_id)
-        sync.addFloat32(self.base.players['myself']['obj'].velocity.getX())
-        sync.addFloat32(self.base.players['myself']['obj'].velocity.getY())
-        sync.addFloat32(self.base.players['myself']['obj'].velocity.getZ())
-        sync.addFloat32(self.base.players['myself']['obj'].position.getX())
-        sync.addFloat32(self.base.players['myself']['obj'].position.getY())
-        sync.addFloat32(self.base.players['myself']['obj'].position.getZ())
-        sync.addFloat32(self.base.players['myself']['obj'].direction.getX())
-        sync.addFloat32(self.base.players['myself']['obj'].direction.getY())
-        sync.addFloat32(self.base.players['myself']['obj'].direction.getZ())
-        sync.addInt8(self.base.players['myself']['obj'].has_moving_hands)
+        sync.addFloat32(self.base.players['myself'].velocity.getX())
+        sync.addFloat32(self.base.players['myself'].velocity.getY())
+        sync.addFloat32(self.base.players['myself'].velocity.getZ())
+        sync.addFloat32(self.base.players['myself'].position.getX())
+        sync.addFloat32(self.base.players['myself'].position.getY())
+        sync.addFloat32(self.base.players['myself'].position.getZ())
+        sync.addFloat32(self.base.players['myself'].direction.getX())
+        sync.addFloat32(self.base.players['myself'].direction.getY())
+        sync.addFloat32(self.base.players['myself'].direction.getZ())
+        sync.addInt8(self.base.players['myself'].has_moving_hands)
         return sync
 
     # def sendMobState(self, task):

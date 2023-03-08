@@ -21,15 +21,16 @@ class Client(NetCommon):
             # print(message)
             self.base.display_messages(message)
 
-            self.base.add_player('guest', is_guest=True)
+            self.base.add_player(0, is_guest=True)
 
     def send(self, data):
         if self.connection:
             self.writer.send(data, self.connection)
 
     def send_player_state(self, task):
-        if self.base.players['myself']['obj'].client_id is not None:
-            # print('client_id:', self.base.players['myself']['obj'].client_id)
-            sync = self.player_state(self.base.players['myself']['obj'].client_id)
+        # クライエントがいるとき
+        if self.base.players['myself'].client_id > 0:
+            # print('client_id:', self.base.players['myself'].client_id)
+            sync = self.player_state(self.base.players['myself'].client_id)
             self.send(sync)
         return task.again

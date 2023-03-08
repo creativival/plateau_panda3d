@@ -27,7 +27,7 @@ class Player(Character):
     def __init__(self, base, is_guest=False):
         print('is_guest:', is_guest)
         self.base = base
-        self.client_id = None
+        self.client_id = 0
         Character.__init__(self)
 
         self.position = Vec3(0, 0, 1)

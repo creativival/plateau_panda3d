@@ -8,7 +8,7 @@ class Player2D:
         print('is_guest:', is_guest)
         self.base = base
         self.is_guest = is_guest
-        self.client_id = None
+        self.client_id = 0
         self.has_moving_hands = False
 
         self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
