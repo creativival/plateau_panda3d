@@ -3,10 +3,11 @@ from src import (
     Database, Sound, DrawText, Window, Building, KeyMap, Camera, Axis, CelestialSphere, Ground, WireFrame, SolidModel,
     Players, Mobs
 )
+from network import Message, Connect
 import constants
 
 
-class OpenWorld(ShowBase, Database, DrawText, Window, KeyMap, Camera, Players, Mobs):
+class OpenWorld(ShowBase, Database, DrawText, Window, KeyMap, Camera, Players, Mobs, Message, Connect):
     def __init__(self, window_title, settings, has_celestial, has_wire_frame, has_solid_model,
                  has_player, has_mobs, character_color):
         self.settings = settings
@@ -42,6 +43,11 @@ class OpenWorld(ShowBase, Database, DrawText, Window, KeyMap, Camera, Players, M
             Players.__init__(self)
         if has_mobs:
             Mobs.__init__(self, constants.mob_dic_list)
+
+        # マルチプレイ
+        Message.__init__(self)
+        # F10 サーバー開始 / F11 クライエントとして接続
+        Connect.__init__(self)
 
 
 if __name__ == '__main__':
