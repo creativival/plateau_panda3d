@@ -1,4 +1,3 @@
-# モブ
 from direct.showbase.ShowBaseGlobal import globalClock
 from panda3d.core import PandaNode, Point3, Vec3, VBase3
 from . import Mob

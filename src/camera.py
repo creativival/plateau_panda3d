@@ -6,7 +6,6 @@ from panda3d.core import *
 
 
 class Camera:
-    # 初期化メソッド
     def __init__(self):
         # マウス操作を禁止
         self.disableMouse()
@@ -18,6 +17,10 @@ class Camera:
         self.camera_base_node.setPos(self.area_center)
         self.camera_base_node.setH(-90)
         self.camera_move_node = self.camera_base_node.attachNewNode(PandaNode('camera_move_node'))
+        axis = self.loader.loadModel('models/zup-axis')
+        axis.reparentTo(self.camera_move_node)
+        axis.setH(90)
+
         self.camera_node = self.camera_move_node.attachNewNode(PandaNode('camera_move_node'))
         self.camera.reparentTo(self.camera_node)
         self.camera.setHpr(90, 0, 0)
@@ -42,43 +45,8 @@ class Camera:
         self.accept('wheel_up', self.wheel_up)
         self.accept('wheel_down', self.wheel_down)
 
-        # key_map
-        self.key_map = {
-            'w': False,
-            'a': False,
-            's': False,
-            'd': False,
-            'space': False,
-            'mouse1': False,
-            'mouse2': False,
-            'mouse3': False,
-        }
-
-        self.accept('w', self.update_key_map, ['w', True])
-        self.accept('w-up', self.update_key_map, ['w', False])
-        self.accept('a', self.update_key_map, ['a', True])
-        self.accept('a-up', self.update_key_map, ['a', False])
-        self.accept('s', self.update_key_map, ['s', True])
-        self.accept('s-up', self.update_key_map, ['s', False])
-        self.accept('d', self.update_key_map, ['d', True])
-        self.accept('d-up', self.update_key_map, ['d', False])
-        self.accept('space', self.update_key_map, ['space', True])
-        self.accept('space-up', self.update_key_map, ['space', False])
-        self.accept('mouse1', self.update_key_map, ['mouse1', True])
-        self.accept('mouse1-up', self.update_key_map, ['mouse1', False])
-        self.accept('mouse2', self.update_key_map, ['mouse2', True])
-        self.accept('mouse2-up', self.update_key_map, ['mouse2', False])
-        self.accept('mouse3', self.update_key_map, ['mouse3', True])
-        self.accept('mouse3-up', self.update_key_map, ['mouse3', False])
-
-        # カメラの切り替え
-        self.accept('t', self.toggle_cam)
-
         # move the camera
         self.taskMgr.add(self.update, 'update')
-
-    def update_key_map(self, key_name, key_state):
-        self.key_map[key_name] = key_state
 
     def draw(self):
         self.camera_move_node.setPos(*self.camera_position, 0)
@@ -126,7 +94,7 @@ class Camera:
 
     def set_camera_pos(self):
         r = self.camera_radius
-        print('camera:', r, self.camera_theta, self.camera_phi)
+        # print('camera:', r, self.camera_theta, self.camera_phi)
         self.camera.setPos(r, 0, 0)
         self.camera_node.setHpr(self.camera_phi, 0, self.camera_theta)
 

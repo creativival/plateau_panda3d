@@ -37,30 +37,47 @@ root/
  │     ├ egg_surface.egg  # キャラクター
  │     ├ sphere_uv_reverse.egg  # 天球（テクスチャー反転）
  │
+ ├ music/                 音源
+ ├ network/                     マルチプレイ
+ │     ├ __init__.py  # 初期化モジュール
+ │     ├ client.py  # ネットワーク（クライエント）
+ │     ├ client_protocol.py  # プロトコル（クライエント）
+ │     ├ connect.py  # サーバー/クライエント接続
+ │     ├ message.py  # メッセージ送受信
+ │     ├ net_common.py  # ネットワーク
+ │     ├ protocol.py  # プロトコル
+ │     ├ server.py  # ネットワーク（サーバー）
+ │     ├ server_protocol.py  # プロトコル（サーバー）
+ │     ├
+ │
  ├ output/                 アウトプット（sqlite3データベースファイル）
  ├ tmp/                    一時ファイル
  ├ src/                     パッケージ
  │     ├ __init__.py  # 初期化モジュール
  │     ├ axis.py  # 座標軸
+ │     ├ building.py  # ビルディング
  │     ├ camera.py  # カメラ
  │     ├ celestial_sphere.py  # 天球
  │     ├ database.py  # データベース（sqlite3）
  │     ├ draw_text.py  # テキスト表示
- │     ├ geometry.py  # ジオメトリ
+ │     ├ geometry_util.py  # ジオメトリ
  │     ├ ground.py  # グラウンド
  │     ├ mod.py  # モブ
  │     ├ mobs.py  # モブを管理
- │     ├ pypro_util.py  # 座標変換
  │     ├ player.py  # プレイヤー
- │     ├ sound.py  # サウンド
+ │     ├ players.py  # プレイヤー管理
+ │     ├ pypro_util.py  # 座標変換
  │     ├ solid_model.py  # 建築物の面を作成
+ │     ├ sound.py  # サウンド
  │     ├ vector.py  # ベクトル変換
  │     ├ window.py  # ウインドウ
  │     ├ wire_frame.py  # 建築物の線を作成
  │     ├
  │
+ ├ texture/                     テクスチャー
  ├ Config.prc  # Panda3Dの設定（FPSを表示）
  ├ constants.js  # 定数
+ ├ dev_main.js  # 開発用の起動ファイル（main.pyをコピーして使用）
  ├ main.js  # 起動ファイル
  ├ README.md  # リードミー
 ```
@@ -161,9 +178,9 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td>1</td><td>6669</td><td>129度30分0秒0000</td><td>33度0分0秒0000</td><td>長崎県すべてと鹿児島県の一部</td></tr>
   <tr><td>2</td><td>6670</td><td>131度 0分0秒0000</td><td>33度0分0秒0000</td><td>福岡県　佐賀県　熊本県　大分県　宮崎県　鹿児島県の一部</td></tr>
   <tr><td>3</td><td>6671</td><td>132度10分0秒0000</td><td>36度0分0秒0000</td><td>山口県　島根県　広島県</td></tr>
-  <tr><td>...</td></tr>
+  <tr><td colspan="5">...</td></tr>
   <tr><td>9</td><td>6677</td><td>139度50分0秒0000</td><td>36度0分0秒0000</td><td>東京都（島しょ部を除く）福島県　栃木県　茨城県　埼玉県 千葉県　群馬県　神奈川県</td></tr>
-  <tr><td>...</td></tr>
+  <tr><td colspan="5">...</td></tr>
 </tbody></table>
 
 PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
@@ -235,7 +252,7 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
 ## 天球
 
 巨大なドーム（天球）の内面に画像を貼り付けて、空を表現できます。  
-画像サイズは1024x1024。上半分に空の画像、下はrgb(0,1,0)の単色。空の画像は鏡面対象にすると継ぎ目が目立たない。  
+画像サイズは1024x1024。上半分に空の画像、下はrgb(0,1,0)の単色。空の画像は左右の鏡面対象にすると継ぎ目が目立たない。  
 
 ```text
         # main.py
@@ -262,6 +279,13 @@ main.pyのインスタンス変数sky_textureを入れ替えることで、様�
 
 ## 操作方法
 
+基本操作
+
+```text
+Escape: ゲームをポーズ
+Backspace: ゲームを終了
+```
+
 遠景カメラビュー
 
 ```text
@@ -273,7 +297,7 @@ WASDで平行移動
 プレイヤービュー
 
 ```text
-Tでカメラの切り替え
+F5でカメラの切り替え
 WASDで平行移動
 マウスで回転
 スペースでジャンプ
@@ -281,7 +305,7 @@ WASDで平行移動
 
 ## キャラクター
 
-数字キーで表情を変えて、エモーションを表現できます。  
+数字キー（1 - 9）で表情を変えて、エモーションを表現できます。  
 色は、インスタンス化の引数character_colorにより設定できます。  
 移動時に耳が動くモーションを追加しました。  
 
@@ -303,6 +327,23 @@ FPSは画面右上に表示されているので、その数字を見て、パ�
 ```
 
 main.pyの設定項目を編集して、パソコンの描画範囲を調整できます。
+
+## マルチプレイヤー（Beta）
+
+マルチプレイが可能です（Betaバージョン）。
+設定は constants.pyで行います。  
+同じパソコン　IP_ADDRESS = 'localhost'  
+同じLAN内　IP_ADDRESS= '192.169.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image10.png)
+
+```text
+F10でサーバーを開く
+F11でクライエントとして接続
+Hで「Hello!」メッセージを送信
+TABでチャットフィルドを開く/閉じる/エンターで送信
+プレイヤーの位置、向き、表情は同期される
+```
 
 ## 開発上の注意
 
