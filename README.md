@@ -4,6 +4,7 @@ PythonのライブラリPanda3Dを使って、日本全国の3D都市モデル�
 
 https://user-images.githubusercontent.com/33368327/221376187-bf98d0f3-9b3e-4954-914f-3766a53690f2.mp4
 
+** 動画は開発中のものです。操作方法はバージョンにより、一部違っている場合があります。
 
 ## 開発環境
 
@@ -152,7 +153,6 @@ if __name__ == '__main__':
     }
 
     app = OpenWorld(
-        title='Map only',  # タイトル
         window_title='PLATEAU World',  # ウインドウタイトル
         settings=plateau_settings,  # PLATEAUデータ設定
         has_celestial=False,  # 天球を表示
@@ -169,7 +169,14 @@ main.py（起動ファイル）の設定を変更します。
 
 plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読み込む設定を行います。  
 メッシュコードを「bldg_mesh1」「bldg_mesh2」「bldg_mesh3」に分割して、記載します「bldg_mesh3」は、リスト形式になっており、広い範囲を選択するときは、複数の番号を入れることが可能です。  
+
+### 座標参照系
+
 座標参照系「bldg_crs_from」「road_crs_from」は、ファイル名の最後に記載してある数字を入力します。（6697、6697_2などは立体、6688は平面データ）  
+
+### 平面座標系
+
+平面座標系を図と表を使って説明します。
 
 ![平面直角座標系](https://www.mlit.go.jp/plateau/uploads/2022/11/zu03-25.png)
 
@@ -183,10 +190,12 @@ plateau_settingsに、先ほどダウンロードしたCityGMLファイルを読
   <tr><td colspan="5">...</td></tr>
 </tbody></table>
 
-PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/）
+PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03-4/)
 
 平面直角座標系は、誤差を少なくするために全国を9つのエリアに分割されています。  
 「crs_to」は、さいたま市が含まれる「9系（6677）」を入力します。  
+
+### 表示するオブジェクトの制限
 
 ```text
         has_celestial=False,  # 天球を表示
@@ -212,6 +221,8 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
 
 ## 設定例
 
+### 札幌大通郵便局
+
 ```text
     # 札幌大通郵便局
     plateau_settings = {
@@ -224,11 +235,13 @@ FPSが低いときはパソコンの負荷を下げるため、has_celestial、h
         # 日本測地系2011 における経緯度座標系
         'road_crs_from': '6668',
         # 平面直角座標系
-        'crs_to': '6677',  # 関東圏（9系）
+        'crs_to': '6679',  # 北海道の一部（11系）
     }
 ```
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image4.png)
+
+### 渋谷駅
 
 ```text
     # 渋谷駅
@@ -330,10 +343,14 @@ main.pyの設定項目を編集して、パソコンの描画範囲を調整で�
 
 ## マルチプレイヤー（Beta）
 
-マルチプレイが可能です（Betaバージョン）。
+マルチプレイが可能です（Betaバージョン）。  
+サーバーとクライエント（複数）が、同じワールドで共同作業を行えます。  
+
 設定は constants.pyで行います。  
 同じパソコン　IP_ADDRESS = 'localhost'  
 同じLAN内　IP_ADDRESS= '192.169.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
+LANの外　IP ADDRESS = 'https://xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
+** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image10.png)
 
