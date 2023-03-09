@@ -40,6 +40,7 @@ class NetCommon:
         sync.addFloat32(self.base.players['myself'].hand_length)
         sync.addFloat32(self.base.players['myself'].left_angle)
         sync.addFloat32(self.base.players['myself'].right_angle)
+        sync.addInt8(self.base.players['myself'].character_face_num)
         return sync
 
     # def sendMobState(self, task):

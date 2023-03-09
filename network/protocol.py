@@ -41,6 +41,13 @@ class Protocol:
         self.base.players[client_id].hand_length = it.getFloat32()
         self.base.players[client_id].left_angle = it.getFloat32()
         self.base.players[client_id].right_angle = it.getFloat32()
+        character_face_num = it.getInt8()
+
+        if character_face_num != self.base.players[client_id].character_face_num:
+            self.base.players[client_id].character_face_num = character_face_num
+            self.base.players[client_id].cat_tex = self.base.loader.loadTexture(
+                f'models/maps/cat{character_face_num}.png')
+            self.base.players[client_id].character_model.setTexture(self.base.players[client_id].cat_tex, 1)
 
     def broadcast_client_state(self, data):
         self.base.server.broadcast(data)
@@ -55,4 +62,3 @@ class Protocol:
         reply.addUint8(msg_id)
         reply.addString(data)
         return reply
-

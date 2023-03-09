@@ -21,6 +21,7 @@ class Player2D:
         self.hand_length = 0
         self.left_angle = 0
         self.right_angle = 0
+        self.guest_face_num = 1
         self.move_speed = 10
         # self.phi = 0
         self.player_base_node.reparentTo(self.base.render)

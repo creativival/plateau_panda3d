@@ -38,6 +38,7 @@ class Player(Character):
         self.hand_length = 0
         self.left_angle = 0
         self.right_angle = 0
+        self.guest_face_num = 1
         self.move_speed = 10
         self.is_walking = False
         self.walking_count = 0
@@ -100,6 +101,14 @@ class Player(Character):
         # move the player
         self.base.taskMgr.add(self.player_update, 'player_update')
         self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
+        # self.base.taskMgr.add(self.change_guest_face, 'change_guest_face')
+
+    def change_guest_face(self, task):
+        if self.is_changed_guest_face_num and self.is_guest:
+            self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
+            self.character_model.setTexture(self.cat_tex, 1)
+
+        return task.cont
 
     def set_player_motion(self, task):
         if not self.is_guest:

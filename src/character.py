@@ -52,8 +52,9 @@ class Character:
         self.character_right_hand_model.setTransparency(TransparencyAttrib.MBinary)
 
         # 表情の変更
-        for i in range(1, 10):
-            self.base.accept(str(i), self.change_face, [i])
+        if not self.is_guest:
+            for i in range(1, 10):
+                self.base.accept(str(i), self.change_face, [i])
 
     def change_face(self, i):
         print(i)
