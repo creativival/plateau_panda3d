@@ -94,7 +94,7 @@ class Camera:
 
     def set_camera_pos(self):
         r = self.camera_radius
-        print('camera:', r, self.camera_theta, self.camera_phi)
+        # print('camera:', r, self.camera_theta, self.camera_phi)
         self.camera.setPos(r, 0, 0)
         self.camera_node.setHpr(self.camera_phi, 0, self.camera_theta)
 

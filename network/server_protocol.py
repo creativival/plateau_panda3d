@@ -22,9 +22,9 @@ class ServerProtocol(Protocol):
             self.base.broadcast_received_message(message)
         elif msg_id == 20:  # クライエントの位置と向きを同期
             client_id = it.getUint8()
-            self.base.sync_player_state(it, client_id)
+            self.sync_player_state(it, client_id)
             
             # 別のクライエントに転送
-            self.base.broadcast_client_state(data)
+            self.broadcast_client_state(data)
             
 

@@ -29,12 +29,15 @@ class Player(Character):
         self.base = base
         self.is_guest = is_guest
         self.client_id = 0
-        self.has_moving_hands = False
+        # self.has_moving_hands = False
         Character.__init__(self)
 
         self.position = Vec3(0, 0, 1)
         self.direction = Vec3(0, 0, 0)
         self.velocity = Vec3(0, 0, 0)
+        self.hand_length = 0
+        self.left_angle = 0
+        self.right_angle = 0
         self.move_speed = 10
         self.is_walking = False
         self.walking_count = 0
@@ -99,28 +102,31 @@ class Player(Character):
         self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
 
     def set_player_motion(self, task):
-        z_length = 0.8 * self.character_hand_length
-        self.character_left_hand_model.setScale(0.5, 0.3, z_length)
-        self.character_right_hand_model.setScale(0.5, 0.3, z_length)
+        if not self.is_guest:
+            self.hand_length = 0.8 * self.character_hand_length
 
-        if self.character_face_num in [2, 8, 9]:
-            base_left_angle = 45
-            base_right_angle = 45
-        else:
-            base_left_angle = 0
-            base_right_angle = 0
-
-        if self.is_walking:
-            self.walking_count += 1
-            if self.walking_count % 2:
-                self.character_right_hand_model_node.setP(base_left_angle - 20)
-                self.character_left_hand_model_node.setP(base_right_angle + 20)
+            if self.character_face_num in [2, 8, 9]:
+                self.left_angle = 45
+                self.right_angle = 45
             else:
-                self.character_right_hand_model_node.setP(base_left_angle + 20)
-                self.character_left_hand_model_node.setP(base_right_angle - 20)
+                self.left_angle = 0
+                self.right_angle = 0
+
+            if self.is_walking:
+                self.walking_count += 1
+                if self.walking_count % 2:
+                    self.left_angle -= 20
+                    self.right_angle += 20
+                else:
+                    self.left_angle += 20
+                    self.right_angle -= 20
         else:
-            self.character_right_hand_model_node.setP(base_left_angle)
-            self.character_left_hand_model_node.setP(base_right_angle)
+            print('guest hand:', self.hand_length, self.left_angle, self.right_angle)
+
+        self.character_left_hand_model.setSz(self.hand_length)
+        self.character_right_hand_model.setSz(self.hand_length)
+        self.character_right_hand_model_node.setP(self.left_angle)
+        self.character_left_hand_model_node.setP(self.right_angle)
         return task.again
 
     def player_draw(self):

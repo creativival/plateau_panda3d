@@ -9,7 +9,6 @@ class Player2D:
         self.base = base
         self.is_guest = is_guest
         self.client_id = 0
-        self.has_moving_hands = False
 
         self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
         self.model_node = self.player_base_node.attachNewNode(PandaNode('model_node'))
@@ -19,6 +18,9 @@ class Player2D:
         self.position = Point3(0, 80, 0)
         self.velocity = Vec3(0, 0, 0)
         self.direction = Vec3(0, 0, 0)
+        self.hand_length = 0
+        self.left_angle = 0
+        self.right_angle = 0
         self.move_speed = 10
         # self.phi = 0
         self.player_base_node.reparentTo(self.base.render)

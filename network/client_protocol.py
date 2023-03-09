@@ -40,6 +40,6 @@ class ClientProtocol(Protocol):
                     # 自分以外のクライエントいるとき作成
                     self.base.add_player(client_id, is_guest=True)
 
-                self.base.sync_player_state(it, client_id)
+                self.sync_player_state(it, client_id)
 
 

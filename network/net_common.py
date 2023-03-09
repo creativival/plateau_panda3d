@@ -37,7 +37,9 @@ class NetCommon:
         sync.addFloat32(self.base.players['myself'].direction.getX())
         sync.addFloat32(self.base.players['myself'].direction.getY())
         sync.addFloat32(self.base.players['myself'].direction.getZ())
-        sync.addInt8(self.base.players['myself'].has_moving_hands)
+        sync.addFloat32(self.base.players['myself'].hand_length)
+        sync.addFloat32(self.base.players['myself'].left_angle)
+        sync.addFloat32(self.base.players['myself'].right_angle)
         return sync
 
     # def sendMobState(self, task):
