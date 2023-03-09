@@ -27,13 +27,13 @@ class Player2D:
             self.player_base_node.setColor(0, 0, 1, 0.5)
 
         # move the player
-        self.base.taskMgr.add(self.update, 'update')
+        self.base.taskMgr.add(self.player_update, 'player_update')
 
-    def draw(self):
+    def player_draw(self):
         self.player_base_node.setPos(self.position)
         self.player_base_node.setHpr(self.direction)
 
-    def set_direction(self):
+    def set_player_direction(self):
         if not self.is_guest:
             if self.base.mouseWatcherNode.hasMouse():
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
@@ -46,7 +46,7 @@ class Player2D:
                 # heading = -x * self.max_heading_angle
                 # pitch = -y * self.max_pitch_angle
 
-    def set_velocity(self):
+    def set_player_velocity(self):
         if not self.is_guest:
             key_map = self.base.key_map
             phi = -self.direction.z
@@ -79,13 +79,13 @@ class Player2D:
             else:
                 self.velocity = Vec3(0, 0, 0)
 
-    def set_position(self):
+    def set_player_position(self):
         dt = globalClock.getDt()
         self.position = self.position + self.velocity * dt
 
-    def update(self, task):
-        self.set_direction()
-        self.set_velocity()
-        self.set_position()
-        self.draw()
+    def player_update(self, task):
+        self.set_player_direction()
+        self.set_player_velocity()
+        self.set_player_position()
+        self.player_draw()
         return task.cont

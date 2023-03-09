@@ -1,6 +1,5 @@
 from direct.distributed.PyDatagram import PyDatagram
 from panda3d.core import *
-from src import Player2D, Players
 from . import NetCommon, ServerProtocol
 
 
@@ -39,7 +38,8 @@ class Server(NetCommon):
                 self.base.add_player(self.client_id, is_guest=True)
 
                 sending_message = \
-                    f'Server: Welcome, client{self.client_id}! Please send your first message.'
+                    f'Server: Welcome Client{self.client_id}! ' \
+                    f'Send first message to press "h" key.'
                 data = PyDatagram()
                 data.addUint8(0)   # クライエント番号を伝達
                 data.addUint8(self.client_id)

@@ -30,7 +30,7 @@ class ClientProtocol(Protocol):
             received_message = it.getString()
             # ウインドウにテキスト表示
             self.handle_received_message(received_message)
-        elif msg_id == 20:  # sync player
+        elif msg_id == 20:  # サーバーと自分以外もクライエントを同期
             client_id = it.getUint8()
 
             if client_id != self.base.players['myself'].client_id:

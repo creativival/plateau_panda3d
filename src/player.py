@@ -27,6 +27,7 @@ class Player(Character):
     def __init__(self, base, is_guest=False):
         print('is_guest:', is_guest)
         self.base = base
+        self.is_guest = is_guest
         self.client_id = 0
         Character.__init__(self)
 
@@ -53,49 +54,48 @@ class Player(Character):
         self.character_node.setPos(0, 0, 1)
         self.character_node.setHpr(180, 0, 0)
 
-        # add camera
-        self.has_player_camera = True
-        # tps cam
-        self.tps_cam = self.base.makeCamera(self.base.win)
-        self.tps_cam.node().setLens(self.perspective_lens)
-        self.tps_cam.reparentTo(self.player_node)
-        # self.tps_cam.getLens().setFov(tps_cam_fov)
-        self.tps_cam.setPos(
-            Vec3(0, -self.tps_cam_back_radius, self.tps_cam_height)
-        )
-        self.tps_cam.lookAt(
-            Vec3(0, self.tps_cam_forward_radius, 0)
-        )
-        # fps cam
-        self.fps_cam_height = self.player_head_height
-        self.fps_cam = self.base.makeCamera(self.base.win)
-        self.fps_cam.node().setLens(self.perspective_lens)
-        self.fps_cam.reparentTo(self.character_node)
-        self.fps_cam.setPos(
-            Vec3(0, -self.player_head_height / 2, self.player_head_height / 2)
-        )
-        self.fps_cam.setH(180)
-        # mirror cam
-        self.mirror_cam = self.base.makeCamera(self.base.win)
-        self.mirror_cam.node().setLens(self.perspective_lens)
-        self.mirror_cam.reparentTo(self.character_node)
-        self.mirror_cam.setPos(
-            Vec3(0, -self.mirror_cam_radius, 0)
-        )
-        # camera change settings
-        self.cameras = [self.base.cam, self.tps_cam, self.fps_cam, self.mirror_cam]
-        self.cameras[1].node().getDisplayRegion(0).setActive(0)
-        self.cameras[2].node().getDisplayRegion(0).setActive(0)
-        self.cameras[3].node().getDisplayRegion(0).setActive(0)
+        if not is_guest:
+            # add camera
+            self.has_player_camera = True
+            # tps cam
+            self.tps_cam = self.base.makeCamera(self.base.win)
+            self.tps_cam.node().setLens(self.perspective_lens)
+            self.tps_cam.reparentTo(self.player_node)
+            # self.tps_cam.getLens().setFov(tps_cam_fov)
+            self.tps_cam.setPos(
+                Vec3(0, -self.tps_cam_back_radius, self.tps_cam_height)
+            )
+            self.tps_cam.lookAt(
+                Vec3(0, self.tps_cam_forward_radius, 0)
+            )
+            # fps cam
+            self.fps_cam_height = self.player_head_height
+            self.fps_cam = self.base.makeCamera(self.base.win)
+            self.fps_cam.node().setLens(self.perspective_lens)
+            self.fps_cam.reparentTo(self.character_node)
+            self.fps_cam.setPos(
+                Vec3(0, -self.player_head_height / 2, self.player_head_height / 2)
+            )
+            self.fps_cam.setH(180)
+            # mirror cam
+            self.mirror_cam = self.base.makeCamera(self.base.win)
+            self.mirror_cam.node().setLens(self.perspective_lens)
+            self.mirror_cam.reparentTo(self.character_node)
+            self.mirror_cam.setPos(
+                Vec3(0, -self.mirror_cam_radius, 0)
+            )
+            # camera change settings
+            self.cameras = [self.base.cam, self.tps_cam, self.fps_cam, self.mirror_cam]
+            self.cameras[1].node().getDisplayRegion(0).setActive(0)
+            self.cameras[2].node().getDisplayRegion(0).setActive(0)
+            self.cameras[3].node().getDisplayRegion(0).setActive(0)
+
+            # カメラの切り替え
+            self.base.accept('f5', self.toggle_cam)
 
         # move the player
-        if not is_guest:
-            # カメラの切り替え
-            self.base.accept('t', self.toggle_cam)
-
-            # move the player
-            self.base.taskMgr.add(self.player_update, 'player_update')
-            self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
+        self.base.taskMgr.add(self.player_update, 'player_update')
+        self.base.taskMgr.doMethodLater(0.5, self.set_player_motion, 'set_player_motion')
 
     def set_player_motion(self, task):
         z_length = 0.8 * self.character_hand_length
@@ -127,81 +127,84 @@ class Player(Character):
         self.player_node.setHpr(self.direction)
 
     def set_player_velocity(self):
-        key_map = self.base.key_map
-        walk_sound = self.base.walk_sound
+        if not self.is_guest:
+            key_map = self.base.key_map
+            walk_sound = self.base.walk_sound
 
-        # jump
-        if key_map['space'] and not self.double_jump_status:
-            self.base.jump_sound.play()
+            # jump
+            if key_map['space'] and not self.double_jump_status:
+                self.base.jump_sound.play()
 
-            self.velocity.setZ(self.jump_speed)
-            if not self.jump_status:
-                self.jump_status = True
-                self.fly_height = 0
+                self.velocity.setZ(self.jump_speed)
+                if not self.jump_status:
+                    self.jump_status = True
+                    self.fly_height = 0
+                else:
+                    self.double_jump_status = True
+
+            if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
+                self.is_walking = True
+                if walk_sound.status() is not walk_sound.PLAYING:
+                    walk_sound.play()
+                # move
+                add_angle = 0
+                if key_map['w'] and key_map['a']:
+                    add_angle += 135
+                elif key_map['a'] and key_map['s']:
+                    add_angle += 225
+                elif key_map['s'] and key_map['d']:
+                    add_angle += 315
+                elif key_map['d'] and key_map['w']:
+                    add_angle += 45
+                elif key_map['w']:
+                    add_angle += 90
+                elif key_map['a']:
+                    add_angle += 180
+                elif key_map['s']:
+                    add_angle += 270
+                elif key_map['d']:
+                    add_angle += 0
+
+                self.velocity.setX(
+                    cos(radians(add_angle + self.direction.x)) * self.move_speed
+                )
+                self.velocity.setY(
+                    sin(radians(add_angle + self.direction.x)) * self.move_speed
+                )
+                # print(self.velocity)
             else:
-                self.double_jump_status = True
-
-        if key_map['w'] or key_map['a'] or key_map['s'] or key_map['d']:
-            self.is_walking = True
-            if walk_sound.status() is not walk_sound.PLAYING:
-                walk_sound.play()
-            # move
-            add_angle = 0
-            if key_map['w'] and key_map['a']:
-                add_angle += 135
-            elif key_map['a'] and key_map['s']:
-                add_angle += 225
-            elif key_map['s'] and key_map['d']:
-                add_angle += 315
-            elif key_map['d'] and key_map['w']:
-                add_angle += 45
-            elif key_map['w']:
-                add_angle += 90
-            elif key_map['a']:
-                add_angle += 180
-            elif key_map['s']:
-                add_angle += 270
-            elif key_map['d']:
-                add_angle += 0
-
-            self.velocity.setX(
-                cos(radians(add_angle + self.direction.x)) * self.move_speed
-            )
-            self.velocity.setY(
-                sin(radians(add_angle + self.direction.x)) * self.move_speed
-            )
-            # print(self.velocity)
-        else:
-            self.is_walking = False
-            if self.position.z == 0:
-                if walk_sound.status() is walk_sound.PLAYING:
-                    walk_sound.stop()
-                # 重力加速度を残すため、Z成分は0にしない
-                self.velocity.setX(0)
-                self.velocity.setY(0)
+                self.is_walking = False
+                if self.position.z == 0:
+                    if walk_sound.status() is walk_sound.PLAYING:
+                        walk_sound.stop()
+                    # 重力加速度を残すため、Z成分は0にしない
+                    self.velocity.setX(0)
+                    self.velocity.setY(0)
 
     def set_player_direction(self):
-        if self.base.mouseWatcherNode.hasMouse():
-            mouse_pos = self.base.mouseWatcherNode.getMouse()
-            x = mouse_pos.x
-            y = mouse_pos.y
-            # print(x, y)
-            heading = -x * self.max_heading_angle
-            pitch = -y * self.max_pitch_angle
-            self.direction = VBase3(heading, pitch, 0)
+        if not self.is_guest:
+            if self.base.mouseWatcherNode.hasMouse():
+                mouse_pos = self.base.mouseWatcherNode.getMouse()
+                x = mouse_pos.x
+                y = mouse_pos.y
+                # print(x, y)
+                heading = -x * self.max_heading_angle
+                pitch = -y * self.max_pitch_angle
+                self.direction = VBase3(heading, pitch, 0)
 
     def set_player_position(self):
-        dt = globalClock.getDt()
+        if not self.is_guest:
+            dt = globalClock.getDt()
 
-        if self.position.z >= 0:
-            self.velocity.z -= self.gravity * dt
-        else:
-            self.position.setZ(0)
-            self.velocity.setZ(0)
-            self.jump_status = False
-            self.double_jump_status = False
+            if self.position.z >= 0:
+                self.velocity.z -= self.gravity * dt
+            else:
+                self.position.setZ(0)
+                self.velocity.setZ(0)
+                self.jump_status = False
+                self.double_jump_status = False
 
-        self.position += self.velocity * dt
+            self.position += self.velocity * dt
 
     def player_update(self, task):
         if self.base.active_cam != 0:
@@ -212,6 +215,7 @@ class Player(Character):
         return task.cont
 
     def toggle_cam(self):
+        print('toggle_cam')
         if self.has_player_camera:
             self.cameras[self.base.active_cam].node().getDisplayRegion(0).setActive(0)
             self.base.active_cam = (self.base.active_cam + 1) % len(self.cameras)

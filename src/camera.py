@@ -17,6 +17,10 @@ class Camera:
         self.camera_base_node.setPos(self.area_center)
         self.camera_base_node.setH(-90)
         self.camera_move_node = self.camera_base_node.attachNewNode(PandaNode('camera_move_node'))
+        axis = self.loader.loadModel('models/zup-axis')
+        axis.reparentTo(self.camera_move_node)
+        axis.setH(90)
+
         self.camera_node = self.camera_move_node.attachNewNode(PandaNode('camera_move_node'))
         self.camera.reparentTo(self.camera_node)
         self.camera.setHpr(90, 0, 0)

@@ -20,7 +20,7 @@ class ServerProtocol(Protocol):
             self.handle_received_message(message)
             # クライエント全員に転送
             self.base.broadcast_received_message(message)
-        elif msg_id == 20:  # sync client player
+        elif msg_id == 20:  # クライエントの位置と向きを同期
             client_id = it.getUint8()
             self.base.sync_player_state(it, client_id)
             

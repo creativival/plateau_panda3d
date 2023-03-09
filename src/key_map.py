@@ -37,5 +37,6 @@ class KeyMap:
         self.accept('mouse3-up', self.update_key_map, ['mouse3', False])
 
     def update_key_map(self, key_name, key_state):
-        # print(key_name, key_state)
-        self.key_map[key_name] = key_state
+        if not self.is_open_chat_field:
+            # print(key_name, key_state)
+            self.key_map[key_name] = key_state

@@ -1,5 +1,3 @@
-from direct.distributed.PyDatagram import PyDatagram
-from src import Player2D, Players
 from . import NetCommon, ClientProtocol
 
 
