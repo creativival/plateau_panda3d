@@ -6,13 +6,11 @@ from direct.gui.DirectGui import *
 
 class Message:
     def __init__(self):
-        ConfigVariableBool("ime-aware").setValue(True)
+        # ConfigVariableBool("ime-aware").setValue(True)
         input_texture = self.loader.loadTexture('texture/button_press.png')
         self.messages = []
         self.timers = []
-        self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
-        self.top_right_text = self.draw_2d_text('', parent=self.a2dTopRight, pos=(-0.05, -0.1),
-                                                align=TextNode.ARight)
+
         # self.bottom_left_text = self.draw_2d_text('bottom_left_text', parent=self.a2dBottomLeft, pos=(0.05, 0.1))
         self.chat_field = DirectEntry(text='', scale=.15, command=self.send_chat, initialText='', numLines=1,
                                       focus=1, frameTexture=input_texture, parent=self.a2dBottomLeft, width=25,
@@ -36,6 +34,7 @@ class Message:
             self.send_message(text)
             self.chat_field.enterText('')
             self.chat_field.hide()
+            self.is_open_chat_field = False
 
     def display_messages(self, message):
         if len(self.messages) > 5:
@@ -77,7 +76,7 @@ class Message:
             data.addString(name)
             data.addString(message)
             self.server.broadcast(data)
-        else:
+        elif self.network_state == 'client':
             # クライエントがメッセージを送信
             name = f'client{self.players["myself"].client_id}'
             # サーバーにメッセージを送信

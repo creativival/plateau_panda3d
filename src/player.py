@@ -29,6 +29,7 @@ class Player(Character):
         self.base = base
         self.is_guest = is_guest
         self.client_id = 0
+        self.has_moving_hands = False
         Character.__init__(self)
 
         self.position = Vec3(0, 0, 1)
@@ -182,7 +183,7 @@ class Player(Character):
                     self.velocity.setY(0)
 
     def set_player_direction(self):
-        if not self.is_guest:
+        if not self.is_guest and not self.base.is_paused_player:
             if self.base.mouseWatcherNode.hasMouse():
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
                 x = mouse_pos.x
