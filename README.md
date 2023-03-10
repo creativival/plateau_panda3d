@@ -347,9 +347,9 @@ main.pyの設定項目を編集して、パソコンの描画範囲を調整で�
 サーバーとクライエント（複数）が、同じワールドで共同作業を行えます。  
 
 設定は constants.pyで行います。  
-同じパソコン　IP_ADDRESS = 'localhost'  
+同じパソコン　IP_ADDRESS = 'localhost'  （初期設定）
 同じLAN内　IP_ADDRESS= '192.169.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
-LANの外　IP ADDRESS = 'https://xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
+LANの外　IP ADDRESS = ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
 ** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image10.png)

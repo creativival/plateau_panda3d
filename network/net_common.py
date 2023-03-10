@@ -40,6 +40,10 @@ class NetCommon:
         sync.addFloat32(self.base.players['myself'].hand_length)
         sync.addFloat32(self.base.players['myself'].left_angle)
         sync.addFloat32(self.base.players['myself'].right_angle)
+        sync.addFloat32(self.base.players['myself'].rgb_r)
+        sync.addFloat32(self.base.players['myself'].rgb_g)
+        sync.addFloat32(self.base.players['myself'].rgb_b)
+        sync.addFloat32(self.base.players['myself'].rgb_a)
         sync.addInt8(self.base.players['myself'].character_face_num)
         return sync
 

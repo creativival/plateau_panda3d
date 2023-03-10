@@ -1,4 +1,4 @@
-from direct.showbase.ShowBase import ShowBase
+from math import isclose
 from panda3d.core import *
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
@@ -16,6 +16,7 @@ class Protocol:
         self.base.display_messages(received_message)
 
     def sync_player_state(self, it, client_id):
+        player = self.base.players[client_id]
         velocity_x = it.getFloat32()
         velocity_y = it.getFloat32()
         velocity_z = it.getFloat32()
@@ -27,27 +28,42 @@ class Protocol:
         direction_z = it.getFloat32()
         # guest_playerとplayerの位置の差を求める
         player_position = Point3(x, y, z)
-        diff_position = player_position - self.base.players[client_id].position
+        diff_position = player_position - player.position
         # print(player_position)
         # print(diff_position)
         if diff_position.length() < 1:
             # guest_playerとplayerを同期するため、guest_playerの速度を変更
-            self.base.players[client_id].velocity = Vec3(velocity_x, velocity_y, velocity_z) + diff_position * 0.1
+            player.velocity = Vec3(velocity_x, velocity_y, velocity_z) + diff_position * 0.1
         else:
             # 位置、速度をダイレクトに合わせる
-            self.base.players[client_id].position = Vec3(x, y, z)
-            self.base.players[client_id].velocity = Vec3(velocity_x, velocity_y, velocity_z)
-        self.base.players[client_id].direction = Vec3(direction_x, direction_y, direction_z)
-        self.base.players[client_id].hand_length = it.getFloat32()
-        self.base.players[client_id].left_angle = it.getFloat32()
-        self.base.players[client_id].right_angle = it.getFloat32()
+            player.position = Vec3(x, y, z)
+            player.velocity = Vec3(velocity_x, velocity_y, velocity_z)
+        player.direction = Vec3(direction_x, direction_y, direction_z)
+        player.hand_length = it.getFloat32()
+        player.left_angle = it.getFloat32()
+        player.right_angle = it.getFloat32()
+        rgb_r = it.getFloat32()
+        rgb_g = it.getFloat32()
+        rgb_b = it.getFloat32()
+        rgb_a = it.getFloat32()
+
+        if not (isclose(player.rgb_r, rgb_r) and isclose(player.rgb_g, rgb_g) and
+                isclose(player.rgb_b, rgb_b) and isclose(player.rgb_a, rgb_a)):
+            player.rgb_r = rgb_r
+            player.rgb_g = rgb_g
+            player.rgb_b = rgb_b
+            player.rgb_a = rgb_a
+            player.character_model.setColor(player.rgb_r, player.rgb_g, player.rgb_b, player.rgb_a)
+            player.character_left_hand_model.setColor(player.rgb_r, player.rgb_g, player.rgb_b, player.rgb_a)
+            player.character_right_hand_model.setColor(player.rgb_r, player.rgb_g, player.rgb_b, player.rgb_a)
+
         character_face_num = it.getInt8()
 
-        if character_face_num != self.base.players[client_id].character_face_num:
-            self.base.players[client_id].character_face_num = character_face_num
-            self.base.players[client_id].cat_tex = self.base.loader.loadTexture(
+        if character_face_num != player.character_face_num:
+            player.character_face_num = character_face_num
+            player.cat_tex = self.base.loader.loadTexture(
                 f'models/maps/cat{character_face_num}.png')
-            self.base.players[client_id].character_model.setTexture(self.base.players[client_id].cat_tex, 1)
+            player.character_model.setTexture(player.cat_tex, 1)
 
     def broadcast_client_state(self, data):
         self.base.server.broadcast(data)

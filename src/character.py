@@ -9,7 +9,7 @@ class Character:
         self.character_node = NodePath('character_node')
 
         # モデル
-        self.character_color = self.base.character_color
+        self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a = self.base.character_color
         self.character_face_num = character_face_num
         self.character_hand_length = character_hand_length
 
@@ -21,7 +21,7 @@ class Character:
         self.character_model.setScale(1.41, 1.2, 1)
         self.character_model.setPos(0, 0, 0)
         self.character_model.setHpr(0, 0, 0)
-        self.character_model.setColor(*self.character_color)
+        self.character_model.setColor(self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a)
         self.character_model.setTransparency(TransparencyAttrib.MBinary)
 
         z_length = 0.8 * self.character_hand_length
@@ -35,7 +35,7 @@ class Character:
         self.character_left_hand_model.setTexture(self.cat_ear_tex, 1)
         self.character_left_hand_model.setScale(0.5, 0.3, z_length)
         self.character_left_hand_model.setPos(0, 0, 0.4)
-        self.character_left_hand_model.setColor(*self.character_color)
+        self.character_left_hand_model.setColor(self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a)
         self.character_left_hand_model.setTransparency(TransparencyAttrib.MBinary)
 
         self.character_right_hand_model_node = self.character_node.attachNewNode(
@@ -48,7 +48,7 @@ class Character:
         self.character_right_hand_model.setTexture(self.cat_ear_tex, 1)
         self.character_right_hand_model.setScale(0.5, 0.3, z_length)
         self.character_right_hand_model.setPos(0, 0, 0.4)
-        self.character_right_hand_model.setColor(*self.character_color)
+        self.character_right_hand_model.setColor(self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a)
         self.character_right_hand_model.setTransparency(TransparencyAttrib.MBinary)
 
         # 表情の変更
