@@ -23,7 +23,7 @@ class Connect:
                 self.client.connect(IP_ADDRESS, PORT_ADDRESS, TIMEOUT)
                 self.network_state = 'client'
 
-    def connect_as_client(self):同じ
+    def connect_as_client(self):
         if not self.network_state:
             try:
                 self.client = Client(self)
