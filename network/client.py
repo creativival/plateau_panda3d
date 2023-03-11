@@ -20,6 +20,8 @@ class Client(NetCommon):
             self.base.display_messages(message)
 
             self.base.add_player(0, is_guest=True)
+        else:
+            raise TypeError
 
     def send(self, data):
         if self.connection:
