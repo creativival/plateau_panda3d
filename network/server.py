@@ -20,6 +20,7 @@ class Server(NetCommon):
 
         self.base.taskMgr.add(self.update_listener, 'update_listener')
         self.base.taskMgr.doMethodLater(0.1, self.send_player_state, 'send_player_state')
+        self.base.taskMgr.doMethodLater(0.1, self.send_mob_states, 'send_mob_states')
 
     def update_listener(self, task):
         if self.listener.newConnectionAvailable():
@@ -63,4 +64,16 @@ class Server(NetCommon):
         if len(self.connections):
             sync = self.player_state()
             self.broadcast(sync)
+        return task.again
+
+    def send_mob_states(self, task):
+        sync = PyDatagram()
+        sync.addInt8(30)  # sync mobs
+        for mob in self.base.mob_obj_list:
+            x, y, z = mob.position
+            velocity_x, velocity_y, velocity_z = mob.velocity
+            direction_x, direction_y, direction_z = mob.direction
+            sync.addString(f'{x},{y},{z},{velocity_x},{velocity_y},{velocity_z},{direction_x},{direction_y},{direction_z}')
+        sync.addString('end')
+        self.broadcast(sync)
         return task.again

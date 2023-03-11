@@ -41,5 +41,21 @@ class ClientProtocol(Protocol):
                     self.base.add_player(client_id, is_guest=True)
 
                 self.sync_player_state(it, client_id)
+        elif msg_id == 30:  # モブを同期
+            for mob in self.base.mob_obj_list:
+                received_text = it.getString()
+                # self.printMessage("Client received:", received_text)
+                x, y, z, velocity_x, velocity_y, velocity_z, direction_x, direction_y, direction_z = \
+                    map(float, received_text.split(','))
+                diff_position = Point3(x, y, z) - mob.position
+                mob.direction = Vec3(direction_x, direction_y, direction_z)
+                # if diff_position.length() < 1:
+                if True:
+                    # 位置と速度をダイレクトに合わせる
+                    mob.position = Point3(x, y, z)
+                    mob.velocity = Vec3(velocity_x, velocity_y, velocity_z)
+                else:
+                    # mobの速度を位置の差を減少させるように補正する
+                    mob.velocity = Vec3(velocity_x, velocity_y, velocity_z) + diff_position * 0.1
 
 

@@ -365,7 +365,7 @@ TABでチャットフィルドを開く/閉じる/エンターで送信
 ## 開発上の注意
 
 - 開発は基本developブランチでおこなう。大きな変更があるときはfeature/\*ブランチを切る。
-- 本番環境にデプロイされるのはmasterブランチ。リリースしたいときはdevelopでの変更をmasterにmergeする。
+- developでの変更をmainに pull request/merge する。
 - 起動ファイルは、main.pyをコピーしたdev_main.pyで各自の設定により行う。dev_main.pyをgitに含めない。
 
 ## サウンド
