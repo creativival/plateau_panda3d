@@ -115,15 +115,16 @@ class Mob:
     #         self.acceleration_to_align = Vec3(0, 0, 0)
     #
     def player_impact(self):
-        vector_to_player = self.base.players['myself'].position - self.position
-        length_to_player = vector_to_player.length()
-        # print(length_to_player)
-        if length_to_player < self.RADIUS_OF_PLAYER * 3:
-            self.acceleration_with_player = \
-                vector_to_player.normalized() *self. RADIUS_OF_PLAYER * \
-                (self.ATTRACTION_OF_PLAYER - self.REPULSION_OF_PLAYER) / length_to_player
-        else:
-            self.acceleration_with_player = Vec3(0, 0, 0)
+        self.acceleration_with_player = Vec3(0, 0, 0)
+        # 全てのプレイヤーの影響を合算
+        for player in self.base.players.values():
+            vector_to_player = player.position - self.position
+            length_to_player = vector_to_player.length()
+            # print(length_to_player)
+            if length_to_player < self.RADIUS_OF_PLAYER * 3:
+                self.acceleration_with_player += \
+                    vector_to_player.normalized() * self. RADIUS_OF_PLAYER * \
+                    (self.ATTRACTION_OF_PLAYER - self.REPULSION_OF_PLAYER) / length_to_player
 
     def set_position(self, dt):
         total_acceleration = self.acceleration_to_cohere + self.acceleration_with_player
