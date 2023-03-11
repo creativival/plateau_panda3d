@@ -362,6 +362,99 @@ TABでチャットフィルドを開く/閉じる/エンターで送信
 プレイヤーの位置、向き、表情は同期される
 ```
 
+## モブ
+
+モブキャラをワールドに召喚できます。
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image11.png)
+
+constants.py に召喚したいモブキャラを辞書-リスト形式で記載する。  
+モブキャラは、モブキャラ同士で集まろうとする習性があります。  
+モブキャラは、プレイヤーから逃げる習性があります。  
+マルチプレイの場合は、全てのプレイヤーが、同じmob_dic_listを指定してください。  
+
+```constants.py
+mob_dic_list = [
+    {
+        'name': 'smiley1',
+        'model_name': 'smiley',
+        'scale': 1,
+        'speed': 1,
+        'heading': 0,
+    },
+    {
+        'name': 'smiley2',
+        'model_name': 'smiley',
+        'scale': 1.2,
+        'speed': 1,
+        'heading': 0,
+    },
+    {
+        'name': 'smiley3',
+        'model_name': 'smiley',
+        'scale': 1.5,
+        'speed': 1,
+        'heading': 0,
+    },
+    {
+        'name': 'smiley4',
+        'model_name': 'smiley',
+        'scale': 2,
+        'speed': 1,
+        'heading': 0,
+    },
+    {
+        'name': 'panda1',
+        'model_name': 'panda',
+        'scale': 0.3,
+        'speed': 0.5,
+        'heading': 0,
+    },
+    {
+        'name': 'panda2',
+        'model_name': 'panda',
+        'scale': 0.5,
+        'speed': 0.5,
+        'heading': 0,
+    },
+    {
+        'name': 'teapot1',
+        'model_name': 'teapot',
+        'scale': 1,
+        'speed': 0.5,
+        'heading': 0,
+    },
+    {
+        'name': 'teapot2',
+        'model_name': 'teapot',
+        'scale': 1.2,
+        'speed': 0.5,
+        'heading': 0,
+    },
+    {
+        'name': 'frowney1',
+        'model_name': 'frowney',
+        'scale': 1,
+        'speed': 2,
+        'heading': 0,
+    },
+    {
+        'name': 'frowney2',
+        'model_name': 'frowney',
+        'scale': 1.2,
+        'speed': 2,
+        'heading': 0,
+    },
+    {
+        'name': 'jack1',
+        'model_name': 'jack',
+        'scale': 1,
+        'speed': 3,
+        'heading': 180,
+    },
+]
+```
+
 ## 開発上の注意
 
 - 開発は基本developブランチでおこなう。大きな変更があるときはfeature/\*ブランチを切る。
