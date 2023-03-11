@@ -129,8 +129,8 @@ class Player(Character):
                 else:
                     self.left_angle += 20
                     self.right_angle -= 20
-        else:
-            print('guest hand:', self.hand_length, self.left_angle, self.right_angle)
+        # else:
+        #     print('guest hand:', self.hand_length, self.left_angle, self.right_angle)
 
         self.character_left_hand_model.setSz(self.hand_length)
         self.character_right_hand_model.setSz(self.hand_length)

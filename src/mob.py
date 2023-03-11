@@ -29,6 +29,7 @@ class Mob:
             1)
         self.direction = Vec3(0, 0, 0)
         self.velocity = Vec3(0, 0, 0)
+        self.direction = Vec3(0, 0, 0)
         self.acceleration_to_cohere = Vec3(0, 0, 0)
         self.acceleration_with_player = Vec3(0, 0, 0)
 
@@ -44,22 +45,23 @@ class Mob:
         #     uniform(-1, 1),
         #     uniform(-1, 1),
         #     0)
-        self.cohere(center_of_gravity)
-        self.player_impact()
+        if self.base.players['myself'].client_id == 0:
+            self.cohere(center_of_gravity)
+            self.player_impact()
+            self.set_direction()
         self.set_position(dt)
         self.draw()
 
-    def draw(self):
+    def set_direction(self):
         heading = degrees(atan2(self.velocity.y, self.velocity.x)) + 90 + uniform(-10, 10)
         pitch = uniform(-5, 5)
         roll = uniform(-1, 1)
+        self.direction = Vec3(heading, pitch, roll)
+
+    def draw(self):
         # set mob
         self.model_node.setPos(self.position)
-        self.model_node.setHpr(
-            heading,
-            pitch,
-            roll,
-        )
+        self.model_node.setHpr(self.direction)
 
     # def update(self):
     #     if not self.render.multiplayer or self.render.multiplayer.network_state == 'server':
@@ -113,21 +115,23 @@ class Mob:
     #         self.acceleration_to_align = Vec3(0, 0, 0)
     #
     def player_impact(self):
-        vector_to_player = self.base.players['myself'].position - self.position
-        length_to_player = vector_to_player.length()
-        # print(length_to_player)
-        if length_to_player < self.RADIUS_OF_PLAYER * 3:
-            self.acceleration_with_player = \
-                vector_to_player.normalized() *self. RADIUS_OF_PLAYER * \
-                (self.ATTRACTION_OF_PLAYER - self.REPULSION_OF_PLAYER) / length_to_player
-        else:
-            self.acceleration_with_player = Vec3(0, 0, 0)
+        self.acceleration_with_player = Vec3(0, 0, 0)
+        # 全てのプレイヤーの影響を合算
+        for player in self.base.players.values():
+            vector_to_player = player.position - self.position
+            length_to_player = vector_to_player.length()
+            # print(length_to_player)
+            if length_to_player < self.RADIUS_OF_PLAYER * 3:
+                self.acceleration_with_player += \
+                    vector_to_player.normalized() * self. RADIUS_OF_PLAYER * \
+                    (self.ATTRACTION_OF_PLAYER - self.REPULSION_OF_PLAYER) / length_to_player
 
     def set_position(self, dt):
         total_acceleration = self.acceleration_to_cohere + self.acceleration_with_player
         self.velocity = \
             (total_acceleration * dt + self.velocity).normalized() * self.speed
         self.position += self.velocity * dt
+        self.position.z = 0
         # x1, y1, z1 = self.position
         # x2, y2, z2 = self.position + self.velocity * dt
         # if z2 > 1:

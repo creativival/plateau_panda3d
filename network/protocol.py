@@ -65,9 +65,6 @@ class Protocol:
                 f'models/maps/cat{character_face_num}.png')
             player.character_model.setTexture(player.cat_tex, 1)
 
-    def broadcast_client_state(self, data):
-        self.base.server.broadcast(data)
-
     @staticmethod
     def print_message(title, msg):
         print('%s %s' % (title, msg))

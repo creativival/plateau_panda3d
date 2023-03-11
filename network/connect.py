@@ -13,14 +13,24 @@ class Connect:
 
     def open_server(self):
         if not self.network_state:
-            self.network_state = 'server'
-            self.server = Server(self, PORT_ADDRESS)
+            try:
+                self.server = Server(self, PORT_ADDRESS)
+                self.network_state = 'server'
+            except TypeError:
+                # 同じパソコンで複数のサーバーを開こうとしたとき、クライエントとして接続
+                print('Found server and connect you as client')
+                self.client = Client(self)
+                self.client.connect(IP_ADDRESS, PORT_ADDRESS, TIMEOUT)
+                self.network_state = 'client'
 
     def connect_as_client(self):
         if not self.network_state:
-            self.network_state = 'client'
-            self.client = Client(self)
-            self.client.connect(IP_ADDRESS, PORT_ADDRESS, TIMEOUT)
+            try:
+                self.client = Client(self)
+                self.client.connect(IP_ADDRESS, PORT_ADDRESS, TIMEOUT)
+                self.network_state = 'client'
+            except TypeError:
+                print('Not found server')
 
         # if self.network_state == 'server':
         #     # self.server = Server(self, 9999)

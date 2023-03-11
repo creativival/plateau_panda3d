@@ -58,7 +58,7 @@ class NetCommon:
     #     sync.addString('end')
     #     self.broadcast(sync)
     #     return task.again
-    #
+
     # def sendBlockChanges(self, task):
     #     sync = self.blockChange(self.base)
     #     self.broadcast(sync)

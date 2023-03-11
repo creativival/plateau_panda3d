@@ -25,6 +25,6 @@ class ServerProtocol(Protocol):
             self.sync_player_state(it, client_id)
             
             # 別のクライエントに転送
-            self.broadcast_client_state(data)
+            self.base.server.broadcast(data)
             
 
