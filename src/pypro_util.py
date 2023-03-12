@@ -8,6 +8,7 @@ from panda3d.core import *
 
 
 def change_to_cartesian(lat, lng, crs_from, crs_to):
+    # print(lat, lng, crs_from, crs_to)
     # 緯度経度を変換
     # 基準点からのメートル
     transformer = Transformer.from_crs(crs_from, crs_to)
@@ -39,8 +40,8 @@ def get_building_positions(geo_text, crs_from, crs_to):
     for geo_location in geo_locations:
         _geo_location = [float(value) for value in geo_location]
         # print(_geo_location)
-        lat, lng = change_to_cartesian(_geo_location[0], _geo_location[1], crs_from, crs_to)
-        cartesian_location = (lat, lng, _geo_location[2])
+        x, y = change_to_cartesian(_geo_location[0], _geo_location[1], crs_from, crs_to)
+        cartesian_location = (x, y, _geo_location[2])
         cartesian_locations.append(cartesian_location)
 
     return tuple(cartesian_locations)

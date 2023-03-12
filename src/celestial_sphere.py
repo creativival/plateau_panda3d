@@ -4,7 +4,8 @@ from . import draw_line_between_two_points
 
 
 class CelestialSphere:
-    def __init__(self):
+    def __init__(self, sky_texture):
+        self.sky_texture = self.loader.loadTexture(sky_texture)
         # 座標軸
         self.celestial_sphere_node = self.render.attachNewNode(PandaNode('axis_node'))
         self.celestial_sphere_node.setPos(self.area_center)

@@ -8,7 +8,8 @@ class Building:
         # 建物、道路を配置
         self.map_node = self.render.attachNewNode(PandaNode('map_node'))
 
-        # 建物のベースノードを作っておく
+        # 建物のベースノード
+        self.all_buildings = []
         settings = self.settings
         mesh3_list = settings['bldg_mesh3_list']
         for mesh3 in mesh3_list:
@@ -17,13 +18,26 @@ class Building:
             table_name = f'plateau_{file_name}'
 
             self.db_cursor.execute(
-                f'SELECT building_id, height, center_position FROM {table_name}'
+                f'SELECT building_id, height, center_position, min_distance FROM {table_name}'
             )
 
             for tuple_value in self.db_cursor.fetchall():
-                building_id, height, center_position = tuple_value
+                building_id, height, center_position, min_distance = tuple_value
                 base_position = Point3(*map(float, center_position.split('/')))
 
                 building_node = self.map_node.attachNewNode(PandaNode(building_id))
                 building_node.setPos(base_position)
                 building_node.setTag('height', str(height))
+                building_node.setTag('building_id', building_id)
+                # Create a collision node for this object.
+                collision_node = CollisionNode(building_id)
+                # Attach a collision sphere solid to the collision node.
+                # collision_node.addSolid(CollisionSphere(0, 0, 0, float(height)))
+                height = float(height)
+                collision_node.addSolid(CollisionBox(Point3(0, 0, height / 2), min_distance, min_distance, height / 2))
+                # Attach the collision node to the object's model.
+                building_collision = building_node.attachNewNode(collision_node)
+                # Set the object's collision node to render as visible.
+                # building_collision.show()
+
+                self.all_buildings.append(building_node)

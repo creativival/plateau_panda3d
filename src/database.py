@@ -1,3 +1,4 @@
+from math import sqrt
 import sqlite3
 import os
 import xml.etree.ElementTree as ET
@@ -87,6 +88,8 @@ class Database:
                         'height TEXT, '
                         'positions TEXT, '
                         'center_position TEXT, '
+                        'max_distance REAL, '
+                        'min_distance REAL, '
                         'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
                         'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
                     )
@@ -133,6 +136,10 @@ class Database:
                         y0 = sum([position[1] for position in positions]) / len(positions)
                         center_position = [x0, y0, 0]
 
+                        distances_from_center = [sqrt((x - x0)**2 + (y - y0)**2) for x, y, _ in positions]
+                        max_distance = max(distances_from_center)
+                        min_distance = min(distances_from_center)
+
                         # データベース保存
                         positions_text = \
                             '|'.join(['/'.join([str(v) for v in l]) for l in positions])
@@ -142,12 +149,15 @@ class Database:
                             name,
                             height,
                             positions_text,
-                            center_position_text
+                            center_position_text,
+                            max_distance,
+                            min_distance
                         )
 
                         self.db_cursor.execute(
-                            f'INSERT INTO {table_name}(building_id, name, height, positions, center_position) '
-                            'values(?, ?, ?, ?, ?)',
+                            f'INSERT INTO {table_name}'
+                            f'(building_id, name, height, positions, center_position, max_distance, min_distance) '
+                            'values(?, ?, ?, ?, ?, ?, ?)',
                             inserts)
 
         self.db.commit()
