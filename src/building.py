@@ -26,6 +26,7 @@ class Building:
                 base_position = Point3(*map(float, center_position.split('/')))
 
                 building_node = self.map_node.attachNewNode(PandaNode(building_id))
+                # print(building_node.getName())
                 building_node.setPos(base_position)
                 building_node.setTag('height', str(height))
                 building_node.setTag('building_id', building_id)

@@ -21,6 +21,9 @@ class Camera:
         axis.reparentTo(self.camera_move_node)
         axis.setH(90)
 
+        # カメラが規定値より離れたとき、背の低いビルを非表示にする
+        self.has_hidden_buildings = False
+
         self.camera_node = self.camera_move_node.attachNewNode(PandaNode('camera_move_node'))
         self.camera.reparentTo(self.camera_node)
         self.camera.setHpr(90, 0, 0)
@@ -124,21 +127,24 @@ class Camera:
         self.set_camera_pos()
 
         if self.camera_radius <= self.max_camera_radius_to_render_surface:
-            # ビルを表示
-            building_nodes = self.map_node.findAllMatches('**/building*')
-            for building_node in building_nodes:
-                for child in building_node.getChildren():
-                    height = child.getNetTag('height')
-                    if height and float(height) <= 10:
-                        name = child.getName()
-                        if name not in ['pillar_line_node', 'ceil_line_node']:
-                            if child.isHidden():
-                                child.show()
-            # 道路を表示
-            road_nodes = self.map_node.findAllMatches('**/road*')
-            for road_node in road_nodes:
-                if road_node.isHidden():
-                    road_node.show()
+            if self.has_hidden_buildings:
+                self.has_hidden_buildings = False
+                # ビルを表示
+                building_nodes = self.map_node.findAllMatches('*bldg*')
+                for building_node in building_nodes:
+                    height = float(building_node.getNetTag('height'))
+                    if height and height <= self.max_building_height_to_hide:
+                        building_node.show()
+                        # for child in building_node.getChildren():
+                        #     name = child.getName()
+                        #     if name not in ['pillar_line_node', 'ceil_line_node']:
+                        #         if child.isHidden():
+                        #             child.show()
+                # 道路を表示
+                road_nodes = self.map_node.findAllMatches('road*')
+                for road_node in road_nodes:
+                    if road_node.isHidden():
+                        road_node.show()
 
     def wheel_down(self):
         # カメラを遠ざける
@@ -146,18 +152,21 @@ class Camera:
         self.set_camera_pos()
 
         if self.max_camera_radius_to_render_surface < self.camera_radius:
-            # ビルを非表示
-            building_nodes = self.map_node.findAllMatches('**/building*')
-            for building_node in building_nodes:
-                for child in building_node.getChildren():
-                    height = child.getNetTag('height')
-                    if height and float(height) <= 10:
-                        name = child.getName()
-                        if name not in ['pillar_line_node', 'ceil_line_node']:
-                            if not child.isHidden():
-                                child.hide()
-            # 道路を非表示
-            road_nodes = self.map_node.findAllMatches('**/road*')
-            for road_node in road_nodes:
-                if not road_node.isHidden():
-                    road_node.hide()
+            if not self.has_hidden_buildings:
+                self.has_hidden_buildings = True
+                # ビルを非表示
+                building_nodes = self.map_node.findAllMatches('*bldg*')
+                for building_node in building_nodes:
+                    height = float(building_node.getNetTag('height'))
+                    if height and height <= self.max_building_height_to_hide:
+                        building_node.hide()
+                        # for child in building_node.getChildren():
+                        #     name = child.getName()
+                        #     if name not in ['pillar_line_node', 'ceil_line_node']:
+                        #         if not child.isHidden():
+                        #             child.hide()
+                # 道路を非表示
+                road_nodes = self.map_node.findAllMatches('road*')
+                for road_node in road_nodes:
+                    if not road_node.isHidden():
+                        road_node.hide()
