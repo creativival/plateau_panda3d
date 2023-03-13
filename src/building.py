@@ -1,4 +1,4 @@
-import sys
+from math import degrees
 from panda3d.core import *
 from . import draw_line_between_two_points
 
@@ -18,11 +18,11 @@ class Building:
             table_name = f'plateau_{file_name}'
 
             self.db_cursor.execute(
-                f'SELECT building_id, height, center_position, min_distance FROM {table_name}'
+                f'SELECT building_id, height, center_position, min_distance, min_angle FROM {table_name}'
             )
 
             for tuple_value in self.db_cursor.fetchall():
-                building_id, height, center_position, min_distance = tuple_value
+                building_id, height, center_position, min_distance, min_angle = tuple_value
                 base_position = Point3(*map(float, center_position.split('/')))
 
                 building_node = self.map_node.attachNewNode(PandaNode(building_id))
@@ -33,10 +33,11 @@ class Building:
                 collision_node = CollisionNode(building_id)
                 # Attach a collision sphere solid to the collision node.
                 # collision_node.addSolid(CollisionSphere(0, 0, 0, float(height)))
-                height = float(height)
-                collision_node.addSolid(CollisionBox(Point3(0, 0, height / 2), min_distance, min_distance, height / 2))
+                collision_node.addSolid(CollisionBox(Point3(0, 0, height / 2), min_distance * 0.7, min_distance * 0.7, height / 2))
                 # Attach the collision node to the object's model.
-                building_collision = building_node.attachNewNode(collision_node)
+                collision_base_node = building_node.attachNewNode(PandaNode(f'collision_{building_id}'))
+                collision_base_node.setH(degrees(min_angle) + 45)
+                building_collision = collision_base_node.attachNewNode(collision_node)
                 # Set the object's collision node to render as visible.
                 # building_collision.show()
 
