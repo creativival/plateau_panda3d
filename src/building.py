@@ -30,6 +30,7 @@ class Building:
                 building_node.setPos(base_position)
                 building_node.setTag('height', str(height))
                 building_node.setTag('building_id', building_id)
+                building_node.setPythonTag('is_hidden', False)
                 # Create a collision node for this object.
                 collision_node = CollisionNode(building_id)
                 # Attach a collision sphere solid to the collision node.
@@ -40,6 +41,6 @@ class Building:
                 collision_base_node.setH(degrees(min_angle) + 45)
                 building_collision = collision_base_node.attachNewNode(collision_node)
                 # Set the object's collision node to render as visible.
-                # building_collision.show()
+                building_collision.show()
 
                 self.all_buildings.append(building_node)

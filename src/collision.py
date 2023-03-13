@@ -20,48 +20,24 @@ class Collision:
         picker_node.addSolid(self.picker_ray)
         self.collision_traverser.addCollider(picker_node_path, self.collision_handler_queue)
 
-        # # Load a model.
-        # smiley = self.loader.loadModel('smiley')
-        # # Reparent the model to the camera so we can move it.
-        # smiley.reparentTo(self.camera)
-        # # Set the initial position of the model in the scene.
-        # smiley.setPos(0, 25.5, 0.5)
-        # smiley.setTransparency(TransparencyAttrib.MAlpha)
-        # 
-        # # Create a collision node for this object.
-        # cNode = CollisionNode('smiley')
-        # # Attach a collision sphere solid to the collision node.
-        # cNode.addSolid(CollisionSphere(0, 0, 0, 1.1))
-        # # Attach the collision node to the object's model.
-        # smileyC = smiley.attachNewNode(cNode)
-        # # Set the object's collision node to render as visible.
-        # smileyC.show()
-        # 
-        # # Load another model.
-        # frowney = self.loader.loadModel('frowney')
-        # # Reparent the model to render.
-        # frowney.reparentTo(self.render)
-        # # Set the position of the model in the scene.
-        # frowney.setPos(5, 25, 0)
-        # frowney.setTransparency(TransparencyAttrib.MAlpha)
-        # 
-        # # Create a collision node for this object.
-        # cNode = CollisionNode('frowney')
-        # # Attach a collision sphere solid to the collision node.
-        # cNode.addSolid(CollisionSphere(0, 0, 0, 1.1))
-        # # Attach the collision node to the object's model.
-        # frowneyC = frowney.attachNewNode(cNode)
-        # # Set the object's collision node to render as visible.
-        # frowneyC.show()
-        # 
-        # smiley.setTag('myObjectTag', '1')
-        # frowney.setTag('myObjectTag', '2')
-
-        # self.all_objects = [smiley, frowney]
         self.picked_object_tag = None
+
+        self.accept('f9', self.toggle_show_or_hide_building)
 
         self.taskMgr.doMethodLater(0.5, self.pick_object_by_mouse, 'pick_object_by_mouse')
         self.taskMgr.add(self.check_picked_object, 'check_picked_object')
+
+    def toggle_show_or_hide_building(self):
+        if self.picked_object_tag:
+            building_node = self.map_node.find(self.picked_object_tag)
+            if building_node:
+                is_hidden = building_node.getPythonTag('is_hidden')
+                if is_hidden:
+                    building_node.show()
+                    building_node.setPythonTag('is_hidden', False)
+                else:
+                    building_node.hide()
+                    building_node.setPythonTag('is_hidden', True)
 
     def pick_object_by_mouse(self, task):
         self.picked_object_tag = None
@@ -86,11 +62,11 @@ class Collision:
         return task.again
 
     def check_picked_object(self, task):
-        for obj in self.all_buildings:
-            if obj.getTag('building_id') == self.picked_object_tag:
-                obj.setColorScale(1, 0, 0, 1)
+        for building_node in self.all_buildings:
+            if building_node.getTag('building_id') == self.picked_object_tag:
+                building_node.setColorScale(1, 0, 0, 1)
             else:
-                if obj.hasColorScale():
-                    obj.clearColorScale()
+                if building_node.hasColorScale():
+                    building_node.clearColorScale()
 
         return task.cont
