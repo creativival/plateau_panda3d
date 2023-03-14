@@ -6,23 +6,14 @@ from direct.gui.DirectGui import *
 
 class Message:
     def __init__(self):
+        self.messages = []
+        self.timers = []
+
         self.accept('h', self.send_hello_message)
 
-    def toggle_text_field(self):
-        if self.text_field.isHidden():
-            self.text_field.show()
-            self.is_open_text_field = True
-            self.text_field.setFocus()
-        else:
-            self.text_field.hide()
-            self.is_open_text_field = False
-
-    def send_chat(self, text):
-        if text:
-            self.send_message(text)
-            self.text_field.enterText('')
-            self.text_field.hide()
-            self.is_open_text_field = False
+    def send_hello_message(self):
+        if not self.is_open_text_field:
+            self.send_message('Hello!')
 
     def display_messages(self, message):
         if len(self.messages) > 5:
@@ -46,10 +37,6 @@ class Message:
         if not self.top_left_text.isHidden():
             self.top_left_text.hide()
         self.timers = []
-
-    def send_hello_message(self):
-        if not self.is_open_text_field:
-            self.send_message('Hello!')
 
     def send_message(self, message):
         data = PyDatagram()
