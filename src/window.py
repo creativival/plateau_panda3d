@@ -22,6 +22,11 @@ class Window:
                                                 align=TextNode.ACenter)
         self.top_right_text = self.draw_2d_text('', parent=self.a2dTopRight, pos=(-0.05, -0.1),
                                                 align=TextNode.ARight)
+        self.bottom_left_text = self.draw_2d_text('', parent=self.a2dBottomLeft, pos=(0.05, 0.1))
+        self.bottom_center_text = self.draw_2d_text('', parent=self.a2dBottomCenter, pos=(0, 0.1),
+                                                align=TextNode.ACenter)
+        self.bottom_right_text = self.draw_2d_text('', parent=self.a2dBottomRight, pos=(-0.05, 0.1),
+                                                align=TextNode.ARight)
 
         # plight = PointLight('plight')
         # plight.setColor((0.2, 0.2, 0.2, 1))

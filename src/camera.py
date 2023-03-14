@@ -52,7 +52,8 @@ class Camera:
         self.taskMgr.add(self.update, 'update')
 
     def draw(self):
-        print('camera position:', self.camera_position)
+        x, y, z = [floor(v) for v in self.camera_position]
+        self.bottom_left_text.setText(f'camera position: {y}, {-x}, {z}')
         self.camera_move_node.setPos(*self.camera_position)
 
     def set_velocity(self):
