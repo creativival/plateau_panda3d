@@ -44,12 +44,31 @@ class TextField:
                     print('Incorrect format')
 
                 if shape == 'cube':
+                    bottom_center_position = self.area_center + Point3(px, py, pz)
+                    building_node = self.map_node.attachNewNode(PandaNode(text))
+                    building_node.setPos(bottom_center_position)
+                    building_node.setTag('height', str(z))
+                    building_node.setTag('building_id', text)
+                    building_node.setPythonTag('is_hidden', False)
                     cube = self.loader.loadModel('models/misc/rgbCube')
                     cube.setTransparency(TransparencyAttrib.MAlpha)
                     cube.setScale(x, y, z)
-                    cube.setPos(self.area_center + Point3(px, py, pz + z / 2))
+                    cube.setPos(0, 0, z / 2)
                     cube.setColor(*LRGBColor(r, g, b) / 255, 0.5)
-                    cube.reparentTo(self.map_node)
+                    cube.reparentTo(building_node)
+                    # Create a collision node for this object.
+                    collision_node = CollisionNode(text)
+                    # Attach a collision sphere solid to the collision node.
+                    # collision_node.addSolid(CollisionSphere(0, 0, 0, float(height)))
+                    collision_node.addSolid(CollisionBox(Point3(0, 0, z / 2), x / 2, y / 2, z / 2))
+                    # Attach the collision node to the object's model.
+                    # collision_base_node = cube.attachNewNode(PandaNode(f'collision_{text}'))
+                    # collision_base_node.setH(degrees(min_angle) + 45)
+                    building_collision = building_node.attachNewNode(collision_node)
+                    # Set the object's collision node to render as visible.
+                    building_collision.show()
+
+                    self.all_buildings.append(building_node)
                 else:
                     print('Incorrect format')
             else:
