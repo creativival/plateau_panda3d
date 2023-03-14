@@ -64,8 +64,21 @@ class Collision:
     def check_picked_object(self, task):
         for building_node in self.all_buildings:
             if building_node.getTag('building_id') == self.picked_object_tag:
-                building_node.setColorScale(1, 0, 0, 1)
+                print(building_node.getColorScale())
+                if building_node.getPythonTag('is_hidden'):
+                    if building_node.isHidden():
+                        building_node.show()
+                    if not building_node.hasColorScale() or \
+                            building_node.getColorScale() != LVecBase4f(0, 0, 1, 1):
+                        building_node.setColorScale(0, 0, 1, 1)
+                else:
+                    if not building_node.hasColorScale() or \
+                            building_node.getColorScale() != LVecBase4f(1, 0, 0, 1):
+                        building_node.setColorScale(1, 0, 0, 1)
             else:
+                if building_node.getPythonTag('is_hidden') and \
+                        not building_node.isHidden():
+                    building_node.hide()
                 if building_node.hasColorScale():
                     building_node.clearColorScale()
 
