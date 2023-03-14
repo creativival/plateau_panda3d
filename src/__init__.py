@@ -5,6 +5,7 @@ from .vector import get_polar_angles_from_vec, get_position_from_polar_angles
 from .draw_text import DrawText
 from .sound import Sound
 from .window import Window
+from .text_field import TextField
 from .building import Building
 from .collision import Collision
 from .key_map import KeyMap

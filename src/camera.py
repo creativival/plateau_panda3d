@@ -29,8 +29,8 @@ class Camera:
         self.camera.setHpr(90, 0, 0)
         self.camera.setPos(self.camera_radius, 0, 0)
         self.set_camera_pos()
-        self.camera_position = Vec2(0, 0)
-        self.camera_velocity = Vec2(0, 0)
+        self.camera_position = Vec3(0, 0, 0)
+        self.camera_velocity = Vec3(0, 0, 0)
         self.camera_move_speed = 100
         # 複数カメラ（プレイヤーカメラ）の設定
         self.active_cam = 0
@@ -52,7 +52,8 @@ class Camera:
         self.taskMgr.add(self.update, 'update')
 
     def draw(self):
-        self.camera_move_node.setPos(*self.camera_position, 0)
+        print('camera position:', self.camera_position)
+        self.camera_move_node.setPos(*self.camera_position)
 
     def set_velocity(self):
         key_map = self.key_map
@@ -77,12 +78,13 @@ class Camera:
                 add_angle += 90
 
             self.camera_velocity = \
-                Vec2(
+                Vec3(
                     cos(radians(add_angle + self.camera_phi)),
-                    sin(radians(add_angle + self.camera_phi))
+                    sin(radians(add_angle + self.camera_phi)),
+                    0
                 ) * self.camera_move_speed
         else:
-            self.camera_velocity = Vec2(0, 0)
+            self.camera_velocity = Vec3(0, 0, 0)
 
     def set_position(self):
         dt = globalClock.getDt()

@@ -15,7 +15,6 @@ class Window:
         self.win.requestProperties(self.props)
         # self.setBackgroundColor(0, 0, 0)
 
-        self.is_open_chat_field = False
         self.is_paused_player = False
 
         self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
