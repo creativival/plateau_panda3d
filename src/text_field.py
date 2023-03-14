@@ -31,13 +31,27 @@ class TextField:
         if text:
             if text[:5] == 'build':
                 print('build')
-                _, shape, dx, dy, height = text.split()
-                if shape == 'box':
-                    box = self.loader.loadModel('models/box')
-                    box.setScale(float(dx) * 2, float(dy) * 2, float(height))
-                    box.setPos(self.area_center)
-                    box.reparentTo(self.map_node)
+                build_command = text.split()
+                if len(build_command) == 8:
+                    _, shape, x, y, z, px, py, pz = build_command
+                    x, y, z, px, py, pz = map(float, (x, y, z, px, py, pz))
+                    r, g, b = 255, 255, 255
+                elif len(build_command) == 11:
+                    _, shape, x, y, z, px, py, pz, r, g, b = build_command
+                    x, y, z, px, py, pz, r, g, b = map(float, (x, y, z, px, py, pz, r, g, b))
+                else:
+                    shape = None
+                    print('Incorrect format')
 
+                if shape == 'cube':
+                    cube = self.loader.loadModel('models/misc/rgbCube')
+                    cube.setTransparency(TransparencyAttrib.MAlpha)
+                    cube.setScale(x, y, z)
+                    cube.setPos(self.area_center + Point3(px, py, pz + z / 2))
+                    cube.setColor(*LRGBColor(r, g, b) / 255, 0.5)
+                    cube.reparentTo(self.map_node)
+                else:
+                    print('Incorrect format')
             else:
                 self.send_message(text)
             self.text_field.enterText('')
