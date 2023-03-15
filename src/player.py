@@ -25,7 +25,7 @@ class Player(Character):
     # orthographic_lens.setFilmSize(*mirror_cam_film_size)
 
     def __init__(self, base, is_guest=False):
-        print('is_guest:', is_guest)
+        # print('is_guest:', is_guest)
         self.base = base
         self.is_guest = is_guest
         self.client_id = 0
@@ -234,7 +234,7 @@ class Player(Character):
         return task.cont
 
     def toggle_cam(self):
-        print('toggle_cam')
+        # print('toggle_cam')
         if self.has_player_camera:
             self.cameras[self.base.active_cam].node().getDisplayRegion(0).setActive(0)
             self.base.active_cam = (self.base.active_cam + 1) % len(self.cameras)

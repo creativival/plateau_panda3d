@@ -11,7 +11,7 @@ class Player2Ds:
 
     def add_player(self, key, is_guest=False):
         self.players[key] = Player2D(self, is_guest)
-        print(self.players)
+        # print(self.players)
 
     # def sync_player_state(self, it, client_id):
     #     velocity_x = it.getFloat32()

@@ -202,7 +202,6 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ### 表示するオブジェクトの制限
 
 ```text
-        sky_texture='models/maps/cloud_sky_1024x1024.png',  # 天球内面の画像を指定
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
         has_player=False, # プレイヤーを表示
@@ -210,7 +209,6 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ```
 
 インスタンス化のさい、引数をブール値で設定すると、オブジェクトを表示/非表示を変更できます。  
-sky_texture='' を指定すると、天球が表示されなくなります。  
 FPSが低いときはパソコンの負荷を下げるため、表示するオブジェクトを減らしてください。  
 
 これで、起動ファイルの設定は完了です。ゲームを実行しましょう。
@@ -272,28 +270,30 @@ FPSが低いときはパソコンの負荷を下げるため、表示するオ�
 巨大なドーム（天球）の内面に画像を貼り付けて、空を表現できます。  
 画像サイズは1024x1024。上半分に空の画像、下はrgb(0,1,0)の単色。空の画像は左右の鏡面対象にすると継ぎ目が目立たない。  
 
+### 天候を変化させる 
+
+インスタンス化の引数sky_textureを指定して、様々な空を表現できます。  
+sky_texture='' を指定すると、天球が表示されなくなります。  
+
 ```text
-        # main.py
-        if has_celestial:
-            self.sky_texture = self.loader.loadTexture('models/maps/sky_1024x1024.png')
-            # self.sky_texture = self.loader.loadTexture('models/maps/cloud_sky_1024x1024.png')
-            # self.sky_texture = self.loader.loadTexture('models/maps/star_sky_1024x1024.png')
-            CelestialSphere.__init__(self)
+        # sky_texture='models/maps/sky_1024x1024.png',
+        sky_texture='models/maps/cloud_sky_1024x1024.png',
+        # sky_texture='models/maps/star_sky_1024x1024.png',
+        # sky_texture='',
 ```
 
-main.pyのインスタンス変数sky_textureを入れ替えることで、様々な空を表現できます。
+#### 快晴
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image6.png)
 
-快晴
+#### 星空
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image7.png)
 
-星空
+#### 雲空
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image8.png)
 
-雲空
 
 ## 操作方法
 
@@ -308,7 +308,7 @@ Escape: ゲームをポーズ
 F12: ゲームを終了
 ```
 
-遠景カメラビュー
+### 遠景カメラビュー
 
 ```text
 WASDで平行移動
@@ -316,7 +316,7 @@ WASDで平行移動
 マウスホイールで遠近
 ```
 
-プレイヤービュー
+### プレイヤービュー
 
 ```text
 F5でカメラの切り替え（遠景→TPS→FPS→ミラー→）
@@ -391,12 +391,14 @@ LANの外　IP ADDRESS = ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image10.png)
 
+### マルチプレイヤー操作説明
+
 ```text
 F10でサーバーを開く
 F11でクライエントとして接続
 Hで「Hello!」メッセージを送信
-TABでチャットフィルドを開く/閉じる/エンターで送信
-プレイヤーの位置、向き、表情は同期される
+TABでテキストフィルドを開く/閉じる
+テキストフィールドに文字を入力してエンターで送信
 ```
 
 ## モブ

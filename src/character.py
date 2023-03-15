@@ -57,7 +57,7 @@ class Character:
                 self.base.accept(str(i), self.change_face, [i])
 
     def change_face(self, i):
-        print(i)
+        # print(i)
         self.character_face_num = i
         self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{i}.png')
         self.character_model.setTexture(self.cat_tex, 1)
