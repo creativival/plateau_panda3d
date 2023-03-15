@@ -74,7 +74,7 @@ root/
  │     ├ solid_model.py  # 建築物の面を作成
  │     ├ sound.py  # サウンド
  │     ├ text_field.py  # テキスト入力欄
- │     ├ vector.py  # ベクトル変換
+ │     ├ vector_util.py  # ベクトル変換
  │     ├ window.py  # ウインドウ
  │     ├ wire_frame.py  # 建築物の線を作成
  │     ├
@@ -297,11 +297,15 @@ main.pyのインスタンス変数sky_textureを入れ替えることで、様�
 
 ## 操作方法
 
-基本操作
+操作方法を説明します。ゲームは遠景カメラモードとプレイヤーモードを切り替えて遊びます。  
+遠景カメラは広い範囲を見渡すことができ、建築を行うときに使用します。  
+プレイヤーモードはプレイヤー視点でワールドを見ることができ、TPS、FPS,ミラーカメラを切り替えできます。  
+
+### 基本操作
 
 ```text
 Escape: ゲームをポーズ
-Backspace: ゲームを終了
+F12: ゲームを終了
 ```
 
 遠景カメラビュー
@@ -315,7 +319,7 @@ WASDで平行移動
 プレイヤービュー
 
 ```text
-F5でカメラの切り替え
+F5でカメラの切り替え（遠景→TPS→FPS→ミラー→）
 WASDで平行移動
 マウスで回転
 スペースでジャンプ
@@ -323,17 +327,23 @@ WASDで平行移動
 
 ## 建築（クリエイティブモード）
 
+PLATEAUのビルを撤去したり、新しい建築物を設置したりして、ワールドを再開発できます。  
+自分だけの理想のワールドを作ってみましょう。
+
+### 建築操作
+
 ```text
 マウスでポイントしてビルを指定（赤く表示される）
 F8でビルを完全に削除する
-F９でビルを表示/非表示を切り替える
-タブキーでテキストフィールを表示させ、建築コマンドを入力してエンターキーで実行する
+F9でビルを表示/非表示を切り替える
+タブキーでテキストフィールを表示し、「建築コマンド」を入力してエンターキーで実行する
 
-建築コマンドの例
+# 建築コマンドの例
 build cube 100 100 100 -50 -100 0 255 255 0
+build sphere 10 20 30 -50 -100 100
 
-建築コマンドの解説
-先頭はbuild
+# 建築コマンドの解説
+先頭はbuildで初めて、スペースで単語を区切ること
 2番目は形状（cube, sphere, corn, cylinder）を選ぶ
 3〜5番目は形状のサイズ（横奥高さ）
 6〜8番目は形状の設置位置（x, y, z）
@@ -347,36 +357,35 @@ cube, sphere, corn, cylinderを組み合わせた建築例
 ## キャラクター
 
 数字キー（1 - 9）で表情を変えて、エモーションを表現できます。  
-色は、インスタンス化の引数character_colorにより設定できます。  
-移動時に耳が動くモーションを追加しました。  
+色は、インスタンス化の引数character_colorにより設定できます。
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image9.png)
 
 ## パフォーマンス調整
 
 本プログラムは、多数のオブジェクトを画面に表示するため、パソコンに大きな負荷がかかります。  
-FPSは画面右上に表示されているので、その数字を見て、パフォーマンスを調整してください。  
+フレームレート（1秒間に切り替わる画面の数）は画面右上に表示されているので、その数字を見て、パフォーマンスを調整してください。  
+main.pyの設定項目を編集して、パソコンの描画範囲を調整できます。  
 
 ```main.py
         # PCの能力により調整
-        self.building_tolerance = 200  # 建物を描画する範囲
+        self.building_tolerance = 400  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
-        self.min_surface_height = 100  # 壁を描画する最低の高さ
-        self.celestial_radius = 2000  # 天球の半径
-        self.max_camera_radius_to_render_surface = 1000  # 面を表示する最大のカメラ半径
-        self.interval_drawing_pillar = 2  # 縦の線を何本おきに描画するか
+        self.min_surface_height = 0  # 壁を描画する最低の高さ
+        self.celestial_radius = 1000  # 天球の半径
+        self.max_camera_radius_to_render_surface = 1000  # 背の低いビルを非表示にする最大のカメラ半径
+        self.max_building_height_to_hide = 10  # 非表示にする背の低いビルの最大高さ
+        self.interval_drawing_pillar = 5  # 縦の線を何本おきに描画するか
 ```
-
-main.pyの設定項目を編集して、パソコンの描画範囲を調整できます。
 
 ## マルチプレイヤー（Beta）
 
-マルチプレイが可能です（Betaバージョン）。  
+マルチプレイが可能です（Betaバージョンのため、うまく接続できない場合があります）。  
 サーバーとクライエント（複数）が、同じワールドで共同作業を行えます。  
 
 設定は constants.pyで行います。  
 同じパソコン　IP_ADDRESS = 'localhost'  （初期設定）  
-同じLAN内　IP_ADDRESS= '192.169.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
+同じLAN内　IP_ADDRESS= '192.168.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
 LANの外　IP ADDRESS = ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
 ** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。
 
@@ -392,23 +401,23 @@ TABでチャットフィルドを開く/閉じる/エンターで送信
 
 ## モブ
 
-モブキャラをワールドに召喚できます。
+モブキャラをワールドに召喚できます。  
+モブキャラは、モブキャラ同士で集まろうとする習性があります。  
+モブキャラは、プレイヤーから逃げる習性があります。  
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image11.png)
 
-constants.py に召喚したいモブキャラを辞書-リスト形式で記載する。  
-モブキャラは、モブキャラ同士で集まろうとする習性があります。  
-モブキャラは、プレイヤーから逃げる習性があります。  
+constants.py に召喚したいモブキャラを辞書-リスト形式で記載します。  
 マルチプレイの場合は、全てのプレイヤーが、同じmob_dic_listを指定してください。  
 
 ```constants.py
 mob_dic_list = [
     {
-        'name': 'smiley1',
-        'model_name': 'smiley',
-        'scale': 1,
-        'speed': 1,
-        'heading': 0,
+        'name': 'smiley1',  # モブID
+        'model_name': 'smiley',  # モデル名
+        'scale': 1,  # モブサイズ
+        'speed': 1,  # 動く速さ
+        'heading': 0,  # 進行方向と頭の向きを合わせるときに指定
     },
     {
         'name': 'smiley2',
@@ -483,16 +492,16 @@ mob_dic_list = [
 ]
 ```
 
+## サウンド
+
+GarageBandで簡単な効果音を作成し、BGMとして鳴らしています。  
+音源を提供してくださる方がいらっしゃいましたら、大歓迎です。
+
 ## 開発上の注意
 
 - 開発は基本developブランチでおこなう。大きな変更があるときはfeature/\*ブランチを切る。
 - developでの変更をmainに pull request/merge する。
 - 起動ファイルは、main.pyをコピーしたdev_main.pyで各自の設定により行う。dev_main.pyをgitに含めない。
-
-## サウンド
-
-GarageBandで簡単な効果音を作成し、BGMとして鳴らしています。  
-音源を提供してくださる方がいらっしゃいましたら、大歓迎です。
 
 ## ライセンス
 
