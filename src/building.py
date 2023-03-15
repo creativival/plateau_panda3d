@@ -41,6 +41,6 @@ class Building:
                 collision_base_node.setH(degrees(min_angle) + 45)
                 building_collision = collision_base_node.attachNewNode(collision_node)
                 # Set the object's collision node to render as visible.
-                building_collision.show()
+                # building_collision.show()
 
                 self.all_buildings.append(building_node)
