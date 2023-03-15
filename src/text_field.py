@@ -38,7 +38,7 @@ class TextField:
             self.is_open_text_field = False
 
     def build_shape(self, text):
-        print('build')
+        print('build start')
         build_command = text.split()
         if len(build_command) == 8:
             _, shape, x, y, z, px, py, pz = build_command

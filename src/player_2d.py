@@ -5,7 +5,7 @@ from direct.showbase.ShowBaseGlobal import globalClock
 
 class Player2D:
     def __init__(self, base, is_guest=False):
-        print('is_guest:', is_guest)
+        # print('is_guest:', is_guest)
         self.base = base
         self.is_guest = is_guest
         self.client_id = 0
