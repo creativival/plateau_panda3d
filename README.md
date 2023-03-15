@@ -342,7 +342,7 @@ build cube 100 100 100 -50 -100 0 255 255 0
 
 cube, sphere, corn, cylinderを組み合わせた建築例  
 
-![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image11.png)
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image12.png)
 
 ## キャラクター
 
