@@ -139,6 +139,9 @@ class Player(Character):
         return task.again
 
     def player_draw(self):
+        if not self.is_guest:
+            x, y, z = [floor(v) for v in self.position]
+            self.base.bottom_left_text.setText(f'player position: {x}, {y}, {z}')
         self.player_node.setPos(self.position)
         self.player_node.setHpr(self.direction)
 
@@ -212,7 +215,7 @@ class Player(Character):
         if not self.is_guest:
             dt = globalClock.getDt()
 
-            if self.position.z >= 0:
+            if self.position.z > 0 or self.velocity.z == self.jump_speed:
                 self.velocity.z -= self.gravity * dt
             else:
                 self.position.setZ(0)

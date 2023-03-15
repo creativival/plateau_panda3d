@@ -6,35 +6,14 @@ from direct.gui.DirectGui import *
 
 class Message:
     def __init__(self):
-        # ConfigVariableBool("ime-aware").setValue(True)
-        input_texture = self.loader.loadTexture('texture/button_press.png')
         self.messages = []
         self.timers = []
 
-        # self.bottom_left_text = self.draw_2d_text('bottom_left_text', parent=self.a2dBottomLeft, pos=(0.05, 0.1))
-        self.chat_field = DirectEntry(text='', scale=.15, command=self.send_chat, initialText='', numLines=1,
-                                      focus=1, frameTexture=input_texture, parent=self.a2dBottomLeft, width=25,
-                                      text_fg=(1, 0, 0, 1), pos=(0.1, 0, 0.1), text_scale=0.75, entryFont=self.font)
-        self.chat_field.hide()
-
         self.accept('h', self.send_hello_message)
-        self.accept('tab', self.toggle_chat_field)
 
-    def toggle_chat_field(self):
-        if self.chat_field.isHidden():
-            self.chat_field.show()
-            self.is_open_chat_field = True
-            self.chat_field.setFocus()
-        else:
-            self.chat_field.hide()
-            self.is_open_chat_field = False
-
-    def send_chat(self, text):
-        if text:
-            self.send_message(text)
-            self.chat_field.enterText('')
-            self.chat_field.hide()
-            self.is_open_chat_field = False
+    def send_hello_message(self):
+        if not self.is_open_text_field:
+            self.send_message('Hello!')
 
     def display_messages(self, message):
         if len(self.messages) > 5:
@@ -58,10 +37,6 @@ class Message:
         if not self.top_left_text.isHidden():
             self.top_left_text.hide()
         self.timers = []
-
-    def send_hello_message(self):
-        if not self.is_open_chat_field:
-            self.send_message('Hello!')
 
     def send_message(self, message):
         data = PyDatagram()

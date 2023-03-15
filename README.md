@@ -1,6 +1,7 @@
 # PLATEAU Panda3D
 
-PythonのライブラリPanda3Dを使って、日本全国の3D都市モデルの整備、活用、オープンデータ化プロジェクト PLATEAUのモデルを3Dゲームに変換します。
+PythonのライブラリPanda3Dを使って、日本全国の3D都市モデルの整備、活用、オープンデータ化プロジェクト PLATEAUのモデルを3Dゲームに変換します。  
+ビルを撤去したり、基本形状を組み合わせた建築を行うことで、街を再開発することができます。  
 
 https://user-images.githubusercontent.com/33368327/221376187-bf98d0f3-9b3e-4954-914f-3766a53690f2.mp4
 
@@ -59,6 +60,8 @@ root/
  │     ├ building.py  # ビルディング
  │     ├ camera.py  # カメラ
  │     ├ celestial_sphere.py  # 天球
+ │     ├ character.py  # キャラクター
+ │     ├ collision.py  # 衝突判定
  │     ├ database.py  # データベース（sqlite3）
  │     ├ draw_text.py  # テキスト表示
  │     ├ geometry_util.py  # ジオメトリ
@@ -70,6 +73,7 @@ root/
  │     ├ pypro_util.py  # 座標変換
  │     ├ solid_model.py  # 建築物の面を作成
  │     ├ sound.py  # サウンド
+ │     ├ text_field.py  # テキスト入力欄
  │     ├ vector.py  # ベクトル変換
  │     ├ window.py  # ウインドウ
  │     ├ wire_frame.py  # 建築物の線を作成
@@ -155,7 +159,7 @@ if __name__ == '__main__':
     app = OpenWorld(
         window_title='PLATEAU World',  # ウインドウタイトル
         settings=plateau_settings,  # PLATEAUデータ設定
-        has_celestial=False,  # 天球を表示
+        sky_texture='models/maps/cloud_sky_1024x1024.png',  # 天球内面の画像を指定
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
         has_player=False, # プレイヤーを表示
@@ -198,7 +202,7 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ### 表示するオブジェクトの制限
 
 ```text
-        has_celestial=False,  # 天球を表示
+        sky_texture='models/maps/cloud_sky_1024x1024.png',  # 天球内面の画像を指定
         has_wire_frame=True,  # ワイヤーフレームを表示
         has_solid_model=True,  # 面を表示
         has_player=False, # プレイヤーを表示
@@ -206,7 +210,8 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ```
 
 インスタンス化のさい、引数をブール値で設定すると、オブジェクトを表示/非表示を変更できます。  
-FPSが低いときはパソコンの負荷を下げるため、has_celestial、has_solid_modelは、「False」推奨です。
+sky_texture='' を指定すると、天球が表示されなくなります。  
+FPSが低いときはパソコンの負荷を下げるため、表示するオブジェクトを減らしてください。  
 
 これで、起動ファイルの設定は完了です。ゲームを実行しましょう。
 
@@ -316,6 +321,29 @@ WASDで平行移動
 スペースでジャンプ
 ```
 
+## 建築（クリエイティブモード）
+
+```text
+マウスでポイントしてビルを指定（赤く表示される）
+F8でビルを完全に削除する
+F９でビルを表示/非表示を切り替える
+タブキーでテキストフィールを表示させ、建築コマンドを入力してエンターキーで実行する
+
+建築コマンドの例
+build cube 100 100 100 -50 -100 0 255 255 0
+
+建築コマンドの解説
+先頭はbuild
+2番目は形状（cube, sphere, corn, cylinder）を選ぶ
+3〜5番目は形状のサイズ（横奥高さ）
+6〜8番目は形状の設置位置（x, y, z）
+9〜11番目はRGB色（省略したときは、白になる）
+```
+
+cube, sphere, corn, cylinderを組み合わせた建築例  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image11.png)
+
 ## キャラクター
 
 数字キー（1 - 9）で表情を変えて、エモーションを表現できます。  
@@ -347,7 +375,7 @@ main.pyの設定項目を編集して、パソコンの描画範囲を調整で�
 サーバーとクライエント（複数）が、同じワールドで共同作業を行えます。  
 
 設定は constants.pyで行います。  
-同じパソコン　IP_ADDRESS = 'localhost'  （初期設定）
+同じパソコン　IP_ADDRESS = 'localhost'  （初期設定）  
 同じLAN内　IP_ADDRESS= '192.169.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
 LANの外　IP ADDRESS = ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
 ** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。

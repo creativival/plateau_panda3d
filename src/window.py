@@ -15,13 +15,17 @@ class Window:
         self.win.requestProperties(self.props)
         # self.setBackgroundColor(0, 0, 0)
 
-        self.is_open_chat_field = False
         self.is_paused_player = False
 
         self.top_left_text = self.draw_2d_text('', parent=self.a2dTopLeft)
         self.top_center_text = self.draw_2d_text('', parent=self.a2dTopCenter, pos=(0, -0.1),
                                                 align=TextNode.ACenter)
         self.top_right_text = self.draw_2d_text('', parent=self.a2dTopRight, pos=(-0.05, -0.1),
+                                                align=TextNode.ARight)
+        self.bottom_left_text = self.draw_2d_text('', parent=self.a2dBottomLeft, pos=(0.05, 0.1))
+        self.bottom_center_text = self.draw_2d_text('', parent=self.a2dBottomCenter, pos=(0, 0.1),
+                                                align=TextNode.ACenter)
+        self.bottom_right_text = self.draw_2d_text('', parent=self.a2dBottomRight, pos=(-0.05, 0.1),
                                                 align=TextNode.ARight)
 
         # plight = PointLight('plight')
@@ -36,7 +40,7 @@ class Window:
         # self.render.setLight(alnp)
 
         self.accept('escape', self.escape_key)
-        self.accept('backspace', self.backspace_key)
+        self.accept('f12', self.f12_key)
 
     def escape_key(self):
         if self.is_paused_player:
@@ -46,7 +50,7 @@ class Window:
             self.is_paused_player = True
             self.top_center_text.setText('Pause')
 
-    def backspace_key(self):
+    def f12_key(self):
         # 終了
         if self.db:
             self.db_cursor.close()
