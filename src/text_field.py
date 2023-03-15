@@ -43,19 +43,28 @@ class TextField:
                     shape = None
                     print('Incorrect format')
 
-                if shape == 'cube':
+                if shape in ['cube', 'sphere', 'cylinder', 'corn']:
+                    if shape == 'cube':
+                        model_path = 'models/misc/rgbCube'
+                        sx, sy, sz = x, y, z
+                        dz = z / 2
+                    else:
+                        model_path = f'models/{shape}_uv64'
+                        sx, sy, sz = x / 2, y / 2, z / 2
+                        dz = z / 2
                     bottom_center_position = self.area_center + Point3(px, py, pz)
                     building_node = self.map_node.attachNewNode(PandaNode(text))
                     building_node.setPos(bottom_center_position)
                     building_node.setTag('height', str(z))
                     building_node.setTag('building_id', text)
                     building_node.setPythonTag('is_hidden', False)
-                    cube = self.loader.loadModel('models/misc/rgbCube')
-                    cube.setTransparency(TransparencyAttrib.MAlpha)
-                    cube.setScale(x, y, z)
-                    cube.setPos(0, 0, z / 2)
-                    cube.setColor(*LRGBColor(r, g, b) / 255, 0.5)
-                    cube.reparentTo(building_node)
+                    model = self.loader.loadModel(model_path)
+                    model.setTextureOff(1)
+                    model.setTransparency(TransparencyAttrib.MAlpha)
+                    model.setScale(sx, sy, sz)
+                    model.setZ(dz)
+                    model.setColor(*LRGBColor(r, g, b) / 255, 0.5)
+                    model.reparentTo(building_node)
                     # Create a collision node for this object.
                     collision_node = CollisionNode(text)
                     # Attach a collision sphere solid to the collision node.
@@ -66,7 +75,7 @@ class TextField:
                     # collision_base_node.setH(degrees(min_angle) + 45)
                     building_collision = building_node.attachNewNode(collision_node)
                     # Set the object's collision node to render as visible.
-                    building_collision.show()
+                    # building_collision.show()
 
                     self.all_buildings.append(building_node)
                 else:
