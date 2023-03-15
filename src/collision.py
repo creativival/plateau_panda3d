@@ -22,10 +22,18 @@ class Collision:
 
         self.picked_object_tag = None
 
+        self.accept('f8', self.remove_building)
         self.accept('f9', self.toggle_show_or_hide_building)
 
         self.taskMgr.doMethodLater(0.5, self.pick_object_by_mouse, 'pick_object_by_mouse')
         self.taskMgr.add(self.check_picked_object, 'check_picked_object')
+
+    def remove_building(self):
+        if self.picked_object_tag:
+            building_node = self.map_node.find(self.picked_object_tag)
+            if building_node:
+                self.all_buildings.remove(building_node)
+                building_node.removeNode()
 
     def toggle_show_or_hide_building(self):
         if self.picked_object_tag:
