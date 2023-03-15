@@ -3,11 +3,11 @@ IP_ADDRESS = 'localhost'
 TIMEOUT = 3000
 mob_dic_list = [
     {
-        'name': 'smiley1',
-        'model_name': 'smiley',
-        'scale': 1,
-        'speed': 1,
-        'heading': 0,
+        'name': 'smiley1',  # モブID
+        'model_name': 'smiley',  # モデル名
+        'scale': 1,  # モブサイズ
+        'speed': 1,  # 動く速さ
+        'heading': 0,  # 進行方向と頭の向きを合わせるときに指定
     },
     {
         'name': 'smiley2',
