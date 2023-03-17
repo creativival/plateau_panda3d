@@ -105,7 +105,7 @@ class Player(Character):
 
     def change_guest_face(self, task):
         if self.is_changed_guest_face_num and self.is_guest:
-            self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
+            self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat/cat{self.character_face_num}.png')
             self.character_model.setTexture(self.cat_tex, 1)
 
         return task.cont

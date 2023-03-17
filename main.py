@@ -76,9 +76,9 @@ if __name__ == '__main__':
     app = OpenWorld(
         window_title='PLATEAU World',
         settings=plateau_settings,
-        # sky_texture='models/maps/sky_1024x1024.png',
-        sky_texture='models/maps/cloud_sky_1024x1024.png',
-        # sky_texture='models/maps/star_sky_1024x1024.png',
+        # sky_texture='models/maps/sky/sky_1024x1024.png',
+        sky_texture='models/maps/sky/cloud_sky_1024x1024.png',
+        # sky_texture='models/maps/sky/star_sky_1024x1024.png',
         has_wire_frame=True,
         has_solid_model=True,
         has_player=True,

@@ -40,7 +40,7 @@ class Window:
         # self.render.setLight(alnp)
 
         self.accept('escape', self.escape_key)
-        self.accept('f12', self.f12_key)
+        # self.accept('f12', self.f12_key)
 
     def escape_key(self):
         if self.is_paused_player:
@@ -50,9 +50,9 @@ class Window:
             self.is_paused_player = True
             self.top_center_text.setText('Pause')
 
-    def f12_key(self):
-        # 終了
-        if self.db:
-            self.db_cursor.close()
-            self.db.close()
-        sys.exit()
+    # def f12_key(self):
+    #     # 終了
+    #     if self.db:
+    #         self.db_cursor.close()
+    #         self.db.close()
+    #     sys.exit()

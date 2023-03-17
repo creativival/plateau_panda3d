@@ -13,8 +13,8 @@ class Character:
         self.character_face_num = character_face_num
         self.character_hand_length = character_hand_length
 
-        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
-        self.cat_ear_tex = self.base.loader.loadTexture('models/maps/cat_ear.png')
+        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat/cat{self.character_face_num}.png')
+        self.cat_ear_tex = self.base.loader.loadTexture('models/maps/cat/cat_ear.png')
         self.character_model = self.base.loader.loadModel('models/egg_shape32')
         self.character_model.reparentTo(self.character_node)
         self.character_model.setTexture(self.cat_tex, 1)
@@ -59,7 +59,7 @@ class Character:
     def change_face(self, i):
         # print(i)
         self.character_face_num = i
-        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{i}.png')
+        self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat/cat{i}.png')
         self.character_model.setTexture(self.cat_tex, 1)
         if i in [3, 6, 7, 9]:
             self.character_hand_length = 1.5
