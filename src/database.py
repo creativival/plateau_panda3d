@@ -8,13 +8,20 @@ from . import get_building_positions, get_road_positions
 
 class Database:
     def __init__(self):
+        # ビル・道路のデータ
         self.db = sqlite3.connect('output/plateau_panda3d.sqlite3')
         self.db_cursor = self.db.cursor()
-        # データベースの作成
         self.road_count = None
         self.create_road_table()
         self.create_building_table()
+
+        # ワールドの中心座標
         self.area_center = self.get_area_center()
+
+        # セーブ
+        self.save_db = sqlite3.connect('output/save.sqlite3')
+        self.save_db_cursor = self.save_db.cursor()
+        self.create_save_tables()
 
     def table_is_exist(self, table_name):
         self.db_cursor.execute(
@@ -274,3 +281,41 @@ class Database:
                 f'INSERT INTO {table_name}(positions, center_position) '
                 'values(?, ?)',
                 inserts)
+
+    def create_save_tables(self):
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS worlds('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'name TEXT UNIQUE, '
+            'ground_size INTEGER, '
+            'game_mode TEXT, '
+            'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
+            'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TRIGGER IF NOT EXISTS trigger_worlds_updated_at AFTER UPDATE ON worlds '
+            'BEGIN'
+            '   UPDATE test SET updated_at = DATETIME(\'now\', \'localtime\') WHERE rowid == NEW.rowid;'
+            'END'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS characters('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'character_type TEXT, '
+            'x INTEGER, '
+            'y INTEGER, '
+            'z INTEGER, '
+            'direction_x INTEGER, '
+            'direction_y INTEGER, '
+            'direction_z INTEGER, '
+            'world_id INTEGER)'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS blocks('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'x INTEGER, '
+            'y INTEGER, '
+            'z INTEGER, '
+            'block_id INTEGER, '
+            'world_id INTEGER)'
+        )

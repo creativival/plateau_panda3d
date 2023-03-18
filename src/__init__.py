@@ -6,7 +6,7 @@ from .draw_text import DrawText
 from .sound import Sound
 from .window import Window
 from .text_field import TextField
-from .gui_util import *
+from .gui_parts import *
 from .menu import Menu
 from .building import Building
 from .collision import Collision

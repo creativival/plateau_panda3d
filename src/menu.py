@@ -3,24 +3,19 @@ import os
 import sys
 import sqlite3
 from panda3d.core import *
-from .gui_util import *
+from .gui_parts import *
 
 
 class Menu:
-    save_path = 'saves'
-    db_name = 'pynecrafter'
-
     def __init__(self):
-        # sqlite3データベース
-        self.db = None
-        self.cursor = None
-
         self.menu_node = self.aspect2d.attachNewNode('menu_node')
         self.menu_node.stash()
         self.save_node = self.aspect2d.attachNewNode('save_node')
         self.save_node.stash()
         self.load_node = self.aspect2d.attachNewNode('load_node')
         self.load_node.stash()
+        self.join_node = self.aspect2d.attachNewNode('join_node')
+        self.join_node.stash()
 
         menu_cm = CardMaker('menu_card')
         menu_cm.setFrame(-1.5, 1.5, -1, 1)
@@ -41,7 +36,7 @@ class Menu:
             pos=(0, 0, 0.4),
             command=self.toggle_menu
         )
-        self.save_button = DrawMappedButton(
+        self.toggle_save_button = DrawMappedButton(
             parent=self.menu_node,
             model=self.button_model,
             text='ゲームをセーブ',
@@ -49,7 +44,7 @@ class Menu:
             pos=(0, 0, 0.24),
             command=self.toggle_save
         )
-        self.load_button = DrawMappedButton(
+        self.toggle_load_button = DrawMappedButton(
             parent=self.menu_node,
             model=self.button_model,
             text='ゲームをロード',
@@ -65,13 +60,13 @@ class Menu:
             pos=(0, 0, -0.08),
             command=self.open_server
         )
-        self.join_button = DrawMappedButton(
+        self.toggle_join_button = DrawMappedButton(
             parent=self.menu_node,
             model=self.button_model,
             text='サーバーに接続',
             font=self.font,
             pos=(0, 0, -0.24),
-            command=self.join_server
+            command=self.toggle_join
         )
         self.exit_button = DrawMappedButton(
             parent=self.menu_node,
@@ -155,8 +150,54 @@ class Menu:
             command=self.toggle_load
         )
 
+        # Join Screen
+        self.join_input_field = DrawEntry(
+            parent=self.join_node,
+            frame_texture=self.frame_texture,
+            initial_text='localhost',
+            font=self.font,
+            pos=(-0.6, 0, 0.1),
+            command=self.connect_as_client,
+        )
+        self.join_text = DrawLabel(
+            parent=self.join_node,
+            text='「サーバーのURL」を入力',
+            font=self.font,
+            pos=(0, 0, 0.35),
+            scale=0.075
+        )
+        self.join_notification_text = DrawLabel(
+            parent=self.join_node,
+            text='',
+            font=self.font,
+            pos=(0, 0, -0.45),
+            scale=0.06
+        )
+        self.join_button = DrawMappedButton(
+            parent=self.join_node,
+            model=self.button_model,
+            text='サーバーに接続',
+            font=self.font,
+            pos=(0, 0, -0.1),
+            command=self.connect_as_client
+        )
+        self.join_back_button = DrawMappedButton(
+            parent=self.join_node,
+            model=self.button_model,
+            text='メニューに戻る',
+            font=self.font,
+            pos=(0, 0, -0.25),
+            command=self.toggle_save
+        )
+
         # ユーザー操作
         self.accept('f12', self.toggle_menu)
+
+    def f12_key(self):
+        if (self.save_node.isStashed() and
+                self.load_node.isStashed() and
+                self.join_node.isStashed()):
+            self.toggle_menu()
 
     def toggle_menu(self):
         if self.menu_node.isStashed():
@@ -185,59 +226,21 @@ class Menu:
             self.menu_node.unstash()
             self.load_node.stash()
 
-    def connect_db(self):
-        path = Menu.save_path
-        db_name = Menu.db_name
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if self.db is None:
-            self.db = sqlite3.connect(f'{path}/{db_name}.sqlite3')
-            self.cursor = self.db.cursor()
-
-    def create_tables(self):
-        self.cursor.execute(
-            'CREATE TABLE IF NOT EXISTS worlds('
-            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-            'name TEXT UNIQUE, '
-            'ground_size INTEGER, '
-            'game_mode TEXT, '
-            'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
-            'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
-        )
-        self.cursor.execute(
-            'CREATE TRIGGER IF NOT EXISTS trigger_worlds_updated_at AFTER UPDATE ON worlds '
-            'BEGIN'
-            '   UPDATE test SET updated_at = DATETIME(\'now\', \'localtime\') WHERE rowid == NEW.rowid;'
-            'END'
-        )
-        self.cursor.execute(
-            'CREATE TABLE IF NOT EXISTS characters('
-            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-            'character_type TEXT, '
-            'x INTEGER, '
-            'y INTEGER, '
-            'z INTEGER, '
-            'direction_x INTEGER, '
-            'direction_y INTEGER, '
-            'direction_z INTEGER, '
-            'world_id INTEGER)'
-        )
-        self.cursor.execute(
-            'CREATE TABLE IF NOT EXISTS blocks('
-            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-            'x INTEGER, '
-            'y INTEGER, '
-            'z INTEGER, '
-            'block_id INTEGER, '
-            'world_id INTEGER)'
-        )
+    def toggle_join(self):
+        if self.join_node.isStashed():
+            self.menu_node.stash()
+            self.join_node.unstash()
+            self.join_notification_text.setText('')
+        else:
+            self.menu_node.unstash()
+            self.join_node.stash()
 
     def get_world_id_from_name(self, world_name):
-        self.cursor.execute(
+        self.save_db_cursor.execute(
             'SELECT id from worlds where name = ?',
             (world_name,)
         )
-        world_id = self.cursor.fetchone()[0]
+        world_id = self.save_db_cursor.fetchone()[0]
 
         return world_id
 
@@ -247,20 +250,18 @@ class Menu:
             self.save_notification_text['text'] = 'セーブしています...'
 
             # セーブ処理
-            self.connect_db()
-            self.create_tables()
-            self.cursor.execute('SELECT COUNT(*) FROM worlds WHERE name = ?', (world_name,))
-            has_same_world_name = self.cursor.fetchone()[0]
+            self.save_db_cursor.execute('SELECT COUNT(*) FROM worlds WHERE name = ?', (world_name,))
+            has_same_world_name = self.save_db_cursor.fetchone()[0]
             # print(has_same_world_name)
 
             # ワールドを保存
             if has_same_world_name:
-                self.cursor.execute(
+                self.save_db_cursor.execute(
                     'UPDATE worlds SET ground_size = ?, game_mode = ? ',
                     (self.ground_size, self.mode)
                 )
             else:
-                self.cursor.execute(
+                self.save_db_cursor.execute(
                     'INSERT INTO worlds(name, ground_size, game_mode) values(?, ?, ?)',
                     (world_name, self.ground_size, self.mode)
                 )
@@ -269,7 +270,7 @@ class Menu:
             world_id = self.get_world_id_from_name(world_name)
 
             # ブロックデータを初期化
-            self.cursor.execute(
+            self.save_db_cursor.execute(
                 'DELETE FROM blocks where world_id = ?',
                 (world_id,)
             )
@@ -280,13 +281,13 @@ class Menu:
                 x, y, z = key.split('_')
                 block_id = value
                 inserts.append((x, y, z, block_id, world_id))
-            self.cursor.executemany(
+            self.save_db_cursor.executemany(
                 'INSERT INTO blocks(x, y, z, block_id, world_id) values(?, ?, ?, ? ,?)',
                 inserts
             )
 
             # プレイヤーを初期化
-            self.cursor.execute(
+            self.save_db_cursor.execute(
                 'DELETE FROM characters where world_id = ?',
                 (world_id,)
             )
@@ -295,26 +296,23 @@ class Menu:
             character_type = 'player'
             x, y, z = self.player.position
             direction_x, direction_y, direction_z = self.player.direction
-            self.cursor.execute(
+            self.save_db_cursor.execute(
                 'INSERT INTO characters(character_type, x, y, z, direction_x, direction_y, direction_z, world_id) '
                 'values(?, ?, ?, ? ,?, ?, ?, ?)',
                 (character_type, x, y, z, direction_x, direction_y, direction_z, world_id)
             )
 
-            self.db.commit()
+            self.save_db.commit()
             self.save_notification_text['text'] = 'セーブ完了！'
         else:
             self.save_notification_text['text'] = 'ワールド名を入力してください。'
 
     def get_world_names(self):
-        self.connect_db()
-        self.create_tables()
-
         # ワールド名のリストを取得
-        self.cursor.execute(
+        self.save_db_cursor.execute(
             'SELECT name FROM worlds ORDER BY updated_at DESC'
         )
-        world_names = [value[0] for value in self.cursor.fetchall()]
+        world_names = [value[0] for value in self.save_db_cursor.fetchall()]
 
         return world_names
 
@@ -342,31 +340,18 @@ class Menu:
         # ブロックを復元
         self.block_node = self.render.attachNewNode(PandaNode('block_node'))
         world_id = self.get_world_id_from_name(world_name)
-        self.cursor.execute('SELECT * FROM blocks WHERE world_id = ?', (world_id,))
-        recorded_blocks = self.cursor.fetchall()
+        self.save_db_cursor.execute('SELECT * FROM blocks WHERE world_id = ?', (world_id,))
+        recorded_blocks = self.save_db_cursor.fetchall()
         for block in recorded_blocks:
             _, x, y, z, block_id, _ = block
             self.block.add_block(x, y, z, block_id)
 
         # プレイヤーを更新
-        self.cursor.execute(
+        self.save_db_cursor.execute(
             'SELECT x, y, z, direction_x, direction_y, direction_z FROM characters WHERE world_id = ? AND character_type = ?',
             (world_id, 'player')
         )
-        # print(self.cursor.fetchall())
-        x, y, z, direction_x, direction_y, direction_z = self.cursor.fetchall()[0]
+        # print(self.save_db_cursor.fetchall())
+        x, y, z, direction_x, direction_y, direction_z = self.save_db_cursor.fetchall()[0]
         self.player.position = Point3(x, y, z)
         self.player.direction = Vec3(direction_x, direction_y, direction_z)
-
-    def exit_game(self):
-        # 終了
-        if self.db:
-            self.db_cursor.close()
-            self.db.close()
-        sys.exit()
-
-    def open_server(self):
-        pass
-
-    def join_server(self):
-        pass
