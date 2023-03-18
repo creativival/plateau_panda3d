@@ -1,13 +1,14 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    Database, Sound, DrawText, Window, TextField, Building, Collision, KeyMap, Camera, Axis, CelestialSphere,
+    Database, Sound, DrawText, Window, TextField, Menu,
+    Building, Collision, KeyMap, Camera, Axis, CelestialSphere,
     Ground, WireFrame, SolidModel, Players, Mobs
 )
 from network import Message, Connect
 import constants
 
 
-class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Collision, KeyMap, Camera, Players,
+class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Menu, Collision, KeyMap, Camera, Players,
                 Mobs, Connect):
     def __init__(self, window_title, settings, sky_texture, has_wire_frame, has_solid_model,
                  has_player, has_mobs, character_color):
@@ -26,9 +27,11 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Collis
         Database.__init__(self)
         Sound.__init__(self)
         DrawText.__init__(self)
+        Connect.__init__(self)
         Window.__init__(self, window_title)
         Message.__init__(self)
         TextField.__init__(self)
+        Menu.__init__(self)
         Building.__init__(self)
         Collision.__init__(self)
         KeyMap.__init__(self)
@@ -45,10 +48,6 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Collis
             Players.__init__(self)
         if has_mobs:
             Mobs.__init__(self, constants.mob_dic_list)
-
-        # マルチプレイ
-        # F10 サーバー開始 / F11 クライエントとして接続
-        Connect.__init__(self)
 
 
 if __name__ == '__main__':
@@ -76,9 +75,9 @@ if __name__ == '__main__':
     app = OpenWorld(
         window_title='PLATEAU World',
         settings=plateau_settings,
-        # sky_texture='models/maps/sky/sky_1024x1024.png',
-        sky_texture='models/maps/sky/cloud_sky_1024x1024.png',
-        # sky_texture='models/maps/sky/star_sky_1024x1024.png',
+        # sky_texture='sky_1024x1024.png',
+        sky_texture='cloud_sky_1024x1024.png',
+        # sky_texture='star_sky_1024x1024.png',
         has_wire_frame=True,
         has_solid_model=True,
         has_player=True,

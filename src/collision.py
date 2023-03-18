@@ -10,8 +10,6 @@ class Collision:
 
         # Initialize the handler.
         self.collision_handler_queue = CollisionHandlerQueue()
-        # self.collHandEvent.addInPattern('into-%in')
-        # self.collHandEvent.addOutPattern('outof-%in')
 
         picker_node = CollisionNode('mouseRay')
         picker_node_path = self.camera.attachNewNode(picker_node)
@@ -30,22 +28,27 @@ class Collision:
 
     def remove_building(self):
         if self.picked_object_tag:
-            building_node = self.map_node.find(self.picked_object_tag)
+            building_id = self.picked_object_tag
+            building_node = self.map_node.find(building_id)
             if building_node:
                 self.all_buildings.remove(building_node)
                 building_node.removeNode()
+                self.database_buildings[building_id] = {'removed': 1, 'hidden': 0}
 
     def toggle_show_or_hide_building(self):
         if self.picked_object_tag:
-            building_node = self.map_node.find(self.picked_object_tag)
+            building_id = self.picked_object_tag
+            building_node = self.map_node.find(building_id)
             if building_node:
                 is_hidden = building_node.getPythonTag('is_hidden')
                 if is_hidden:
                     building_node.show()
                     building_node.setPythonTag('is_hidden', False)
+                    self.database_buildings[building_id] = {'removed': 0, 'hidden': 0}
                 else:
                     building_node.hide()
                     building_node.setPythonTag('is_hidden', True)
+                    self.database_buildings[building_id] = {'removed': 0, 'hidden': 1}
 
     def pick_object_by_mouse(self, task):
         self.picked_object_tag = None

@@ -83,9 +83,9 @@ class Database:
                 self.db_cursor.execute(
                     f'SELECT count(*) from {table_name}'
                 )
-                result = self.db_cursor.fetchall()
-                if result[0][0] > 1:
-                    print('record count:', result[0][0])
+                result = self.db_cursor.fetchone()
+                if result[0] > 1:
+                    print('record count:', result[0])
                     return
             else:
                 print('not fount:', table_name)
@@ -207,9 +207,9 @@ class Database:
                 self.db_cursor.execute(
                     f'SELECT count(*) from {table_name}'
                 )
-                result = self.db_cursor.fetchall()
-                if result[0][0] > 1:
-                    print('record count:', result[0][0])
+                result = self.db_cursor.fetchone()
+                if result[0] > 1:
+                    print('record count:', result[0])
                     return
             else:
                 print('not found:', table_name)
@@ -287,15 +287,21 @@ class Database:
             'CREATE TABLE IF NOT EXISTS worlds('
             'id INTEGER PRIMARY KEY AUTOINCREMENT, '
             'name TEXT UNIQUE, '
-            'ground_size INTEGER, '
-            'game_mode TEXT, '
+            'bldg_mesh1 TEXT, '
+            'bldg_mesh2 TEXT, '
+            'bldg_mesh3_list TEXT, '
+            'road_mesh3_list TEXT, '
+            'bldg_crs_from TEXT, '
+            'road_crs_from TEXT, '
+            'crs_to TEXT, '
+            'sky_texture TEXT, '
             'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
             'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
         )
         self.save_db_cursor.execute(
             'CREATE TRIGGER IF NOT EXISTS trigger_worlds_updated_at AFTER UPDATE ON worlds '
             'BEGIN'
-            '   UPDATE test SET updated_at = DATETIME(\'now\', \'localtime\') WHERE rowid == NEW.rowid;'
+            '   UPDATE worlds SET updated_at = DATETIME(\'now\', \'localtime\') WHERE rowid == NEW.rowid;'
             'END'
         )
         self.save_db_cursor.execute(
@@ -311,11 +317,10 @@ class Database:
             'world_id INTEGER)'
         )
         self.save_db_cursor.execute(
-            'CREATE TABLE IF NOT EXISTS blocks('
+            'CREATE TABLE IF NOT EXISTS buildings('
             'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-            'x INTEGER, '
-            'y INTEGER, '
-            'z INTEGER, '
-            'block_id INTEGER, '
+            'building_id TEXT, '
+            'removed INTEGER DEFAULT 0, '
+            'hidden INTEGER DEFAULT 0, '
             'world_id INTEGER)'
         )

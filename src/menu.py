@@ -191,7 +191,7 @@ class Menu:
         )
 
         # ユーザー操作
-        self.accept('f12', self.toggle_menu)
+        self.accept('f12', self.f12_key)
 
     def f12_key(self):
         if (self.save_node.isStashed() and
@@ -247,63 +247,109 @@ class Menu:
     def save_world(self):
         world_name = self.save_input_field.get(True)
         if world_name:
-            self.save_notification_text['text'] = 'セーブしています...'
+            settings = self.settings
 
             # セーブ処理
-            self.save_db_cursor.execute('SELECT COUNT(*) FROM worlds WHERE name = ?', (world_name,))
+            self.save_db_cursor.execute(
+                'SELECT COUNT(*) FROM worlds WHERE name = ?',
+                (world_name,))
             has_same_world_name = self.save_db_cursor.fetchone()[0]
             # print(has_same_world_name)
 
             # ワールドを保存
             if has_same_world_name:
+                print('update')
+                self.save_notification_text['text'] = 'アップデートしています...'
+                world_data = (
+                    settings['bldg_mesh1'],
+                    settings['bldg_mesh2'],
+                    ','.join(settings['bldg_mesh3_list']),
+                    ','.join(settings['road_mesh3_list']),
+                    settings['bldg_crs_from'],
+                    settings['road_crs_from'],
+                    settings['crs_to'],
+                    settings['sky_texture'],
+                    world_name,
+                )
                 self.save_db_cursor.execute(
-                    'UPDATE worlds SET ground_size = ?, game_mode = ? ',
-                    (self.ground_size, self.mode)
+                    'UPDATE worlds SET '
+                    'bldg_mesh1 = ?, '
+                    'bldg_mesh2 = ?, '
+                    'bldg_mesh3_list = ?, '
+                    'road_mesh3_list = ?, '
+                    'bldg_crs_from = ?, '
+                    'road_crs_from = ?, '
+                    'crs_to = ?, '
+                    'sky_texture = ? '
+                    'WHERE name = ? ',
+                    world_data
                 )
             else:
+                print('save')
+                self.save_notification_text['text'] = 'セーブしています...'
+                world_data = (
+                    world_name,
+                    settings['bldg_mesh1'],
+                    settings['bldg_mesh2'],
+                    ','.join(settings['bldg_mesh3_list']),
+                    ','.join(settings['road_mesh3_list']),
+                    settings['bldg_crs_from'],
+                    settings['road_crs_from'],
+                    settings['crs_to'],
+                    settings['sky_texture'],
+                )
                 self.save_db_cursor.execute(
-                    'INSERT INTO worlds(name, ground_size, game_mode) values(?, ?, ?)',
-                    (world_name, self.ground_size, self.mode)
+                    'INSERT INTO worlds('
+                    'name, bldg_mesh1, bldg_mesh2, bldg_mesh3_list, road_mesh3_list, '
+                    'bldg_crs_from, road_crs_from, crs_to, sky_texture) '
+                    'values(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    world_data
                 )
 
             # world_id を取得
             world_id = self.get_world_id_from_name(world_name)
 
-            # ブロックデータを初期化
+            # ビルデータを初期化
             self.save_db_cursor.execute(
-                'DELETE FROM blocks where world_id = ?',
+                'DELETE FROM buildings where world_id = ?',
                 (world_id,)
             )
 
-            # ブロックデータを保存
+            # ビルデータを保存
             inserts = []
-            for key, value in self.block.block_dictionary.items():
-                x, y, z = key.split('_')
-                block_id = value
-                inserts.append((x, y, z, block_id, world_id))
+            for key, value in self.database_buildings.items():
+                building_id = key
+                removed = value['removed']
+                hidden = value['hidden']
+                inserts.append((building_id, removed, hidden, world_id))
+            print(self.database_buildings)
+            print(inserts)
             self.save_db_cursor.executemany(
-                'INSERT INTO blocks(x, y, z, block_id, world_id) values(?, ?, ?, ? ,?)',
+                'INSERT INTO buildings(building_id, removed, hidden, world_id) values(?, ?, ?, ?)',
                 inserts
             )
-
-            # プレイヤーを初期化
-            self.save_db_cursor.execute(
-                'DELETE FROM characters where world_id = ?',
-                (world_id,)
-            )
-
-            # プレイヤー情報を保存
-            character_type = 'player'
-            x, y, z = self.player.position
-            direction_x, direction_y, direction_z = self.player.direction
-            self.save_db_cursor.execute(
-                'INSERT INTO characters(character_type, x, y, z, direction_x, direction_y, direction_z, world_id) '
-                'values(?, ?, ?, ? ,?, ?, ?, ?)',
-                (character_type, x, y, z, direction_x, direction_y, direction_z, world_id)
-            )
+            #
+            # # プレイヤーを初期化
+            # self.save_db_cursor.execute(
+            #     'DELETE FROM characters where world_id = ?',
+            #     (world_id,)
+            # )
+            #
+            # # プレイヤー情報を保存
+            # character_type = 'player'
+            # x, y, z = self.player.position
+            # direction_x, direction_y, direction_z = self.player.direction
+            # self.save_db_cursor.execute(
+            #     'INSERT INTO characters(character_type, x, y, z, direction_x, direction_y, direction_z, world_id) '
+            #     'values(?, ?, ?, ? ,?, ?, ?, ?)',
+            #     (character_type, x, y, z, direction_x, direction_y, direction_z, world_id)
+            # )
 
             self.save_db.commit()
-            self.save_notification_text['text'] = 'セーブ完了！'
+            if has_same_world_name:
+                self.save_notification_text['text'] = 'アップデート完了！'
+            else:
+                self.save_notification_text['text'] = 'セーブ完了！'
         else:
             self.save_notification_text['text'] = 'ワールド名を入力してください。'
 

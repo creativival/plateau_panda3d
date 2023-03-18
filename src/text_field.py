@@ -16,6 +16,9 @@ class TextField:
                                       text_fg=(1, 0, 0, 1), pos=(0.1, 0, 0.1), text_scale=0.75, entryFont=self.font)
         self.text_field.hide()
 
+        # データベースに保存
+        self.database_buildings = {}
+
         self.accept('tab', self.toggle_text_field)
 
     def toggle_text_field(self):
@@ -86,5 +89,6 @@ class TextField:
             # building_collision.show()
 
             self.all_buildings.append(building_node)
+            self.database_buildings[text] = {'removed': 0, 'hidden': 0}
         else:
             print('Incorrect format')
