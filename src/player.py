@@ -201,7 +201,7 @@ class Player(Character):
     def set_player_direction(self):
         if (not self.is_guest and
                 not self.base.is_paused_player and
-                self.menu_node.isStashed()):
+                self.base.menu_node.isStashed()):
             if self.base.mouseWatcherNode.hasMouse():
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
                 x = mouse_pos.x

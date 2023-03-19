@@ -37,7 +37,7 @@ class KeyMap:
         self.accept('mouse3-up', self.update_key_map, ['mouse3', False])
 
     def update_key_map(self, key_name, key_state):
-        if (not self.text_field.isStashed() and
+        if (self.text_field.isStashed() and
                 not self.is_paused_player and
                 self.menu_node.isStashed()):
             # print(key_name, key_state)

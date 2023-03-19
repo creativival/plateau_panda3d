@@ -8,12 +8,11 @@ from network import Message, Connect
 import constants
 
 
-class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Menu, Collision, KeyMap, Camera, Players,
-                Mobs, Connect):
-    def __init__(self, window_title, settings, sky_texture, has_wire_frame, has_solid_model,
-                 has_player, has_mobs, character_color):
+class OpenWorld(ShowBase, Database, DrawText, Connect, Window, Message, TextField, Menu,
+                KeyMap, Camera, Collision, Players,
+                Mobs):
+    def __init__(self, window_title, settings):
         self.settings = settings
-        self.character_color = character_color
         # PCの能力により調整
         self.building_tolerance = 400  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
@@ -32,22 +31,21 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Menu, 
         Message.__init__(self)
         TextField.__init__(self)
         Menu.__init__(self)
-        Building.__init__(self)
-        Collision.__init__(self)
         KeyMap.__init__(self)
         Camera.__init__(self)
         Axis.__init__(self)
         Ground.__init__(self)
-        if sky_texture:
-            CelestialSphere.__init__(self, sky_texture)
-        if has_wire_frame:
-            WireFrame.__init__(self)
-        if has_solid_model:
-            SolidModel.__init__(self)
-        if has_player:
-            Players.__init__(self)
-        if has_mobs:
-            Mobs.__init__(self, constants.mob_dic_list)
+
+        # map_node
+        Building.__init__(self)
+        Collision.__init__(self)
+        CelestialSphere.__init__(self)
+        WireFrame.__init__(self)
+        SolidModel.__init__(self)
+        # players_node
+        Players.__init__(self)
+        # mobs_node
+        Mobs.__init__(self, constants.mob_dic_list)
 
 
 if __name__ == '__main__':
@@ -71,17 +69,20 @@ if __name__ == '__main__':
         # 平面直角座標系
         'crs_to': '6677',  # 関東圏（9系）
     }
+    my_settings = {
+        'plateau_settings': plateau_settings,
+        # 'sky_texture': 'sky_1024x1024.png',
+        'sky_texture': 'cloud_sky_1024x1024.png',
+        # 'sky_texture': 'star_sky_1024x1024.png',
+        'has_wire_frame': True,
+        'has_solid_model': True,
+        'has_player': True,
+        'has_mobs': True,
+        'character_color': (1, 1, 1, 1),
+    }
 
     app = OpenWorld(
         window_title='PLATEAU World',
-        settings=plateau_settings,
-        # sky_texture='sky_1024x1024.png',
-        sky_texture='cloud_sky_1024x1024.png',
-        # sky_texture='star_sky_1024x1024.png',
-        has_wire_frame=True,
-        has_solid_model=True,
-        has_player=True,
-        has_mobs=True,
-        character_color=(1, 1, 0, 1),
+        settings=my_settings,
     )
     app.run()

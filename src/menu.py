@@ -3,6 +3,12 @@ import os
 import sys
 import sqlite3
 from panda3d.core import *
+from .ground import Ground
+from .building import Building
+from .collision import Collision
+from .celestial_sphere import CelestialSphere
+from .wire_frame import WireFrame
+from .solid_model import SolidModel
 from .gui_parts import *
 
 
@@ -390,18 +396,50 @@ class Menu:
 
     def load_world(self, world_name):
         # ロード処理
+        self.save_db_cursor.execute(
+            'SELECT bldg_mesh1,bldg_mesh2, bldg_mesh3_list, road_mesh3_list, '
+            'bldg_crs_from, road_crs_from, crs_to, sky_texture '
+            'FROM worlds WHERE name = ?',
+            (world_name,)
+        )
+        (bldg_mesh1, bldg_mesh2, bldg_mesh3_list, road_mesh3_list, bldg_crs_from, road_crs_from, crs_to,
+         sky_texture) = self.save_db_cursor.fetchone()
+
+        plateau_settings = self.settings['plateau_settings']
+        plateau_settings['bldg_mesh1'] = bldg_mesh1
+        plateau_settings['bldg_mesh2'] = bldg_mesh2
+        plateau_settings['bldg_mesh3_list'] = bldg_mesh3_list.split(',')
+        plateau_settings['road_mesh3_list'] = road_mesh3_list.split(',')
+        plateau_settings['bldg_crs_from'] = bldg_crs_from
+        plateau_settings['road_crs_from'] = road_crs_from
+        plateau_settings['crs_to'] = crs_to
+        self.settings['sky_texture'] = sky_texture
+
+        # ワールドの中心座標
+        self.area_center = self.get_area_center()
+        self.camera_base_node.setPos(self.area_center)
+        self.axis_node.setPos(self.area_center)
+        self.ground_node.setPos(self.area_center)
+        self.players_node.setPos(self.area_center)
+        self.mobs_node.setPos(self.area_center)
+
         # 初期化
-        # self.map_node.removeNode()
+        self.map_node.removeNode()
+        # 再構築
+        Building.__init__(self)
+        Collision.__init__(self)
+        CelestialSphere.__init__(self)
+        WireFrame.__init__(self)
+        SolidModel.__init__(self)
 
         # # ビルを復元
-        # self.map_node = self.render.attachNewNode(PandaNode('map_node'))
         world_id = self.get_world_id_from_name(world_name)
 
         if world_id:
             self.save_db_cursor.execute('SELECT * FROM buildings WHERE world_id = ?', (world_id,))
             buildings = self.save_db_cursor.fetchall()
             for building in buildings:
-                print(building)
+                # print(building)
                 _, building_id, removed, hidden, _ = building
 
                 if building_id[:6] == 'build ':
@@ -431,4 +469,3 @@ class Menu:
             self.load_notification_text['text'] = 'ロードが完了しました。'
         else:
             self.load_notification_text['text'] = 'ロードできませんでした。'
-
