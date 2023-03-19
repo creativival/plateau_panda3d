@@ -37,7 +37,9 @@ class Player2D:
         self.player_base_node.setHpr(self.direction)
 
     def set_player_direction(self):
-        if not self.is_guest and not self.base.is_paused_player:
+        if (not self.is_guest and
+                not self.base.is_paused_player and
+                self.base.menu_node.isStashed()):
             if self.base.mouseWatcherNode.hasMouse():
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
                 x = mouse_pos.x

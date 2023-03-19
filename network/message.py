@@ -12,7 +12,7 @@ class Message:
         self.accept('h', self.send_hello_message)
 
     def send_hello_message(self):
-        if not self.is_open_text_field:
+        if not self.text_field.isStashed():
             self.send_message('Hello!')
 
     def display_messages(self, message):

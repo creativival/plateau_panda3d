@@ -6,8 +6,11 @@ from network import NetCommon, ServerProtocol
 
 class Players:
     def __init__(self):
-        self.players = {}
-        self.add_player('myself')
+        if self.settings['has_player']:
+            self.players_node = self.render.attachNewNode(PandaNode('players_node'))
+            self.players_node.setPos(self.area_center)
+            self.players = {}
+            self.add_player('myself')
 
     def add_player(self, key, is_guest=False):
         self.players[key] = Player(self, is_guest)

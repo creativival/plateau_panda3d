@@ -8,13 +8,20 @@ from . import get_building_positions, get_road_positions
 
 class Database:
     def __init__(self):
+        # ビル・道路のデータ
         self.db = sqlite3.connect('output/plateau_panda3d.sqlite3')
         self.db_cursor = self.db.cursor()
-        # データベースの作成
         self.road_count = None
         self.create_road_table()
         self.create_building_table()
+
+        # ワールドの中心座標
         self.area_center = self.get_area_center()
+
+        # セーブ
+        self.save_db = sqlite3.connect('output/save.sqlite3')
+        self.save_db_cursor = self.save_db.cursor()
+        self.create_save_tables()
 
     def table_is_exist(self, table_name):
         self.db_cursor.execute(
@@ -26,7 +33,7 @@ class Database:
         return True
 
     def get_area_center(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['bldg_mesh3_list']
         x_positions = []
         y_positions = []
@@ -55,7 +62,7 @@ class Database:
         return (min_position + max_position) / 2
 
     def create_building_table(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['bldg_mesh3_list']
         bldg_crs_from = settings['bldg_crs_from']
         if len(bldg_crs_from.split('_')) > 1:
@@ -76,9 +83,9 @@ class Database:
                 self.db_cursor.execute(
                     f'SELECT count(*) from {table_name}'
                 )
-                result = self.db_cursor.fetchall()
-                if result[0][0] > 1:
-                    print('record count:', result[0][0])
+                result = self.db_cursor.fetchone()
+                if result[0] > 1:
+                    print('record count:', result[0])
                     return
             else:
                 print('not fount:', table_name)
@@ -179,7 +186,7 @@ class Database:
         self.db.commit()
 
     def create_road_table(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['road_mesh3_list']
         road_crs_from = settings['road_crs_from']
         if len(road_crs_from.split('_')) > 1:
@@ -200,9 +207,9 @@ class Database:
                 self.db_cursor.execute(
                     f'SELECT count(*) from {table_name}'
                 )
-                result = self.db_cursor.fetchall()
-                if result[0][0] > 1:
-                    print('record count:', result[0][0])
+                result = self.db_cursor.fetchone()
+                if result[0] > 1:
+                    print('record count:', result[0])
                     return
             else:
                 print('not found:', table_name)
@@ -251,7 +258,7 @@ class Database:
         self.db.commit()
 
     def write_road(self, geo_text, table_name):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         positions = get_road_positions(geo_text, self.road_crs_from, settings['crs_to'])
         if positions:
             self.road_count += 1
@@ -274,3 +281,46 @@ class Database:
                 f'INSERT INTO {table_name}(positions, center_position) '
                 'values(?, ?)',
                 inserts)
+
+    def create_save_tables(self):
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS worlds('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'name TEXT UNIQUE, '
+            'bldg_mesh1 TEXT, '
+            'bldg_mesh2 TEXT, '
+            'bldg_mesh3_list TEXT, '
+            'road_mesh3_list TEXT, '
+            'bldg_crs_from TEXT, '
+            'road_crs_from TEXT, '
+            'crs_to TEXT, '
+            'sky_texture TEXT, '
+            'created_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')), '
+            'updated_at TEXT NOT NULL DEFAULT (DATETIME(\'now\', \'localtime\')))'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TRIGGER IF NOT EXISTS trigger_worlds_updated_at AFTER UPDATE ON worlds '
+            'BEGIN'
+            '   UPDATE worlds SET updated_at = DATETIME(\'now\', \'localtime\') WHERE rowid == NEW.rowid;'
+            'END'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS characters('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'character_type TEXT, '
+            'x INTEGER, '
+            'y INTEGER, '
+            'z INTEGER, '
+            'direction_x INTEGER, '
+            'direction_y INTEGER, '
+            'direction_z INTEGER, '
+            'world_id INTEGER)'
+        )
+        self.save_db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS buildings('
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+            'building_id TEXT, '
+            'removed INTEGER DEFAULT 0, '
+            'hidden INTEGER DEFAULT 0, '
+            'world_id INTEGER)'
+        )

@@ -62,7 +62,7 @@ class Protocol:
         if character_face_num != player.character_face_num:
             player.character_face_num = character_face_num
             player.cat_tex = self.base.loader.loadTexture(
-                f'models/maps/cat{character_face_num}.png')
+                f'models/maps/cat/cat{character_face_num}.png')
             player.character_model.setTexture(player.cat_tex, 1)
 
     @staticmethod

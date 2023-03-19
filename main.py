@@ -1,18 +1,18 @@
 from direct.showbase.ShowBase import ShowBase
 from src import (
-    Database, Sound, DrawText, Window, TextField, Building, Collision, KeyMap, Camera, Axis, CelestialSphere,
+    Database, Sound, DrawText, Window, TextField, Menu,
+    Building, Collision, KeyMap, Camera, Axis, CelestialSphere,
     Ground, WireFrame, SolidModel, Players, Mobs
 )
 from network import Message, Connect
 import constants
 
 
-class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Collision, KeyMap, Camera, Players,
-                Mobs, Connect):
-    def __init__(self, window_title, settings, sky_texture, has_wire_frame, has_solid_model,
-                 has_player, has_mobs, character_color):
+class OpenWorld(ShowBase, Database, DrawText, Connect, Window, Message, TextField, Menu,
+                KeyMap, Camera, Collision, Players,
+                Mobs):
+    def __init__(self, window_title, settings):
         self.settings = settings
-        self.character_color = character_color
         # PCの能力により調整
         self.building_tolerance = 400  # 建物を描画する範囲
         self.road_tolerance = 400  # 道路を描画する範囲
@@ -26,29 +26,26 @@ class OpenWorld(ShowBase, Database, DrawText, Window, Message, TextField, Collis
         Database.__init__(self)
         Sound.__init__(self)
         DrawText.__init__(self)
+        Connect.__init__(self)
         Window.__init__(self, window_title)
         Message.__init__(self)
         TextField.__init__(self)
-        Building.__init__(self)
-        Collision.__init__(self)
+        Menu.__init__(self)
         KeyMap.__init__(self)
         Camera.__init__(self)
         Axis.__init__(self)
         Ground.__init__(self)
-        if sky_texture:
-            CelestialSphere.__init__(self, sky_texture)
-        if has_wire_frame:
-            WireFrame.__init__(self)
-        if has_solid_model:
-            SolidModel.__init__(self)
-        if has_player:
-            Players.__init__(self)
-        if has_mobs:
-            Mobs.__init__(self, constants.mob_dic_list)
 
-        # マルチプレイ
-        # F10 サーバー開始 / F11 クライエントとして接続
-        Connect.__init__(self)
+        # map_node
+        Building.__init__(self)
+        Collision.__init__(self)
+        CelestialSphere.__init__(self)
+        WireFrame.__init__(self)
+        SolidModel.__init__(self)
+        # players_node
+        Players.__init__(self)
+        # mobs_node
+        Mobs.__init__(self, constants.mob_dic_list)
 
 
 if __name__ == '__main__':
@@ -72,17 +69,20 @@ if __name__ == '__main__':
         # 平面直角座標系
         'crs_to': '6677',  # 関東圏（9系）
     }
+    my_settings = {
+        'plateau_settings': plateau_settings,
+        # 'sky_texture': 'sky_1024x1024.png',
+        'sky_texture': 'cloud_sky_1024x1024.png',
+        # 'sky_texture': 'star_sky_1024x1024.png',
+        'has_wire_frame': True,  # ワイヤーフレームを表示
+        'has_solid_model': True,  # 面を表示
+        'has_player': True,  # プレイヤーを表示
+        'has_mobs': True,  # モブを表示
+        'character_color': (1, 1, 1, 1),
+    }
 
     app = OpenWorld(
         window_title='PLATEAU World',
-        settings=plateau_settings,
-        # sky_texture='models/maps/sky_1024x1024.png',
-        sky_texture='models/maps/cloud_sky_1024x1024.png',
-        # sky_texture='models/maps/star_sky_1024x1024.png',
-        has_wire_frame=True,
-        has_solid_model=True,
-        has_player=True,
-        has_mobs=True,
-        character_color=(1, 1, 0, 1),
+        settings=my_settings,
     )
     app.run()

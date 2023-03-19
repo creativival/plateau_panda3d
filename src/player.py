@@ -50,9 +50,7 @@ class Player(Character):
         self.double_jump_status = False
 
         # プレイヤー
-        self.player_base_node = self.base.render.attachNewNode(PandaNode('player_base_node'))
-        self.player_base_node.setPos(self.base.area_center)
-        self.player_node = self.player_base_node.attachNewNode(PandaNode('player_node'))
+        self.player_node = self.base.players_node.attachNewNode(PandaNode('player_node'))
         self.player_node.setPos(self.position)
         self.player_node.setHpr(self.direction)
         self.character_node.reparentTo(self.player_node)
@@ -105,7 +103,7 @@ class Player(Character):
 
     def change_guest_face(self, task):
         if self.is_changed_guest_face_num and self.is_guest:
-            self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat{self.character_face_num}.png')
+            self.cat_tex = self.base.loader.loadTexture(f'models/maps/cat/cat{self.character_face_num}.png')
             self.character_model.setTexture(self.cat_tex, 1)
 
         return task.cont
@@ -201,7 +199,9 @@ class Player(Character):
                     self.velocity.setY(0)
 
     def set_player_direction(self):
-        if not self.is_guest and not self.base.is_paused_player:
+        if (not self.is_guest and
+                not self.base.is_paused_player and
+                self.base.menu_node.isStashed()):
             if self.base.mouseWatcherNode.hasMouse():
                 mouse_pos = self.base.mouseWatcherNode.getMouse()
                 x = mouse_pos.x
