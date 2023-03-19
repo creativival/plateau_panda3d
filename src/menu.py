@@ -247,14 +247,17 @@ class Menu:
             'SELECT id from worlds where name = ?',
             (world_name,)
         )
-        world_id = self.save_db_cursor.fetchone()[0]
+        result = self.save_db_cursor.fetchone()
 
-        return world_id
+        if result:
+            return result[0]
+        else:
+            return None
 
     def save_world(self):
         world_name = self.save_input_field.get(True)
         if world_name:
-            settings = self.settings
+            settings = self.settings['plateau_settings']
 
             # セーブ処理
             self.save_db_cursor.execute(
@@ -275,7 +278,7 @@ class Menu:
                     settings['bldg_crs_from'],
                     settings['road_crs_from'],
                     settings['crs_to'],
-                    settings['sky_texture'],
+                    self.settings['sky_texture'],
                     world_name,
                 )
                 self.save_db_cursor.execute(
@@ -303,7 +306,7 @@ class Menu:
                     settings['bldg_crs_from'],
                     settings['road_crs_from'],
                     settings['crs_to'],
-                    settings['sky_texture'],
+                    self.settings['sky_texture'],
                 )
                 self.save_db_cursor.execute(
                     'INSERT INTO worlds('
@@ -388,23 +391,44 @@ class Menu:
     def load_world(self, world_name):
         # ロード処理
         # 初期化
-        self.map_node.removeNode()
+        # self.map_node.removeNode()
 
-        # ブロックを復元
-        self.map_node = self.render.attachNewNode(PandaNode('map_node'))
+        # # ビルを復元
+        # self.map_node = self.render.attachNewNode(PandaNode('map_node'))
         world_id = self.get_world_id_from_name(world_name)
-        self.save_db_cursor.execute('SELECT * FROM blocks WHERE world_id = ?', (world_id,))
-        recorded_blocks = self.save_db_cursor.fetchall()
-        for block in recorded_blocks:
-            _, x, y, z, block_id, _ = block
-            self.block.add_block(x, y, z, block_id)
 
-        # プレイヤーを更新
-        self.save_db_cursor.execute(
-            'SELECT x, y, z, direction_x, direction_y, direction_z FROM characters WHERE world_id = ? AND character_type = ?',
-            (world_id, 'player')
-        )
-        # print(self.save_db_cursor.fetchall())
-        x, y, z, direction_x, direction_y, direction_z = self.save_db_cursor.fetchall()[0]
-        self.player.position = Point3(x, y, z)
-        self.player.direction = Vec3(direction_x, direction_y, direction_z)
+        if world_id:
+            self.save_db_cursor.execute('SELECT * FROM buildings WHERE world_id = ?', (world_id,))
+            buildings = self.save_db_cursor.fetchall()
+            for building in buildings:
+                print(building)
+                _, building_id, removed, hidden, _ = building
+
+                if building_id[:6] == 'build ':
+                    self.build_shape(building_id)
+
+                building_node = self.map_node.find(building_id)
+
+                if removed:
+                    self.all_buildings.remove(building_node)
+                    building_node.removeNode()
+                    self.database_buildings[building_id] = {'removed': 1, 'hidden': 0}
+
+                if hidden:
+                    building_node.hide()
+                    building_node.setPythonTag('is_hidden', True)
+                    self.database_buildings[building_id] = {'removed': 0, 'hidden': 1}
+
+            # # プレイヤーを更新
+            # self.save_db_cursor.execute(
+            #     'SELECT x, y, z, direction_x, direction_y, direction_z FROM characters WHERE world_id = ? AND character_type = ?',
+            #     (world_id, 'player')
+            # )
+            # # print(self.save_db_cursor.fetchall())
+            # x, y, z, direction_x, direction_y, direction_z = self.save_db_cursor.fetchall()[0]
+            # self.player.position = Point3(x, y, z)
+            # self.player.direction = Vec3(direction_x, direction_y, direction_z)
+            self.load_notification_text['text'] = 'ロードが完了しました。'
+        else:
+            self.load_notification_text['text'] = 'ロードできませんでした。'
+
