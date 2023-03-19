@@ -33,8 +33,12 @@ root/
  │
  ├ models/                      3Dモデル
  │     ├ maps                 テクスチャー
- │     │     ├ cat.png  # キャラクター
- │     │     ├ sky_1024x1024.png  # 天球の内面
+ │     │     ├ button  # ボタン
+ │     │         ├ button_up.png
+ │     │     ├ cat  # キャラクター
+ │     │         ├ cat.png
+ │     │     ├ sky  # 天球の内面
+ │     │         ├ sky_texture.png
  │     │
  │     ├ egg_surface.egg  # キャラクター
  │     ├ sphere_uv_reverse.egg  # 天球（テクスチャー反転）
@@ -66,6 +70,9 @@ root/
  │     ├ draw_text.py  # テキスト表示
  │     ├ geometry_util.py  # ジオメトリ
  │     ├ ground.py  # グラウンド
+ │     ├ gui_parts.py  # GUIパーツ
+ │     ├ key_map.py  # キーマップ
+ │     ├ menu.py  # メニュー
  │     ├ mod.py  # モブ
  │     ├ mobs.py  # モブを管理
  │     ├ player.py  # プレイヤー
@@ -155,16 +162,21 @@ if __name__ == '__main__':
         # 平面直角座標系
         'crs_to': '6677',  # 関東圏（9系）
     }
+    my_settings = {
+        'plateau_settings': plateau_settings,
+        # 'sky_texture': 'sky_1024x1024.png',
+        'sky_texture': 'cloud_sky_1024x1024.png',
+        # 'sky_texture': 'star_sky_1024x1024.png',
+        'has_wire_frame': True,  # ワイヤーフレームを表示
+        'has_solid_model': True,  # 面を表示
+        'has_player': True,  # プレイヤーを表示
+        'has_mobs': True,  # モブを表示
+        'character_color': (1, 1, 1, 1),
+    }
 
     app = OpenWorld(
-        window_title='PLATEAU World',  # ウインドウタイトル
-        settings=plateau_settings,  # PLATEAUデータ設定
-        sky_texture='models/maps/cloud_sky_1024x1024.png',  # 天球内面の画像を指定
-        has_wire_frame=True,  # ワイヤーフレームを表示
-        has_solid_model=True,  # 面を表示
-        has_player=False, # プレイヤーを表示
-        has_mobs=False,  # モブを表示
-        character_color=(1, 1, 0, 1),  # キャラクターの色を変更
+        window_title='PLATEAU World',
+        settings=my_settings,
     )
     app.run()
 ```
@@ -202,13 +214,13 @@ PLATEAU Webサイトより引用（https://www.mlit.go.jp/plateau/learning/tpc03
 ### 表示するオブジェクトの制限
 
 ```text
-        has_wire_frame=True,  # ワイヤーフレームを表示
-        has_solid_model=True,  # 面を表示
-        has_player=False, # プレイヤーを表示
-        has_mobs=False,  # モブを表示
+        'has_wire_frame': True,  # ワイヤーフレームを表示
+        'has_solid_model': True,  # 面を表示
+        'has_player': True,  # プレイヤーを表示
+        'has_mobs': True,  # モブを表示
 ```
 
-インスタンス化のさい、引数をブール値で設定すると、オブジェクトを表示/非表示を変更できます。  
+my_settingsでブール値で設定すると、オブジェクトを表示/非表示を変更できます。  
 FPSが低いときはパソコンの負荷を下げるため、表示するオブジェクトを減らしてください。  
 
 これで、起動ファイルの設定は完了です。ゲームを実行しましょう。
@@ -272,14 +284,13 @@ FPSが低いときはパソコンの負荷を下げるため、表示するオ�
 
 ### 天候を変化させる 
 
-インスタンス化の引数sky_textureを指定して、様々な空を表現できます。  
-sky_texture='' を指定すると、天球が表示されなくなります。  
+my_settingsでsky_textureを指定して、様々な空を表現できます。  
+sky_texture: '' を指定すると、天球が表示されなくなります。  
 
 ```text
-        # sky_texture='models/maps/sky_1024x1024.png',
-        sky_texture='models/maps/cloud_sky_1024x1024.png',
-        # sky_texture='models/maps/star_sky_1024x1024.png',
-        # sky_texture='',
+        # 'sky_texture': 'sky_1024x1024.png',
+        'sky_texture': 'cloud_sky_1024x1024.png',
+        # 'sky_texture': 'star_sky_1024x1024.png',
 ```
 
 #### 快晴
@@ -304,8 +315,34 @@ sky_texture='' を指定すると、天球が表示されなくなります。
 ### 基本操作
 
 ```text
-Escape: ゲームをポーズ
-F12: ゲームを終了
+Escape: プレイヤーをポーズする
+F12: メニュー画面を表示/非表示
+```
+
+## メニュー
+
+メニュー画面から、ワールドの「セーブ」「ロード」やマルチプレイが実行できます。  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image13.png)
+
+### セーブ・ロード
+
+保存したいワールドの名前を入力して、セーブしてください。  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image14.png)
+
+
+保存したワールドをロードできます。選択肢からロードしたいワールド名を選んでください。  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image15.png)
+
+## カメラ
+
+カメラの切り替えは「F5」キーで行います。
+
+```text
+
+F5でカメラの切り替え（遠景→TPS→FPS→ミラー→）
 ```
 
 ### 遠景カメラビュー
@@ -319,7 +356,6 @@ WASDで平行移動
 ### プレイヤービュー
 
 ```text
-F5でカメラの切り替え（遠景→TPS→FPS→ミラー→）
 WASDで平行移動
 マウスで回転
 スペースでジャンプ
@@ -382,12 +418,28 @@ main.pyの設定項目を編集して、パソコンの描画範囲を調整で�
 
 マルチプレイが可能です（Betaバージョンのため、うまく接続できない場合があります）。  
 サーバーとクライエント（複数）が、同じワールドで共同作業を行えます。  
+** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。  
 
-設定は constants.pyで行います。  
-同じパソコン　IP_ADDRESS = 'localhost'  （初期設定）  
-同じLAN内　IP_ADDRESS= '192.168.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておく）  
-LANの外　IP ADDRESS = ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
-** サーバーを外部に公開するときは、セキュリティー上の配慮が必要です。ご注意ください。
+### サーバーを開く
+
+メニュー画面からサーバーを開いてください。  
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image16.png)
+
+### クライエントとしてワールドに合流する
+
+メニュー画面から「サーバーに接続」を選んで、サーバーのアドレスを入力します。   
+
+```text
+サーバーのアドレス
+同じパソコン 'localhost'  （初期設定 同時に操作できません。開発テスト用）  
+LANの内 '192.168.xx.xx'　（あらかじめ、同じ都市データをデータベースに保存しておくこと）  
+LANの外 ' https：//xxxx.jp.ngrok.io'　（ngrok等で、外部にサーバーを公開してクライエントにURLを伝えます）  
+```
+
+![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image17.png)
+
+サーバーにクライエント1とクライエント2が合流した
 
 ![PLATEAU Panda3D](https://github.com/creativival/plateau_panda3d/blob/main/image/plateau_panda3d_image10.png)
 

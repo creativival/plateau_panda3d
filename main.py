@@ -74,10 +74,10 @@ if __name__ == '__main__':
         # 'sky_texture': 'sky_1024x1024.png',
         'sky_texture': 'cloud_sky_1024x1024.png',
         # 'sky_texture': 'star_sky_1024x1024.png',
-        'has_wire_frame': True,
-        'has_solid_model': True,
-        'has_player': True,
-        'has_mobs': True,
+        'has_wire_frame': True,  # ワイヤーフレームを表示
+        'has_solid_model': True,  # 面を表示
+        'has_player': True,  # プレイヤーを表示
+        'has_mobs': True,  # モブを表示
         'character_color': (1, 1, 1, 1),
     }
 
