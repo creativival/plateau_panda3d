@@ -9,7 +9,7 @@ class Character:
         self.character_node = NodePath('character_node')
 
         # モデル
-        self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a = self.base.character_color
+        self.rgb_r, self.rgb_g, self.rgb_b, self.rgb_a = self.base.settings['character_color']
         self.character_face_num = character_face_num
         self.character_hand_length = character_hand_length
 

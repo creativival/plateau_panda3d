@@ -53,7 +53,8 @@ class Collision:
     def pick_object_by_mouse(self, task):
         self.picked_object_tag = None
 
-        if self.mouseWatcherNode.hasMouse():
+        if (self.mouseWatcherNode.hasMouse() and
+                self.menu_node.isStashed()):
             mouse_x, mouse_y = self.mouseWatcherNode.getMouse()
             self.picker_ray.setFromLens(self.camNode, mouse_x, mouse_y)
             self.collision_traverser.traverse(self.render)

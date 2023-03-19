@@ -7,14 +7,13 @@ from direct.gui.DirectGui import *
 class TextField:
     def __init__(self):
         # ConfigVariableBool("ime-aware").setValue(True)
-        self.is_open_text_field = False
         input_texture = self.loader.loadTexture('texture/button_press.png')
 
         # self.bottom_left_text = self.draw_2d_text('bottom_left_text', parent=self.a2dBottomLeft, pos=(0.05, 0.1))
         self.text_field = DirectEntry(text='', scale=.15, command=self.send_text_from_field, initialText='', numLines=1,
                                       focus=1, frameTexture=input_texture, parent=self.a2dBottomLeft, width=25,
                                       text_fg=(1, 0, 0, 1), pos=(0.1, 0, 0.1), text_scale=0.75, entryFont=self.font)
-        self.text_field.hide()
+        self.text_field.stash()
 
         # データベースに保存
         self.database_buildings = {}
@@ -22,13 +21,11 @@ class TextField:
         self.accept('tab', self.toggle_text_field)
 
     def toggle_text_field(self):
-        if self.text_field.isHidden():
-            self.text_field.show()
-            self.is_open_text_field = True
+        if self.text_field.isStashed():
+            self.text_field.unstash()
             self.text_field.setFocus()
         else:
-            self.text_field.hide()
-            self.is_open_text_field = False
+            self.text_field.stash()
 
     def send_text_from_field(self, text):
         if text:
@@ -37,8 +34,7 @@ class TextField:
             else:
                 self.send_message(text)
             self.text_field.enterText('')
-            self.text_field.hide()
-            self.is_open_text_field = False
+            self.text_field.stash()
 
     def build_shape(self, text):
         print('build start')
@@ -86,7 +82,7 @@ class TextField:
             # collision_base_node.setH(degrees(min_angle) + 45)
             building_collision = building_node.attachNewNode(collision_node)
             # Set the object's collision node to render as visible.
-            # building_collision.show()
+            # building_collision.unstash()
 
             self.all_buildings.append(building_node)
             self.database_buildings[text] = {'removed': 0, 'hidden': 0}

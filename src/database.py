@@ -33,7 +33,7 @@ class Database:
         return True
 
     def get_area_center(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['bldg_mesh3_list']
         x_positions = []
         y_positions = []
@@ -62,7 +62,7 @@ class Database:
         return (min_position + max_position) / 2
 
     def create_building_table(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['bldg_mesh3_list']
         bldg_crs_from = settings['bldg_crs_from']
         if len(bldg_crs_from.split('_')) > 1:
@@ -186,7 +186,7 @@ class Database:
         self.db.commit()
 
     def create_road_table(self):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['road_mesh3_list']
         road_crs_from = settings['road_crs_from']
         if len(road_crs_from.split('_')) > 1:
@@ -258,7 +258,7 @@ class Database:
         self.db.commit()
 
     def write_road(self, geo_text, table_name):
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         positions = get_road_positions(geo_text, self.road_crs_from, settings['crs_to'])
         if positions:
             self.road_count += 1

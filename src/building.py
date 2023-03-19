@@ -10,7 +10,7 @@ class Building:
 
         # 建物のベースノード
         self.all_buildings = []
-        settings = self.settings
+        settings = self.settings['plateau_settings']
         mesh3_list = settings['bldg_mesh3_list']
         for mesh3 in mesh3_list:
             file_name = (f'{settings["bldg_mesh1"]}{settings["bldg_mesh2"]}{mesh3}'

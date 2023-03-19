@@ -10,11 +10,13 @@ class Menu:
     def __init__(self):
         self.menu_node = self.aspect2d.attachNewNode('menu_node')
         self.menu_node.stash()
-        self.save_node = self.aspect2d.attachNewNode('save_node')
+        self.select_menu_node = self.menu_node.attachNewNode('select_menu_node')
+        self.select_menu_node.stash()
+        self.save_node = self.menu_node.attachNewNode('save_node')
         self.save_node.stash()
-        self.load_node = self.aspect2d.attachNewNode('load_node')
+        self.load_node = self.menu_node.attachNewNode('load_node')
         self.load_node.stash()
-        self.join_node = self.aspect2d.attachNewNode('join_node')
+        self.join_node = self.menu_node.attachNewNode('join_node')
         self.join_node.stash()
 
         menu_cm = CardMaker('menu_card')
@@ -29,7 +31,7 @@ class Menu:
 
         # Menu Screen
         self.resume_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='ゲームに戻る',
             font=self.font,
@@ -37,7 +39,7 @@ class Menu:
             command=self.toggle_menu
         )
         self.toggle_save_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='ゲームをセーブ',
             font=self.font,
@@ -45,7 +47,7 @@ class Menu:
             command=self.toggle_save
         )
         self.toggle_load_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='ゲームをロード',
             font=self.font,
@@ -53,7 +55,7 @@ class Menu:
             command=self.toggle_load
         )
         self.server_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='サーバーを開始',
             font=self.font,
@@ -61,7 +63,7 @@ class Menu:
             command=self.open_server
         )
         self.toggle_join_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='サーバーに接続',
             font=self.font,
@@ -69,7 +71,7 @@ class Menu:
             command=self.toggle_join
         )
         self.exit_button = DrawMappedButton(
-            parent=self.menu_node,
+            parent=self.select_menu_node,
             model=self.button_model,
             text='ゲームを終了',
             font=self.font,
@@ -187,52 +189,57 @@ class Menu:
             text='メニューに戻る',
             font=self.font,
             pos=(0, 0, -0.25),
-            command=self.toggle_save
+            command=self.toggle_join
         )
 
         # ユーザー操作
         self.accept('f12', self.f12_key)
 
     def f12_key(self):
-        if (self.save_node.isStashed() and
-                self.load_node.isStashed() and
-                self.join_node.isStashed()):
-            self.toggle_menu()
+        self.toggle_menu()
 
     def toggle_menu(self):
         if self.menu_node.isStashed():
             self.menu_node.unstash()
+            self.select_menu_node.unstash()
+            self.save_node.stash()
+            self.load_node.stash()
+            self.join_node.stash()
             self.menu_background_node.unstash()
         else:
             self.menu_node.stash()
+            self.select_menu_node.stash()
+            self.save_node.stash()
+            self.load_node.stash()
+            self.join_node.stash()
             self.menu_background_node.stash()
 
     def toggle_save(self):
         if self.save_node.isStashed():
-            self.menu_node.stash()
+            self.select_menu_node.stash()
             self.save_node.unstash()
             self.save_notification_text.setText('')
         else:
-            self.menu_node.unstash()
+            self.select_menu_node.unstash()
             self.save_node.stash()
 
     def toggle_load(self):
         if self.load_node.isStashed():
-            self.menu_node.stash()
+            self.select_menu_node.stash()
             self.load_node.unstash()
             self.load_notification_text.setText('')
             self.add_list_items()
         else:
-            self.menu_node.unstash()
+            self.select_menu_node.unstash()
             self.load_node.stash()
 
     def toggle_join(self):
         if self.join_node.isStashed():
-            self.menu_node.stash()
+            self.select_menu_node.stash()
             self.join_node.unstash()
             self.join_notification_text.setText('')
         else:
-            self.menu_node.unstash()
+            self.select_menu_node.unstash()
             self.join_node.stash()
 
     def get_world_id_from_name(self, world_name):
@@ -380,11 +387,11 @@ class Menu:
 
     def load_world(self, world_name):
         # ロード処理
-        # # ブロックを全て削除
-        self.block_node.removeNode()
+        # 初期化
+        self.map_node.removeNode()
 
         # ブロックを復元
-        self.block_node = self.render.attachNewNode(PandaNode('block_node'))
+        self.map_node = self.render.attachNewNode(PandaNode('map_node'))
         world_id = self.get_world_id_from_name(world_name)
         self.save_db_cursor.execute('SELECT * FROM blocks WHERE world_id = ?', (world_id,))
         recorded_blocks = self.save_db_cursor.fetchall()
